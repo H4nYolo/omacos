@@ -186,16 +186,16 @@ ctrl-alt-cmd-shift-u = 'flatten-workspace-tree'                                 
 # Join a window into a neighbour's group: service mode (Super + Shift + ;) then Shift + Arrow
 
 # ---- Launchers
-ctrl-alt-cmd-enter       = 'exec-and-forget open -na Ghostty'                                              # Super + Return  Terminal
-ctrl-alt-cmd-shift-t     = 'exec-and-forget open -na Ghostty --args -e zsh -lic "tmux attach || tmux new -s Work"'   # Super + Alt + Return  Tmux terminal (re-homed)
-ctrl-alt-cmd-shift-enter = 'exec-and-forget open -a Zen'                                                   # Super + Shift + Return  Browser
-ctrl-alt-cmd-shift-f     = 'exec-and-forget open -a Finder ~'                                              # Super + Shift + F  Files
-ctrl-alt-cmd-shift-n     = 'exec-and-forget open -na Ghostty --args -e nvim'                               # Super + Shift + N  Editor
-ctrl-alt-cmd-shift-d     = 'exec-and-forget open -na Ghostty --args -e lazydocker'                         # Super + Shift + D  Docker
-ctrl-alt-cmd-shift-a     = 'exec-and-forget open -a NeoHtop'                                               # Super + Shift + A  Activity
-ctrl-alt-cmd-shift-g     = 'exec-and-forget open -a Telegram'                                              # Super + Shift + G  Messenger
-ctrl-alt-cmd-k           = 'exec-and-forget omacos-popup keys'       # Super + K  Show keybindings
-ctrl-alt-cmd-space       = 'exec-and-forget omacos-popup launcher'   # Super + Space  Launcher
+ctrl-alt-cmd-enter       = 'exec-and-forget open -na Ghostty'                                              # Super + Return  Terminal (Ghostty)
+ctrl-alt-cmd-shift-t     = 'exec-and-forget open -na Ghostty --args -e zsh -lic "tmux attach || tmux new -s Work"'   # Super + Alt + Return  Terminal with tmux (Ghostty, re-homed)
+ctrl-alt-cmd-shift-enter = 'exec-and-forget open -a Zen'                                                   # Super + Shift + Return  Browser (Zen)
+ctrl-alt-cmd-shift-f     = 'exec-and-forget open -a Finder ~'                                              # Super + Shift + F  Files (Finder)
+ctrl-alt-cmd-shift-n     = 'exec-and-forget open -na Ghostty --args -e nvim'                               # Super + Shift + N  Editor (nvim)
+ctrl-alt-cmd-shift-d     = 'exec-and-forget open -na Ghostty --args -e lazydocker'                         # Super + Shift + D  Docker (lazydocker)
+ctrl-alt-cmd-shift-a     = 'exec-and-forget open -a NeoHtop'                                               # Super + Shift + A  Activity (NeoHtop)
+ctrl-alt-cmd-shift-g     = 'exec-and-forget open -a Telegram'                                              # Super + Shift + G  Messenger (Telegram)
+ctrl-alt-cmd-k           = 'exec-and-forget omacos-popup keys'       # Super + K  Show keybindings (this help)
+ctrl-alt-cmd-space       = 'exec-and-forget omacos-popup launcher'   # Super + Space  App launcher
 # Super + Escape System menu, Super + Ctrl + L lock (use cmd-ctrl-q) -> not bound
 
 ctrl-alt-cmd-shift-semicolon = 'mode service'
