@@ -34,6 +34,29 @@ and starts the services. Re-running it is safe.
 Each top-level directory is a stow package mirroring `$HOME`, so a single tool
 can be linked on its own: `stow --target=$HOME aerospace`.
 
+### First run: permissions macOS will ask for
+
+- **Karabiner-Elements** — Input Monitoring (and its driver extension under Login Items & Extensions)
+- **AeroSpace** — Accessibility
+- **Sol** — Accessibility (window management, clipboard)
+- **Pearcleaner** — Full Disk Access to find leftovers; turn on *Sentinel* in its settings
+
+Grant them once, then restart the app that asked.
+
+### Packages
+
+| package | links |
+|---|---|
+| `aerospace` | `~/.aerospace.toml` |
+| `karabiner` | `~/.config/karabiner/` (Karabiner rewrites `karabiner.json` itself; backups are ignored) |
+| `tmux` | `~/.config/tmux/tmux.conf` |
+| `zsh` | `~/.zshrc`, `~/.p10k.zsh`, `~/.config/zsh/omarchy.zsh` |
+| `ghostty` | `~/.config/ghostty/config` |
+| `sketchybar`, `borders` | `~/.config/sketchybar/`, `~/.config/borders/bordersrc` |
+| `sol` | `~/.config/sol/` (Sol writes `config.json` itself; `state.json` is ignored) |
+| `nvim`, `git` | `~/.config/nvim/`, `~/.config/git/ignore` |
+| `bin` | `~/.local/bin/omacos-keys`, `~/.local/bin/omacos-scratchpad` |
+
 ## The modifier story
 
 Omarchy hangs everything on `Super`. macOS has no spare modifier, so:
