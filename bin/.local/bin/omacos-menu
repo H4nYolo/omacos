@@ -31,7 +31,7 @@ borders_state() { pgrep -x borders >/dev/null && printf 'on' || printf 'off'; }
 menu_root() {
   show "omacos" "$(printf '%s\n' \
     '  Apps	exec omacos-launcher' \
-    '󰧑  Learn	menu_learn' \
+    '  Learn	menu_learn' \
     '󰄀  Capture	menu_capture' \
     '󰆏  Clipboard	exec omacos-clipboard' \
     '󰞅  Emoji	exec omacos-menu-emoji' \
