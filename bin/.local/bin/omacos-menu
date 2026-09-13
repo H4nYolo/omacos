@@ -103,7 +103,7 @@ menu_update() {
 menu_info() {
   show "info" "$(printf '%s\n' \
     '󰥔  Time	omacos-notify "$(date "+%H:%M")" "$(date "+%A, %d %B %Y")"' \
-    '󰖐  Weather	omacos-notify "Weather" "$(curl -s -m 10 "wttr.in/?format=%l:+%c+%t,+%w")"' \
+    '󰖐  Weather	omacos-notify "Weather" "$(curl -s -m 10 "wttr.in/$(cat "$HOME/.config/omacos/weather-location" 2>/dev/null | tr -d "[:space:]")?format=%l:+%c+%t,+%w")"' \
     '󰖩  Network	omacos-notify "Network" "$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || echo offline) · $(curl -s -m 5 ifconfig.me)"' \
     '󰋼  About	about')"
 }

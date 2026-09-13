@@ -9,7 +9,7 @@ case "$req" in
   menu*)  exec omacos-menu ${req#menu} ;;
   emoji)  exec omacos-menu-emoji ;;
   clipboard) exec omacos-clipboard ;;
-  weather) curl -s -m 15 'wttr.in/?F'; printf '\n press Enter to close'; read -r _ ;;
+  weather) curl -s -m 15 "wttr.in/$(cat "$HOME/.config/omacos/weather-location" 2>/dev/null | tr -d '[:space:]')?F"; printf '\n press Enter to close'; read -r _ ;;
   brew)   brew upgrade --formula; printf '\n done — press Enter to close'; read -r _ ;;
   audio)  dev="$(SwitchAudioSource -a -t output | fzf --reverse --no-info --cycle --prompt='󰓃  ' --pointer='' \
                   --color='bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7')" \

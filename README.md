@@ -139,6 +139,7 @@ Right, left to right:
 - mic / camera in use (best effort, follows macOS' sensor attribution log via `omacos-media-stream`)
 - brew updates: number of outdated packages, checked hourly, hidden at zero; click runs `brew upgrade` in the popup
 - network: SSID on Wi-Fi, port name on wired; click opens Network settings
+- weather: wttr.in, IP-based; put a place in `~/.config/omacos/weather-location` (`Berlin`, `Dieburg,DE`, or `48.5,10.2`) to pin it — the popup and the menu's weather notification use the same file
 - bluetooth: connected devices with battery; click opens Bluetooth settings
 - audio output device; click opens a chooser in the popup (SwitchAudioSource)
 - volume (click mutes), cpu and memory (click opens NeoHtop), clock (click opens Calendar) The macOS menu bar is hidden by `install.sh`.
