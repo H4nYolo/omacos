@@ -24,6 +24,7 @@ brew "ncurses"          # tmux-256color terminfo (macOS ncurses is too old)
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 brew "stow"
+brew "uv"                 # installs terminaltexteffects (screensaver)
 
 # omarchy aliases & tools
 brew "eza"

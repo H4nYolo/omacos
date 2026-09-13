@@ -1,0 +1,47 @@
+#!/bin/bash
+# omacos-screensaver-run — Omarchy's screensaver loop (bin/omarchy-screensaver), runs inside
+# each screensaver terminal: random TTE effects on ~/.config/omacos/screensaver.txt until a
+# key is pressed or the screensaver loses focus. Then every screensaver window is closed.
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+TEXT="$HOME/.config/omacos/screensaver.txt"
+EFFECTS=(beams binarypath blackhole bouncyballs bubbles burn colorshift crumble decrypt errorcorrect
+         expand fireworks highlight laseretch matrix middleout orbittingvolley overflow pour print
+         rain randomsequence rings scattered slice slide smoke spotlights spray swarm sweep
+         synthgrid thunderstorm)
+
+screensaver_in_focus() {
+  [ "$(aerospace list-windows --focused --format '%{window-title}' 2>/dev/null)" = "omacos-screensaver" ]
+}
+
+exit_screensaver() {
+  [ -n "$ttepid" ] && kill "$ttepid" 2>/dev/null   # tte is a python process under uv, so kill by pid
+  printf '\033[?25h'
+  # every screensaver window on every monitor (pattern anchored to the binary so it
+  # cannot match a shell that merely mentions the screensaver)
+  pkill -f '^/Applications/Ghostty.app/Contents/MacOS/ghostty --config-file=.*/ghostty/screensaver' 2>/dev/null
+  exit 0
+}
+ttepid=""
+trap exit_screensaver SIGINT SIGTERM SIGHUP SIGQUIT
+
+printf '\033]11;rgb:00/00/00\007'   # black background
+printf '\033[?25l'                  # hide the cursor
+
+# The pty starts at 80x24 and is resized once the window is laid out (fullscreen);
+# tte measures the terminal only at startup, so wait for the real size.
+deadline=$((SECONDS + 3))
+while ((SECONDS < deadline)) && [[ $(stty size 2>/dev/null) == "24 80" ]]; do sleep 0.05; done
+sleep 0.3
+
+while true; do
+  effect="${EFFECTS[RANDOM % ${#EFFECTS[@]}]}"
+  tte -i "$TEXT" --frame-rate 120 --canvas-width 0 --canvas-height 0 --anchor-canvas c --anchor-text c \
+      --no-eol --no-restore-cursor "$effect" &
+  ttepid=$!
+  while kill -0 "$ttepid" 2>/dev/null; do
+    if read -rsn1 -t 1 || ! screensaver_in_focus; then
+      exit_screensaver
+    fi
+  done
+  clear
+done

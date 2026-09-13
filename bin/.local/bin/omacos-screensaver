@@ -1,0 +1,36 @@
+#!/bin/sh
+# omacos-screensaver — Omarchy's screensaver on macOS: one fullscreen Ghostty per monitor
+# running omacos-screensaver-run. Any key (or clicking elsewhere) ends it everywhere.
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+pgrep -f '^/Applications/Ghostty.app/Contents/MacOS/ghostty --config-file=.*/ghostty/screensaver' >/dev/null && exit 0
+ghostty="/Applications/Ghostty.app/Contents/MacOS/ghostty"
+cd "$HOME" || exit 1
+
+ghostty_win() {  # <pid> -> window id, waits up to 3s
+  i=0
+  while [ $i -lt 30 ]; do
+    id="$(aerospace list-windows --monitor all --pid "$1" --format '%{window-id}' 2>/dev/null | head -1)"
+    [ -n "$id" ] && { printf '%s' "$id"; return 0; }
+    sleep 0.1; i=$((i+1))
+  done
+  return 1
+}
+
+# Pass 1: one window per monitor, parked on its monitor. Fullscreen comes last:
+# a new window appearing on a workspace ends that workspace's fullscreen.
+ids=""
+for mon in $(aerospace list-monitors --format '%{monitor-id}' 2>/dev/null); do
+  env -u TERM -u TERM_PROGRAM -u TMUX -u TMUX_PANE -u COLORTERM \
+    "$ghostty" --config-file="$HOME/.config/ghostty/screensaver" --title=omacos-screensaver \
+    -e omacos-screensaver-run >/dev/null 2>&1 &
+  id="$(ghostty_win $!)" || continue
+  aerospace move-node-to-monitor --window-id "$id" "$mon" >/dev/null 2>&1
+  ids="$ids $id"
+done
+
+# Pass 2: fullscreen without gaps, focus the last one so a keypress reaches it
+for id in $ids; do
+  aerospace fullscreen on --window-id "$id" --no-outer-gaps >/dev/null 2>&1
+done
+last="${ids##* }"
+[ -n "$last" ] && aerospace focus --window-id "$last" >/dev/null 2>&1

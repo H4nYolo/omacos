@@ -1,0 +1,8 @@
+# ~/.config/ghostty/screensaver — Omarchy's default/ghostty/screensaver, used by omacos-screensaver
+window-padding-x = 0
+window-padding-y = 0
+window-padding-color = extend-always
+font-size = 18
+background = #000000
+cursor-style-blink = false
+confirm-close-surface = false

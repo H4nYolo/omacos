@@ -52,11 +52,12 @@ Grant them once, then restart the app that asked.
 | `karabiner` | `~/.config/karabiner/` (Karabiner rewrites `karabiner.json` itself; backups are ignored) |
 | `tmux` | `~/.config/tmux/tmux.conf` |
 | `zsh` | `~/.zshrc`, `~/.p10k.zsh`, `~/.config/zsh/omarchy.zsh` |
-| `ghostty` | `~/.config/ghostty/config`, `~/.config/ghostty/popup` (the popup instance) |
+| `ghostty` | `~/.config/ghostty/config`, `popup` (the popup instance), `screensaver` |
 | `sketchybar`, `borders` | `~/.config/sketchybar/`, `~/.config/borders/bordersrc` |
 | `sol` | `~/.config/sol/` (Sol writes `config.json` itself; `state.json` is ignored) |
 | `nvim`, `git` | `~/.config/nvim/`, `~/.config/git/ignore` |
-| `bin` | `~/.local/bin/omacos-launcher`, `omacos-keys`, `omacos-scratchpad`, `omacos-popup`, `omacos-popupd`, `omacos-popup-run`, `omacos-media-stream` |
+| `bin` | `~/.local/bin/omacos-launcher`, `omacos-keys`, `omacos-scratchpad`, `omacos-popup`, `omacos-popupd`, `omacos-popup-run`, `omacos-media-stream`, `omacos-screensaver`, `omacos-screensaver-run`, `omacos-idle` |
+| `omacos` | `~/.config/omacos/` (screensaver text, idle minutes) |
 
 ## The modifier story
 
@@ -163,6 +164,16 @@ remove the leftovers. From a script: `/Applications/Pearcleaner.app/Contents/Mac
 
 Note: Pearcleaner turns into that CLI whenever `TERM` is set in its environment, which is why
 `install.sh` launches Sol and AeroSpace with `TERM` and `TMUX` stripped.
+
+## Screensaver
+
+Omarchy's terminal screensaver: after 5 idle minutes (`~/.config/omacos/idle-minutes`, `0`
+disables it) `omacos-idle` opens one fullscreen Ghostty per monitor running random
+[terminaltexteffects](https://github.com/ChrisBuilds/terminaltexteffects) animations on
+`~/.config/omacos/screensaver.txt` (Omarchy's logo by default, edit it or drop in your own ASCII
+art). Any key, or clicking somewhere else, ends it on every monitor. It stays off while an app
+keeps the display awake (video, calls). Start it by hand from the launcher (`Screensaver`) or with
+`omacos-screensaver`. The launcher also has `Lock screen` and `Sleep`.
 
 ## tmux
 

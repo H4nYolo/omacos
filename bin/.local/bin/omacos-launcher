@@ -21,6 +21,10 @@ apps() {
     done
     printf 'Finder\t/System/Library/CoreServices/Finder.app\n'
   } | sort -t "$(printf '\t')" -k1,1 -u
+  # omacos actions (Omarchy menu → System)
+  printf '󰒲 Screensaver\taction:screensaver\n'
+  printf '󰌾 Lock screen\taction:lock\n'
+  printf '󰤄 Sleep\taction:sleep\n'
 }
 
 # rank: history count (desc), then name
@@ -43,6 +47,12 @@ key="$(printf '%s\n' "$out" | sed -n 1p)"
 line="$(printf '%s\n' "$out" | sed -n 2p)"
 [ -n "$line" ] || exit 0
 name="${line%%	*}"; path="${line#*	}"
+
+case "$path" in
+  action:screensaver) exec omacos-screensaver ;;
+  action:lock)  exec osascript -e 'tell application "System Events" to keystroke "q" using {control down, command down}' ;;
+  action:sleep) exec pmset sleepnow ;;
+esac
 
 case "$key" in
   ctrl-x)

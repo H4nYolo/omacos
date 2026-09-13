@@ -9,7 +9,7 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ARCHIVE="$HOME/.config-archive/$(date +%Y%m%d-%H%M%S)"
-PACKAGES=(aerospace karabiner tmux zsh ghostty sketchybar borders nvim git sol bin)
+PACKAGES=(aerospace karabiner tmux zsh ghostty sketchybar borders nvim git sol omacos bin)
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 
@@ -69,6 +69,12 @@ if [[ ! -f "$HOME/.zshrc.local" ]]; then
   cat > "$HOME/.zshrc.local" <<'LOCAL'
 # ~/.zshrc.local — machine-specific exports and secrets. Not tracked by git.
 LOCAL
+fi
+
+# --- 4b. terminaltexteffects for the screensaver ---------------------------------
+if ! command -v tte >/dev/null; then
+  log "installing terminaltexteffects"
+  uv tool install terminaltexteffects >/dev/null
 fi
 
 # --- 5. tmux-256color terminfo --------------------------------------------------
