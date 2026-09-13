@@ -67,6 +67,9 @@ arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resiz
 
 `Alt + Tab` cycles windows on the workspace.
 
+**Help** — `Super + K` opens a searchable list of every binding (AeroSpace and tmux), generated
+from the config itself. Inside tmux, `Prefix + ?` lists the tmux keys.
+
 ### Re-homed keys (no `Super + Alt` / `Super + Ctrl`)
 
 | Omarchy | Here |
@@ -91,6 +94,11 @@ focus-follows-mouse have no AeroSpace equivalent.
 Workspaces `1-5` and `scratch` live on the main display, `6-9` on the second
 one (`workspace-to-monitor-force-assignment` in `aerospace/.aerospace.toml`).
 Edit the monitor names there for your setup — `aerospace list-monitors` prints them.
+
+## tmux
+
+Omarchy's tmux config as-is: prefix `Ctrl + Space`, `Alt + Enter` / `Alt + Shift + Enter` split,
+`Alt + 1-9` windows, `Alt + arrows` navigate, plus `Ctrl + h/j/k/l` pane navigation that is vim-aware.
 
 ## Shell
 

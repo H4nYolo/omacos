@@ -1,10 +1,7 @@
-# ~/.config/zsh/omarchy.zsh
-# Omarchy default/bash/aliases – macOS/zsh-Port
-# In ~/.zshrc einbinden:  source ~/.config/zsh/omarchy.zsh
-#
-# brew install eza fzf bat zoxide tmux neovim
-# Omarchy sourced diese Datei in bash; sie läuft unverändert in zsh.
-# Änderungen ggü. Original sind mit "# mac:" markiert.
+# ~/.config/zsh/omarchy.zsh — omacos
+# Omarchy's default/bash/aliases, running in zsh. Sourced from ~/.zshrc.
+# Changes against the original are marked "# mac:".
+# Needs: brew install eza fzf bat zoxide tmux neovim zsh-autosuggestions zsh-syntax-highlighting
 
 # ---------------------------------------------------------------- File system
 if command -v eza &> /dev/null; then
@@ -21,7 +18,7 @@ else
 fi
 alias eff='$EDITOR "$(ff)"'
 
-# mac: BSD-find kennt kein -printf -> stat -f statt find -printf
+# mac: BSD find has no -printf -> stat -f instead
 sff() {
   if [ $# -eq 0 ]; then echo "Usage: sff <destination> (e.g. sff host:/tmp/)"; return 1; fi
   local file
@@ -48,7 +45,7 @@ if command -v zoxide &> /dev/null; then
   }
 fi
 
-# mac: Omarchy überschreibt open() mit xdg-open. macOS hat `open` nativ -> weglassen.
+# mac: Omarchy overrides open() with xdg-open; macOS has `open` natively -> dropped.
 
 # ---------------------------------------------------------------- Directories
 alias ..='cd ..'
@@ -75,31 +72,30 @@ alias gcam='git commit -a -m'
 alias gcad='git commit -a --amend'
 
 # ---------------------------------------------------------------- Tmux layouts
-# Nachbau der Omarchy-Layoutfunktionen (tdl / tdlm / tsl). Verhalten wie im
-# Omarchy-Manual beschrieben: Editor links, KI rechts, Terminal darunter.
-# Müssen innerhalb einer tmux-Session laufen.
+# Re-creations of Omarchy's tdl / tdlm / tsl (default/bash/fns): editor left,
+# AI agent right, terminal below. Must run inside a tmux session.
 
 _tmux_require() {
   if [ -z "$TMUX" ]; then echo "Run this inside a tmux session (alias: t)"; return 1; fi
 }
 
-# tdl <ai> [<second_ai>]  – Dev layout: editor | ai (+ second ai) / terminal
+# tdl <ai> [<second_ai>]  – dev layout: editor | ai (+ second ai) / terminal
 tdl() {
   _tmux_require || return 1
   local ai="${1:-cx}" ai2="$2" dir="$PWD"
   tmux new-window -c "$dir" -n "$(basename "$dir")"
-  tmux send-keys "n" C-m                          # Pane 1: Editor (nvim)
-  tmux split-window -h -l 45% -c "$dir"           # Pane 2: KI rechts
+  tmux send-keys "n" C-m                          # pane 1: editor (nvim)
+  tmux split-window -h -l 45% -c "$dir"           # pane 2: AI on the right
   tmux send-keys "$ai" C-m
   if [ -n "$ai2" ]; then
-    tmux split-window -v -c "$dir"                # Pane 3: zweite KI
+    tmux split-window -v -c "$dir"                # pane 3: second AI
     tmux send-keys "$ai2" C-m
   fi
-  tmux split-window -v -l 30% -c "$dir"           # Terminal unten rechts
+  tmux split-window -v -l 30% -c "$dir"           # terminal bottom right
   tmux select-pane -t 1
 }
 
-# tdlm <ai> [<second_ai>]  – ein tdl-Window pro Unterverzeichnis
+# tdlm <ai> [<second_ai>]  – one tdl window per subdirectory
 tdlm() {
   _tmux_require || return 1
   local sub
@@ -109,7 +105,7 @@ tdlm() {
   done
 }
 
-# tsl <count> <command>  – Swarm: <count> Panes, alle starten <command>
+# tsl <count> <command>  – swarm: <count> panes, each running <command>
 tsl() {
   _tmux_require || return 1
   local count="$1"; shift
@@ -128,23 +124,22 @@ tsl() {
 }
 
 # ---------------------------------------------------------------- zsh plugins
-# brew install zsh-autosuggestions zsh-syntax-highlighting
-# Autosuggestions = graue Vorschläge aus der History (→ oder Ende annimmt, Ctrl+→ wortweise)
+# Autosuggestions: grey history hints (→ or End accepts, Ctrl+→ one word)
 _brew_prefix="${HOMEBREW_PREFIX:-$(brew --prefix 2>/dev/null)}"
 if [ -f "$_brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
   source "$_brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
   ZSH_AUTOSUGGEST_STRATEGY=(history completion)
   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
-  bindkey '^[[F' end-of-line          # Ende
-  bindkey '^[[1;5C' forward-word      # Ctrl+→ : nur ein Wort annehmen
+  bindkey '^[[F' end-of-line          # End
+  bindkey '^[[1;5C' forward-word      # Ctrl+→ : accept one word
 fi
-# Syntax-Highlighting muss als letztes geladen werden
+# Syntax highlighting has to be sourced last
 if [ -f "$_brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
   source "$_brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
 unset _brew_prefix
 
-# History-Verhalten wie gewohnt: groß, geteilt, ohne Duplikate
+# History: large, shared, no duplicates
 HISTSIZE=50000
 SAVEHIST=50000
 setopt SHARE_HISTORY HIST_IGNORE_ALL_DUPS HIST_IGNORE_SPACE HIST_REDUCE_BLANKS

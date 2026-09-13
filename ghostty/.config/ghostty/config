@@ -1,0 +1,19 @@
+# ~/.config/ghostty/config — omacos
+# Omarchy's Ghostty look. Reload with cmd+shift+, or restart Ghostty.
+
+font-family = CaskaydiaMono Nerd Font
+theme = TokyoNight Night
+
+# Omarchy: 14px padding, no confirm on close, no resize overlay
+window-padding-x = 14
+window-padding-y = 14
+confirm-close-surface = false
+resize-overlay = never
+
+# tiling: no macOS title bar, AeroSpace draws the frame via JankyBorders
+macos-titlebar-style = hidden
+
+# Omarchy's tmux bindings live on Alt (Alt+Enter, Alt+1-9, Alt+arrows) — Option must send Alt.
+macos-option-as-alt = true
+
+# Alt+Shift+Enter and Ctrl+Alt+Shift+arrows need the kitty keyboard protocol (tmux: extended-keys csi-u)

@@ -85,6 +85,12 @@ run = 'layout floating'
 if.app-id = 'com.raycast.macos'
 run = 'layout floating'
 
+# Super + K keybinding popup
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
+if.window-title-regex-substring = 'omacos-keys'
+run = 'layout floating'
+
 # ================================================================ main mode
 [mode.main.binding]
 
@@ -99,15 +105,15 @@ ctrl-alt-cmd-f = 'fullscreen'                             # Super + F  Fullscree
 # Super + Shift + Backspace  Toggle gaps -> no equivalent
 
 # ---- Focus / Swap (Super + Arrows / Super + Shift + Arrows)
-ctrl-alt-cmd-left  = 'focus --boundaries all-monitors-outer-frame left'
-ctrl-alt-cmd-right = 'focus --boundaries all-monitors-outer-frame right'
-ctrl-alt-cmd-up    = 'focus --boundaries all-monitors-outer-frame up'
-ctrl-alt-cmd-down  = 'focus --boundaries all-monitors-outer-frame down'
+ctrl-alt-cmd-left  = 'focus --boundaries all-monitors-outer-frame left'       # Super + Left  Focus
+ctrl-alt-cmd-right = 'focus --boundaries all-monitors-outer-frame right'      # Super + Right  Focus
+ctrl-alt-cmd-up    = 'focus --boundaries all-monitors-outer-frame up'         # Super + Up  Focus
+ctrl-alt-cmd-down  = 'focus --boundaries all-monitors-outer-frame down'       # Super + Down  Focus
 
-ctrl-alt-cmd-shift-left  = 'move left'
-ctrl-alt-cmd-shift-right = 'move right'
-ctrl-alt-cmd-shift-up    = 'move up'
-ctrl-alt-cmd-shift-down  = 'move down'
+ctrl-alt-cmd-shift-left  = 'move left'                                        # Super + Shift + Left  Swap
+ctrl-alt-cmd-shift-right = 'move right'                                       # Super + Shift + Right  Swap
+ctrl-alt-cmd-shift-up    = 'move up'                                          # Super + Shift + Up  Swap
+ctrl-alt-cmd-shift-down  = 'move down'                                        # Super + Shift + Down  Swap
 
 # ---- Resize (single 50px step; Omarchy's Alt/Ctrl steps don't exist here)
 ctrl-alt-cmd-minus       = 'resize smart -50'             # Super + Minus
@@ -172,8 +178,9 @@ ctrl-alt-cmd-shift-n     = 'exec-and-forget open -na Ghostty --args -e nvim'    
 ctrl-alt-cmd-shift-d     = 'exec-and-forget open -na Ghostty --args -e lazydocker'                         # Super + Shift + D  Docker
 ctrl-alt-cmd-shift-a     = 'exec-and-forget open -a NeoHtop'                                               # Super + Shift + A  Activity
 ctrl-alt-cmd-shift-g     = 'exec-and-forget open -a Telegram'                                              # Super + Shift + G  Messenger
+ctrl-alt-cmd-k           = 'exec-and-forget open -na Ghostty --args --title=omacos-keys -e ~/.local/bin/omacos-keys'   # Super + K  Show keybindings
 # Super + Space  Launcher -> Raycast via Karabiner
-# Super + Escape System menu, Super + K keybindings, Super + Ctrl + L lock (use cmd-ctrl-q) -> not bound
+# Super + Escape System menu, Super + Ctrl + L lock (use cmd-ctrl-q) -> not bound
 
 ctrl-alt-cmd-shift-semicolon = 'mode service'
 
