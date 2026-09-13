@@ -40,6 +40,7 @@ source "$ITEM_DIR/front_app.sh"
 
 # Right (added in reverse order: sketchybar stacks right items from the edge)
 source "$ITEM_DIR/clock.sh"
+source "$ITEM_DIR/weather.sh"
 source "$ITEM_DIR/memory.sh"
 source "$ITEM_DIR/cpu.sh"
 source "$ITEM_DIR/volume.sh"
