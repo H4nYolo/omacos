@@ -15,3 +15,6 @@ themes/*/wallpaper.*
 # Sol runtime state
 sol/.config/sol/state.json
 sol/.config/sol/images_pasteboard/
+
+# personal, never committed
+omacos/.config/omacos/weather-location
