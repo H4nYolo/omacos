@@ -61,7 +61,7 @@ alias r='rails'
 alias t='tmux attach || tmux new -s Work'
 alias ic='tdl c'      # dev layout with opencode, optional <dir>
 alias ix='tdl cx'     # dev layout with claude code, optional <dir>
-alias icx='tdl c cx'  # dev layout with both
+alias icx='tdl c cx'  # dev layout with both, optional <dir>
 alias mup='MISE_MINIMUM_RELEASE_AGE=0 mise up'
 # n [files]  – nvim, current directory when called without arguments
 n() { if [ "$#" -eq 0 ]; then command nvim . ; else command nvim "$@"; fi; }
@@ -80,7 +80,7 @@ _tmux_require() {
   if [ -z "$TMUX" ]; then echo "Run this inside a tmux session (alias: t)"; return 1; fi
 }
 
-# tdl <ai> [<second_ai>] [<dir>]  – dev layout: editor | ai (+ second ai) / terminal; dir is created on request
+# tdl <ai> [<ai2>] [<dir>]  – dev layout: editor | ai (+ second ai) / terminal, dir is created on request
 tdl() {
   _tmux_require || return 1
   local ai="" ai2="" dir="$PWD" arg
@@ -111,7 +111,7 @@ tdl() {
   tmux select-pane -t 1
 }
 
-# tdlm <ai> [<second_ai>]  – one tdl window per subdirectory
+# tdlm <ai> [<ai2>]  – one tdl window per subdirectory
 tdlm() {
   _tmux_require || return 1
   local sub
