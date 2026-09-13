@@ -79,7 +79,7 @@ start sysdiagnose on them.
 
 Everything Omarchy has, on the same keys, with `Super` = Caps Lock.
 
-**Windows** — `W`/`Q` close · `T` float · `J` split · `F` fullscreen ·
+**Windows** — `W`/`Q` close the window and quit the app when it was its last one · `T` float · `J` split · `F` fullscreen ·
 arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resize the other axis · `Home` balance
 
 **Workspaces** — `1-9`, `0` (= 10) jump, press the current one again to go back · `Shift + 1-9`, `Shift + 0` move window & follow ·

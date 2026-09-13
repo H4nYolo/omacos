@@ -109,8 +109,8 @@ run = 'move-node-to-workspace 10'
 [mode.main.binding]
 
 # ---- Windows
-ctrl-alt-cmd-w = 'close'                                  # Super + W  Close
-ctrl-alt-cmd-q = 'close'                                  # Super + Q  Close
+ctrl-alt-cmd-w = 'close --quit-if-last-window'          # Super + W  Close window, quit the app when it was the last one
+ctrl-alt-cmd-q = 'close --quit-if-last-window'          # Super + Q  Close window, quit the app when it was the last one
 ctrl-alt-cmd-t = 'layout floating tiling'                 # Super + T  Toggle float
 ctrl-alt-cmd-j = 'layout horizontal vertical'             # Super + J  Toggle split
 ctrl-alt-cmd-f = 'fullscreen'                             # Super + F  Fullscreen
