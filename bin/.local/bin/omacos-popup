@@ -13,10 +13,16 @@ pid="$(pgrep -f 'ghostty --config-file=.*/ghostty/popup' | head -1)"
 [ -n "$pid" ] || exit 1
 
 # A previous popup still running (hidden or visible)? Close its surface so the
-# next toggle starts a fresh one with the new request.
-if pgrep -P "$pid" >/dev/null 2>&1; then
-  pkill -P "$pid"
-  sleep 0.3
+# next toggle starts a fresh one with the new request — unless it is a brew
+# upgrade in progress: never kill that, just bring the panel back.
+child="$(pgrep -P "$pid" | head -1)"
+if [ -n "$child" ]; then
+  if pgrep -P "$child" -f 'brew' >/dev/null 2>&1 || ps -o command= -p $(pgrep -P "$child" 2>/dev/null) 2>/dev/null | grep -q 'brew'; then
+    printf 'brew\n' > "$STATE_DIR/popup-request"
+  else
+    pkill -P "$pid"
+    sleep 0.3
+  fi
 fi
 
 # Fire the popup instance's private global hotkey (ctrl+alt+shift+cmd+F19).
