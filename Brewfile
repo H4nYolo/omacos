@@ -29,7 +29,6 @@ brew "jq"
 brew "neovim"
 brew "lazygit"
 brew "lazydocker"
-brew "btop"
 
 # font
 cask "font-caskaydia-mono-nerd-font"

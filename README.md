@@ -13,7 +13,8 @@ aliases, Tokyo Night — onto AeroSpace, Ghostty, tmux, zsh and Karabiner.
 | tmux config | tmux (`tmux/`) |
 | bash aliases, `tdl` / `tdlm` / `tsl` layouts | zsh (`zsh/`) |
 | Alacritty / Ghostty | Ghostty (`ghostty/`) |
-| LazyVim, btop | LazyVim, btop (`nvim/`, `btop/`) |
+| LazyVim | LazyVim (`nvim/`) |
+| btop | [NeoHtop](https://github.com/Abdenasser/neohtop) on `Super + Shift + A` |
 | Theme | Tokyo Night everywhere (`themes/`) |
 
 ## Install

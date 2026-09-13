@@ -9,7 +9,7 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ARCHIVE="$HOME/.config-archive/$(date +%Y%m%d-%H%M%S)"
-PACKAGES=(aerospace karabiner tmux zsh ghostty sketchybar borders nvim btop git bin)
+PACKAGES=(aerospace karabiner tmux zsh ghostty sketchybar borders nvim git bin)
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 
@@ -55,7 +55,6 @@ archive "$HOME/.config/ghostty"
 archive "$HOME/.config/sketchybar"
 archive "$HOME/.config/borders"
 archive "$HOME/.config/nvim"
-archive "$HOME/.config/btop"
 archive "$HOME/.config/git"
 
 mkdir -p "$HOME/.config" "$HOME/.local/bin"
