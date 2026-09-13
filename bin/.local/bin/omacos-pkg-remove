@@ -6,7 +6,7 @@ PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
 
 list() {
   brew leaves      2>/dev/null | awk '{ printf "%s\tformula\t󰏗\n", $0 }'
-  brew list --cask 2>/dev/null | awk '{ printf "%s\tcask\t\n", $0 }'
+  brew list --cask 2>/dev/null | awk '{ printf "%s\tcask\t󰏖\n", $0 }'
 }
 
 sel="$(list | omacos-fzf --multi --exact --delimiter='\t' --with-nth=3,1 --nth=1 \

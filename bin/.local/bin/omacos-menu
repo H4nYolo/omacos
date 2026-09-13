@@ -30,17 +30,17 @@ borders_state() { pgrep -x borders >/dev/null && printf 'on' || printf 'off'; }
 
 menu_root() {
   show "omacos" "$(printf '%s\n' \
-    '  Apps	exec omacos-launcher' \
-    '  Learn	menu_learn' \
+    '󰀻  Apps	exec omacos-launcher' \
+    '󰂺  Learn	menu_learn' \
     '󰄀  Capture	menu_capture' \
     '󰆏  Clipboard	exec omacos-clipboard' \
     '󰞅  Emoji	exec omacos-menu-emoji' \
     '󰔡  Toggle	menu_toggle' \
     '󰏗  Install	menu_install' \
-    '  Remove	menu_remove' \
+    '󰆴  Remove	menu_remove' \
     '󰚰  Update	menu_update' \
     '󰋼  Info	menu_info' \
-    '  System	menu_system')"
+    '󰒓  System	menu_system')"
 }
 
 menu_learn() {
@@ -48,11 +48,11 @@ menu_learn() {
     '󰌌  Keybindings	exec omacos-keys' \
     '󰌌  tmux keybindings	exec omacos-keys tmux' \
     '󰘳  AeroSpace keybindings	exec omacos-keys aerospace' \
-    "  omacos on GitHub	gui $REPO_URL" \
-    '  Omarchy manual	gui https://learn.omacom.io/2/the-omarchy-manual' \
-    '  AeroSpace guide	gui https://nikitabobko.github.io/AeroSpace/guide' \
-    '  Ghostty docs	gui https://ghostty.org/docs' \
-    '  tmux wiki	gui https://github.com/tmux/tmux/wiki')"
+    "󰊤  omacos on GitHub	gui $REPO_URL" \
+    '󰂺  Omarchy manual	gui https://learn.omacom.io/2/the-omarchy-manual' \
+    '󰖲  AeroSpace guide	gui https://nikitabobko.github.io/AeroSpace/guide' \
+    '󰆍  Ghostty docs	gui https://ghostty.org/docs' \
+    '󰆍  tmux wiki	gui https://github.com/tmux/tmux/wiki')"
 }
 
 menu_capture() {
@@ -79,26 +79,26 @@ menu_toggle() {
 menu_install() {
   show "install" "$(printf '%s\n' \
     '󰏗  Package (brew)	exec omacos-pkg-install' \
-    '  App Store	gui -a "App Store"')"
+    '󰀵  App Store	gui -a "App Store"')"
 }
 
 menu_remove() {
   show "remove" "$(printf '%s\n' \
     '󰏗  Package (brew)	exec omacos-pkg-remove' \
-    '  App (Pearcleaner)	exec omacos-launcher --uninstall')"
+    '󰗩  App (Pearcleaner)	exec omacos-launcher --uninstall')"
 }
 
 menu_update() {
   show "update" "$(printf '%s\n' \
     '󰚰  Upgrade packages (brew)	brew update && brew upgrade --formula && brew upgrade --cask; printf "\n done — press Enter to close"; read -r _' \
-    '󰒓  Show outdated	brew outdated --verbose; printf "\n press Enter to close"; read -r _' \
+    '󰋚  Show outdated	brew outdated --verbose; printf "\n press Enter to close"; read -r _' \
     '  macOS software update	gui "x-apple.systempreferences:com.apple.Software-Update-Settings.extension"')"
 }
 
 menu_info() {
   show "info" "$(printf '%s\n' \
     '󰥔  Time	omacos-notify "$(date "+%H:%M")" "$(date "+%A, %d %B %Y")"' \
-    '  Weather	omacos-notify "Weather" "$(curl -s -m 10 "wttr.in/?format=%l:+%c+%t,+%w")"' \
+    '󰖐  Weather	omacos-notify "Weather" "$(curl -s -m 10 "wttr.in/?format=%l:+%c+%t,+%w")"' \
     '󰖩  Network	omacos-notify "Network" "$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || echo offline) · $(curl -s -m 5 ifconfig.me)"' \
     '󰋼  About	about')"
 }
