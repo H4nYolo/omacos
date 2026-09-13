@@ -82,32 +82,6 @@
                         ]
                     },
                     {
-                        "description": "omacos: SUPER + SPACE = Sol launcher (option+space)",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "spacebar",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "left_command",
-                                            "left_control",
-                                            "left_option"
-                                        ]
-                                    }
-                                },
-                                "to": [
-                                    {
-                                        "key_code": "spacebar",
-                                        "modifiers": [
-                                            "left_option"
-                                        ]
-                                    }
-                                ],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "Toggle CAPS_LOCK with LEFT_SHIFT + RIGHT_SHIFT",
                         "manipulators": [
                             {

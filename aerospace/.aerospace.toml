@@ -7,7 +7,7 @@
 #   Omarchy Alt           -> Option (left to tmux / the terminal)
 #   Super + Alt / Super + Ctrl cannot be expressed; those bindings were re-homed (see README).
 #
-# Caps Lock + Space opens Sol (Karabiner turns it into option-space) — not bound here.
+# Caps Lock + Space opens the app launcher (omacos-launcher); Sol stays on plain Option + Space.
 # ctrl-alt-cmd-shift + , . / are swallowed by Karabiner to avoid macOS sysdiagnose — never bind them.
 
 config-version = 2
@@ -93,6 +93,17 @@ run = 'layout floating'
 [[on-window-detected]]
 if.app-id = 'com.alienator88.Pearcleaner'
 run = 'layout floating'
+
+# Citrix sessions (.ica files) always land on workspace 10 (key 0). The session
+# windows belong to Citrix Viewer; the Workspace app itself is matched too in case
+# a version keeps the sessions in-process.
+[[on-window-detected]]
+if.app-id = 'com.citrix.receiver.icaviewer.mac'
+run = 'move-node-to-workspace 10'
+
+[[on-window-detected]]
+if.app-id = 'com.citrix.receiver.nomas'
+run = 'move-node-to-workspace 10'
 
 # Popups opened by omacos-popup (Super + K help etc.) float, centred by the script
 [[on-window-detected]]
@@ -190,7 +201,7 @@ ctrl-alt-cmd-shift-d     = 'exec-and-forget open -na Ghostty --args -e lazydocke
 ctrl-alt-cmd-shift-a     = 'exec-and-forget open -a NeoHtop'                                               # Super + Shift + A  Activity
 ctrl-alt-cmd-shift-g     = 'exec-and-forget open -a Telegram'                                              # Super + Shift + G  Messenger
 ctrl-alt-cmd-k           = 'exec-and-forget omacos-popup omacos-keys 120 45 omacos-keys'   # Super + K  Show keybindings
-# Super + Space  Launcher -> Sol via Karabiner (option-space)
+ctrl-alt-cmd-space       = 'exec-and-forget OMACOS_POPUP_FONT_SIZE=16 omacos-popup omacos-launcher 60 22 omacos-launcher'   # Super + Space  Launcher
 # Super + Escape System menu, Super + Ctrl + L lock (use cmd-ctrl-q) -> not bound
 
 ctrl-alt-cmd-shift-semicolon = 'mode service'

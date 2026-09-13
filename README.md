@@ -15,7 +15,7 @@ aliases, Tokyo Night — onto AeroSpace, Ghostty, tmux, zsh and Karabiner.
 | Alacritty / Ghostty | Ghostty (`ghostty/`) |
 | LazyVim | LazyVim (`nvim/`) |
 | btop | [NeoHtop](https://github.com/Abdenasser/neohtop) on `Super + Shift + A` |
-| `Super + Space` launcher | [Sol](https://github.com/ospfranco/sol), free and open source |
+| Walker (`Super + Space` menu) | `omacos-launcher`: fzf app list in a floating Ghostty, Pearcleaner on `ctrl-x` |
 | Clean app uninstall | [Pearcleaner](https://github.com/alienator88/Pearcleaner), with its Sentinel watching the Trash |
 | Theme | Tokyo Night everywhere (`themes/`) |
 
@@ -55,7 +55,7 @@ Grant them once, then restart the app that asked.
 | `sketchybar`, `borders` | `~/.config/sketchybar/`, `~/.config/borders/bordersrc` |
 | `sol` | `~/.config/sol/` (Sol writes `config.json` itself; `state.json` is ignored) |
 | `nvim`, `git` | `~/.config/nvim/`, `~/.config/git/ignore` |
-| `bin` | `~/.local/bin/omacos-keys`, `omacos-scratchpad`, `omacos-popup` (centred floating Ghostty for any command) |
+| `bin` | `~/.local/bin/omacos-launcher`, `omacos-keys`, `omacos-scratchpad`, `omacos-popup` (centred floating Ghostty for any command) |
 
 ## The modifier story
 
@@ -68,7 +68,7 @@ Omarchy hangs everything on `Super`. macOS has no spare modifier, so:
 | `Alt` | `Option` | untouched, so tmux keeps its `Alt` bindings (Ghostty sends option as alt) |
 | `Super + Alt`, `Super + Ctrl` | – | not expressible; those bindings were re-homed (below) |
 
-`Caps Lock + Space` opens Sol (Karabiner turns it into `⌥ Space`, Sol's hotkey).
+`Caps Lock + Space` opens the app launcher. Sol, if installed, keeps its own `⌥ Space`.
 
 `Caps Lock + Shift + , . /` are swallowed by Karabiner — macOS would otherwise
 start sysdiagnose on them.
@@ -121,6 +121,7 @@ focus-follows-mouse have no AeroSpace equivalent.
 Workspaces `1-5` and `scratch` live on the main display, `6-10` (keys `6 7 8 9 0`) on the second
 one (`workspace-to-monitor-force-assignment` in `aerospace/.aerospace.toml`).
 Edit the monitor names there for your setup — `aerospace list-monitors` prints them.
+Citrix sessions (`.ica` files) are sent to workspace 10 by an `on-window-detected` rule.
 
 ## Bar, borders, wallpaper
 
@@ -132,8 +133,14 @@ Tokyo Night with Nerd Font glyphs. The macOS menu bar is hidden by `install.sh`.
 
 ## Launcher and uninstall
 
-Sol replaces Raycast: app launch, calculator, clipboard, emoji, unit conversion, all free.
-Uninstalling is Pearcleaner's job. Launch it from Sol and pick the app, or just drag an app to
+`Super + Space` opens `omacos-launcher`, the walker look-alike: every app from `/Applications`,
+`~/Applications` and the system folders in a monochrome fzf list, most-launched first. `Enter`
+launches, `ctrl-x` opens the app in Pearcleaner with its leftovers listed for a clean uninstall,
+`Esc` closes. Launch counts live in `~/.local/state/omacos/launcher-history`.
+
+[Sol](https://github.com/ospfranco/sol) stays around on `⌥ Space` for calculator, clipboard history
+and emoji; drop it from the Brewfile if you don't need those.
+Uninstalling is Pearcleaner's job. Pick the app in the launcher with `ctrl-x`, or drag an app to
 the Trash: Pearcleaner's Sentinel (enable it in Pearcleaner's settings) pops up and offers to
 remove the leftovers. From a script: `/Applications/Pearcleaner.app/Contents/MacOS/Pearcleaner uninstall-all /Applications/Foo.app`.
 
