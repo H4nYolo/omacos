@@ -1,0 +1,17 @@
+#!/bin/sh
+# omacos-media-stream — keeps sketchybar's mic/camera indicator current.
+# Follows macOS' sensor attribution log ("Active activity attributions changed to [...]",
+# logged whenever an app starts or stops using the microphone or camera) and flips the
+# `media` item on or off. Started by AeroSpace at login; the sketchybar plugin restarts
+# it if it is gone. Best effort — verify the log wording on new macOS versions with:
+#   log stream --predicate 'eventMessage CONTAINS "attributions changed"'
+PATH="/opt/homebrew/bin:$PATH"
+pgrep -f '^log stream .*attributions changed' >/dev/null && exit 0
+exec log stream --style compact --predicate 'eventMessage CONTAINS "attributions changed"' 2>/dev/null |
+while read -r line; do
+  icons=""
+  case "$line" in *icrophone*) icons="" ;; esac
+  case "$line" in *amera*)     icons="$icons " ;; esac
+  if [ -n "$icons" ]; then sketchybar --set media icon="$icons" drawing=on
+  else sketchybar --set media drawing=off; fi
+done

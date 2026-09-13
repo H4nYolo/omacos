@@ -5,5 +5,9 @@ PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
 req="$(cat "${XDG_STATE_HOME:-$HOME/.local/state}/omacos/popup-request" 2>/dev/null)"
 case "$req" in
   keys)   exec omacos-keys ;;
+  brew)   brew upgrade; printf '\n done — press Enter to close'; read -r _ ;;
+  audio)  dev="$(SwitchAudioSource -a -t output | fzf --reverse --no-info --cycle --prompt='󰓃  ' --pointer='' \
+                  --color='bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7')" \
+          && [ -n "$dev" ] && SwitchAudioSource -t output -s "$dev" >/dev/null ;;
   *)      exec omacos-launcher ;;
 esac

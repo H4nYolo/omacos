@@ -8,6 +8,7 @@ tap "FelixKratz/formulae"
 cask "nikitabobko/tap/aerospace"
 brew "FelixKratz/formulae/sketchybar"
 brew "FelixKratz/formulae/borders"
+brew "switchaudio-osx"   # audio output chooser in the bar
 
 # keyboard
 cask "karabiner-elements"

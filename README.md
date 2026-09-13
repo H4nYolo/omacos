@@ -56,7 +56,7 @@ Grant them once, then restart the app that asked.
 | `sketchybar`, `borders` | `~/.config/sketchybar/`, `~/.config/borders/bordersrc` |
 | `sol` | `~/.config/sol/` (Sol writes `config.json` itself; `state.json` is ignored) |
 | `nvim`, `git` | `~/.config/nvim/`, `~/.config/git/ignore` |
-| `bin` | `~/.local/bin/omacos-launcher`, `omacos-keys`, `omacos-scratchpad`, `omacos-popup`, `omacos-popupd`, `omacos-popup-run` |
+| `bin` | `~/.local/bin/omacos-launcher`, `omacos-keys`, `omacos-scratchpad`, `omacos-popup`, `omacos-popupd`, `omacos-popup-run`, `omacos-media-stream` |
 
 ## The modifier story
 
@@ -125,9 +125,16 @@ Citrix sessions (`.ica` files) are sent to workspace 10 by an `on-window-detecte
 
 ## Bar, borders, wallpaper
 
-`sketchybar/` is a Waybar clone: workspaces on the left (focused = blue pill, occupied = bright,
-empty = dim, `scratch` only when in use), volume / cpu / memory / clock on the right, all in
-Tokyo Night with Nerd Font glyphs. The macOS menu bar is hidden by `install.sh`.
+`sketchybar/` is a Waybar clone in Tokyo Night with Nerd Font glyphs. Left: workspaces (focused =
+blue pill, occupied = bright, empty = dim, `scratch` only when in use). Centre: the focused app.
+Right, left to right:
+
+- mic / camera in use (best effort, follows macOS' sensor attribution log via `omacos-media-stream`)
+- brew updates: number of outdated packages, checked hourly, hidden at zero; click runs `brew upgrade` in the popup
+- network: SSID on Wi-Fi, port name on wired; click opens Network settings
+- bluetooth: connected devices with battery; click opens Bluetooth settings
+- audio output device; click opens a chooser in the popup (SwitchAudioSource)
+- volume (click mutes), cpu and memory (click opens NeoHtop), clock (click opens Calendar) The macOS menu bar is hidden by `install.sh`.
 `borders/` draws Hyprland's 2px accent border around the focused window.
 `install.sh` fetches Omarchy's Tokyo Night wallpaper and sets it on every display.
 

@@ -16,7 +16,7 @@ config-version = 2
 persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'scratch']
 
 # sketchybar and borders run as brew services. The popup Ghostty instance (Super+Space, Super+K) starts here.
-after-startup-command = ['exec-and-forget omacos-popupd']
+after-startup-command = ['exec-and-forget omacos-popupd', 'exec-and-forget omacos-media-stream']
 
 # Notify sketchybar about workspace changes
 exec-on-workspace-change = ['/bin/bash', '-c',
