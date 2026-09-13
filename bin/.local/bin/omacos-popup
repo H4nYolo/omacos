@@ -17,8 +17,11 @@ pid="$(pgrep -f 'ghostty --config-file=.*/ghostty/popup' | head -1)"
 # upgrade in progress: never kill that, just bring the panel back.
 child="$(pgrep -P "$pid" | head -1)"
 if [ -n "$child" ]; then
-  if pgrep -P "$child" -f 'brew' >/dev/null 2>&1 || ps -o command= -p $(pgrep -P "$child" 2>/dev/null) 2>/dev/null | grep -q 'brew'; then
-    printf 'brew\n' > "$STATE_DIR/popup-request"
+  # brew may sit several levels down (login → sh → omacos-menu → brew), so look at
+  # every process on the panel's tty rather than at direct children only.
+  child_tty="$(ps -o tty= -p "$child" 2>/dev/null | tr -d ' ')"
+  if [ -n "$child_tty" ] && [ "$child_tty" != "??" ] && ps -t "$child_tty" -o command= 2>/dev/null | grep -q 'brew'; then
+    : # leave the request as it is: the panel just comes back with whatever brew is doing
   else
     pkill -P "$pid"
     sleep 0.3
