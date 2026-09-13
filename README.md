@@ -148,7 +148,7 @@ Right, left to right:
 ## Menu, launcher and uninstall
 
 `Super + Shift + Space` opens `omacos-menu`, Omarchy's menu as a tree of fzf lists in the popup
-panel (`Esc` goes up a level):
+panel (`Backspace` on an empty query goes up a level, also out of the pickers; `Esc` closes):
 
 - **Apps** — the launcher below
 - **Learn** — keybindings (all / tmux / AeroSpace), the omacos repo, the Omarchy manual, AeroSpace, Ghostty and tmux docs

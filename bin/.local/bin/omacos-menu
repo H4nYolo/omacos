@@ -1,6 +1,7 @@
 #!/bin/sh
 # omacos-menu [route] — Omarchy's Super+Space menu (Super+Shift+Space here): a tree of
-# fzf menus in the popup. Esc goes one level up, Esc at the root closes.
+# fzf menus in the popup. Backspace on an empty query goes one level up (also out of
+# the pickers), Esc closes the whole thing.
 # Routes: root (default), learn, capture, toggle, install, remove, update, info, system.
 PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
 STATE="${XDG_STATE_HOME:-$HOME/.local/state}/omacos"; mkdir -p "$STATE"
@@ -8,16 +9,20 @@ REPO_URL="https://github.com/H4nYolo/omacos"
 gui() { env -u TERM -u TERM_PROGRAM -u COLORTERM -u TMUX -u TMUX_PANE open "$@"; }
 
 # show <title> <items>: items are "label<TAB>command" lines. A command "menu_x" opens a
-# submenu and comes back here when it is left; anything else is eval'd and ends the menu.
+# submenu and comes back here when it is left; "pick <cmd>" runs a picker that may come
+# back with status 3 (backspace); anything else is eval'd and ends the menu.
 show() {
   title="$1"; items="$2"
   while true; do
     sel="$(printf '%s\n' "$items" | omacos-fzf --exact --delimiter='\t' --with-nth=1 --nth=1 \
-            --prompt="  $title  " --header=' enter  select  ·  esc  back')" || return 1
-    [ -n "$sel" ] || return 1
+            --prompt="  $title  " --header=' enter  select  ·  backspace  back  ·  esc  close' \
+            --bind 'backward-eof:become(echo BACK)')" || return 2
+    [ -n "$sel" ] || return 2
+    [ "$sel" = BACK ] && return 1
     cmd="${sel#*	}"
     case "$cmd" in
-      menu_*) "$cmd" || continue; return 0 ;;
+      menu_*) "$cmd"; [ $? -eq 1 ] && continue; return 0 ;;
+      pick\ *) ${cmd#pick }; [ $? -eq 3 ] && continue; return 0 ;;
       *) eval "$cmd"; return 0 ;;
     esac
   done
@@ -30,11 +35,11 @@ borders_state() { pgrep -x borders >/dev/null && printf 'on' || printf 'off'; }
 
 menu_root() {
   show "omacos" "$(printf '%s\n' \
-    '󰀻  Apps	exec omacos-launcher' \
+    '󰀻  Apps	pick omacos-launcher' \
     '󰂺  Learn	menu_learn' \
     '󰄀  Capture	menu_capture' \
-    '󰆏  Clipboard	exec omacos-clipboard' \
-    '󰞅  Emoji	exec omacos-menu-emoji' \
+    '󰆏  Clipboard	pick omacos-clipboard' \
+    '󰞅  Emoji	pick omacos-menu-emoji' \
     '󰔡  Toggle	menu_toggle' \
     '󰏗  Install	menu_install' \
     '󰆴  Remove	menu_remove' \
@@ -45,9 +50,9 @@ menu_root() {
 
 menu_learn() {
   show "learn" "$(printf '%s\n' \
-    '󰌌  Keybindings	exec omacos-keys' \
-    '󰌌  tmux keybindings	exec omacos-keys tmux' \
-    '󰘳  AeroSpace keybindings	exec omacos-keys aerospace' \
+    '󰌌  Keybindings	pick omacos-keys' \
+    '󰌌  tmux keybindings	pick omacos-keys tmux' \
+    '󰘳  AeroSpace keybindings	pick omacos-keys aerospace' \
     "󰊤  omacos on GitHub	gui $REPO_URL" \
     '󰂺  Omarchy manual	gui https://learn.omacom.io/2/the-omarchy-manual' \
     '󰖲  AeroSpace guide	gui https://nikitabobko.github.io/AeroSpace/guide' \
@@ -78,14 +83,14 @@ menu_toggle() {
 
 menu_install() {
   show "install" "$(printf '%s\n' \
-    '󰏗  Package (brew)	exec omacos-pkg-install' \
+    '󰏗  Package (brew)	pick omacos-pkg-install' \
     '󰀵  App Store	gui -a "App Store"')"
 }
 
 menu_remove() {
   show "remove" "$(printf '%s\n' \
-    '󰏗  Package (brew)	exec omacos-pkg-remove' \
-    '󰗩  App (Pearcleaner)	exec omacos-launcher --uninstall')"
+    '󰏗  Package (brew)	pick omacos-pkg-remove' \
+    '󰗩  App (Pearcleaner)	pick omacos-launcher --uninstall')"
 }
 
 menu_update() {

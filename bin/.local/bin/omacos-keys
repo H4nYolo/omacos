@@ -52,4 +52,5 @@ tmux_keys() {
   [ "$only" != aerospace ] && tmux_keys
 } | fzf --reverse --exact --no-info --cycle --prompt='  ' --pointer='' --header-lines=2 \
         --color='bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7,header:#565f89,info:#565f89' \
-        --bind 'esc:abort,enter:abort' >/dev/null
+        --bind 'esc:abort,enter:abort,backward-eof:become(echo BACK)' | grep -qx BACK && exit 3
+exit 0

@@ -11,12 +11,14 @@ list() {
 
 sel="$(list | omacos-fzf --multi --exact --delimiter='\t' --with-nth=3,1 --nth=1 \
         --prompt='󰏗  install  ' \
-        --header=' enter  install  ·  tab  multi-select  ·  alt-p  preview  ·  esc  close' \
+        --header=' enter  install  ·  tab  multi-select  ·  alt-p  preview  ·  backspace  back  ·  esc  close' \
         --preview='brew info --{2} {1} 2>/dev/null' \
         --preview-window='down:60%:wrap' \
         --preview-label=' alt-p toggle · alt-j/k scroll ' --preview-label-pos=bottom \
-        --bind 'alt-p:toggle-preview,alt-j:preview-down,alt-k:preview-up,alt-d:preview-half-page-down,alt-u:preview-half-page-up')" || exit 0
+        --bind 'alt-p:toggle-preview,alt-j:preview-down,alt-k:preview-up,alt-d:preview-half-page-down,alt-u:preview-half-page-up' \
+        --bind 'backward-eof:become(echo BACK)')" || exit 0
 [ -n "$sel" ] || exit 0
+[ "$sel" = BACK ] && exit 3
 
 formulae="$(printf '%s\n' "$sel" | awk -F'\t' '$2=="formula" {print $1}' | tr '\n' ' ')"
 casks="$(printf '%s\n' "$sel" | awk -F'\t' '$2=="cask" {print $1}' | tr '\n' ' ')"

@@ -11,7 +11,7 @@ mode="${1:-launch}"
 if [ "$mode" = "--uninstall" ]; then
   prompt='  uninstall  '; header=' enter  uninstall (Pearcleaner)  ·  esc  close'
 else
-  prompt='  '; header=' enter  launch  ·  ctrl-x  uninstall  ·  esc  close'
+  prompt='  '; header=' enter  launch  ·  ctrl-x  uninstall  ·  backspace  back  ·  esc  close'
 fi
 
 apps() {
@@ -48,7 +48,8 @@ out="$(ranked | fzf --reverse --exact --no-info --cycle \
         --delimiter='\t' --with-nth=1 \
         --prompt="$prompt" --pointer='' \
         --header="$header" \
-        --expect=ctrl-x $TOKYO)" || exit 0
+        --expect=ctrl-x --bind 'backward-eof:become(echo BACK)' $TOKYO)" || exit 0
+[ "$out" = BACK ] && exit 3
 
 key="$(printf '%s\n' "$out" | sed -n 1p)"
 line="$(printf '%s\n' "$out" | sed -n 2p)"
