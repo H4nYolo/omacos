@@ -3,7 +3,7 @@
 Read this first when resuming work on this repo (new session or after a context compact).
 Keep it current: update it at the end of every working session.
 
-**Last updated:** 2026-09-13 (session 2: other-monitor workspace marker, Omarchy menu, brew picker, clipboard, emoji, capture)
+**Last updated:** 2026-09-13 end of session 2 (other-monitor workspace marker, Omarchy menu with Backspace = back, brew picker, clipboard, emoji, capture, help with aliases/tools, weather-location, Super+W quits last window, tdl <dir>)
 
 ## What this is
 
@@ -51,6 +51,9 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 - System Events: `set position of w` on a variable reference fails (-10006); address `window 1` / `window "name"` directly.
 - brew inside the sketchybar launchd service crashes on cask checks → the updates plugin counts `--formula` only. `updates=when_shown` is the default: hidden items never run their script → set `updates=on`.
 - Karabiner sometimes does not reload after in-place edits: `launchctl kickstart -k gui/$(id -u)/org.pqrs.service.agent.Karabiner-Console-User-Server`.
+- Never run an interactive `zsh -i` inside a popup pipeline: it takes over the panel's tty and fzf quits at once. Source `~/.zshrc` non-interactively instead (see `omacos-keys`).
+- fzf pickers inside the menu: `backward-eof:become(echo BACK)` + exit 3 = "go back one level"; menu functions must keep title/items `local` or the parent redraws with the child's entries.
+- Glyphs typed into heredocs can get lost silently (four menu icons arrived as two spaces). Check with a codepoint dump; use Material Design glyphs (U+F0000+), they all render in CaskaydiaMono NF.
 - `brew install` inside the popup shares brew's lock with any running `brew upgrade`; the popup's "never kill brew" rule also protects installs.
 - Homebrew now requires `brew trust <tap>` for third-party taps (felixkratz/formulae, nikitabobko/tap).
 - The sketchybar formula 2.24.0 fails to build on macOS 26 (its `curl` for the docs cannot verify TLS inside the build sandbox). Ignored via `~/.config/omacos/updates-ignore`; issue text drafted for `felixkratz/homebrew-formulae`, user submits it.
