@@ -79,12 +79,17 @@ if ! infocmp tmux-256color >/dev/null 2>&1; then
 fi
 
 # --- 6. Services ----------------------------------------------------------------
+# GUI apps inherit this shell's environment via `open`. TERM/TMUX must not leak in:
+# Pearcleaner switches to CLI mode when TERM is set, and tmux refuses to nest with TMUX set.
+# Everything AeroSpace or Sol launches later inherits their environment, so start them clean.
+launch() { env -u TERM -u TERM_PROGRAM -u TMUX -u TMUX_PANE -u COLORTERM open -a "$@"; }
 log "services"
 brew services start sketchybar >/dev/null || true
 brew services start borders    >/dev/null || true
-open -a AeroSpace
-aerospace reload-config || true
-open -a Karabiner-Elements
+launch AeroSpace
+sleep 3; aerospace reload-config || true
+launch Karabiner-Elements
+[[ -d /Applications/Sol.app ]] && launch Sol
 
 # --- 7. Wallpaper (Omarchy's Tokyo Night default) --------------------------------
 WALL="$REPO/themes/tokyo-night/wallpaper.jpg"
