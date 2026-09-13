@@ -46,10 +46,10 @@ tmux_keys() {
 }
 
 # every alias of the interactive shell (Omarchy's, oh-my-zsh's, yours), the documented
-# tmux layout functions from ~/.config/zsh/omarchy.zsh, the tools from the Brewfile
-# (~/.config/omacos/tools.tsv) and every omacos-* command
+# every alias of the shell (Omarchy's, oh-my-zsh's, yours — ~/.zshrc sourced non-interactively,
+# an interactive zsh would grab the popup's tty and abort fzf), the documented
 shell_keys() {
-  zsh -ic 'alias' 2>/dev/null | sed -e "s/'\\\\'\$/'\\\\'''/" -e "s/'\\\\''/'/g" | awk -v cfg="$HOME/.config/zsh/omarchy.zsh" '
+  zsh -c 'source ~/.zshrc >/dev/null 2>&1; alias' </dev/null 2>/dev/null | sed -e "s/'\\\\'\$/'\\\\'''/" -e "s/'\\\\''/'/g" | awk -v cfg="$HOME/.config/zsh/omarchy.zsh" '
     BEGIN {
       # trailing "# comment" on an alias line in omarchy.zsh becomes its description
       while ((getline line < cfg) > 0) {
