@@ -102,8 +102,8 @@ Edit the monitor names there for your setup — `aerospace list-monitors` prints
 empty = dim, `scratch` only when in use), volume / cpu / memory / clock on the right, all in
 Tokyo Night with Nerd Font glyphs. The macOS menu bar is hidden by `install.sh`.
 `borders/` draws Hyprland's 2px accent border around the focused window.
-`install.sh` fetches Omarchy's Tokyo Night wallpaper and sets it on every display, and offers
-`themes/tokyo-night/tokyo-night.ray-theme` to Raycast so the launcher matches.
+`install.sh` fetches Omarchy's Tokyo Night wallpaper and sets it on every display.
+Raycast keeps its stock dark look: custom themes need Raycast Pro.
 
 ## tmux
 

@@ -96,11 +96,4 @@ fi
 log "wallpaper"
 osascript -e "tell application \"System Events\" to set picture of every desktop to \"$WALL\""
 
-# --- 8. Raycast theme -----------------------------------------------------------
-if [[ -d /Applications/Raycast.app && -f "$REPO/themes/tokyo-night/tokyo-night.ray-theme" ]]; then
-  log "raycast theme (confirm the import dialog in Raycast)"
-  T="$REPO/themes/tokyo-night/tokyo-night.ray-theme"
-  open "$(jq -r '"raycast://theme?version=\(.version)&name=\(.name|@uri)&author=\(.author|@uri)&authorUsername=\(.authorUsername|@uri)&appearance=\(.appearance)&colors=\([.colors.background,.colors.backgroundSecondary,.colors.text,.colors.selection,.colors.loader,.colors.red,.colors.orange,.colors.yellow,.colors.green,.colors.blue,.colors.purple,.colors.magenta]|join(",")|@uri)"' "$T")"
-fi
-
 log "done — log out and back in (or restart AeroSpace) if the menu bar is still visible"
