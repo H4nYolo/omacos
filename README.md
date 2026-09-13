@@ -110,8 +110,11 @@ Tokyo Night with Nerd Font glyphs. The macOS menu bar is hidden by `install.sh`.
 
 Sol replaces Raycast: app launch, calculator, clipboard, emoji, unit conversion, all free.
 Uninstalling is Pearcleaner's job. Launch it from Sol and pick the app, or just drag an app to
-the Trash: Pearcleaner's Sentinel pops up and offers to remove the leftovers. A deep link does it
-from scripts too: `open 'pear://uninstallApp?path=/Applications/Foo.app'`.
+the Trash: Pearcleaner's Sentinel (enable it in Pearcleaner's settings) pops up and offers to
+remove the leftovers. From a script: `/Applications/Pearcleaner.app/Contents/MacOS/Pearcleaner uninstall-all /Applications/Foo.app`.
+
+Note: Pearcleaner turns into that CLI whenever `TERM` is set in its environment, which is why
+`install.sh` launches Sol and AeroSpace with `TERM` and `TMUX` stripped.
 
 ## tmux
 
