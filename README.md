@@ -145,7 +145,7 @@ Right, left to right:
 - bluetooth: connected devices with battery; click opens Bluetooth settings
 - audio output device; click opens a chooser in the popup (SwitchAudioSource)
 - volume (click mutes), cpu and memory (click opens NeoHtop), clock (click opens Calendar) The macOS menu bar is hidden by `install.sh`.
-`borders/` draws Hyprland's 2px accent border around the focused window.
+`borders/` draws a rounded, glowing Tokyo Night border around the focused window (JankyBorders; plain and gradient variants are in `bordersrc`).
 `install.sh` fetches Omarchy's Tokyo Night wallpaper and sets it on every display.
 
 ## Menu, launcher and uninstall

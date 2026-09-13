@@ -1,11 +1,15 @@
 #!/bin/bash
 # ~/.config/borders/bordersrc — omacos
-# Hyprland-style border around the focused window (Omarchy: 2px, theme accent). Tokyo Night.
+# Border around the focused window (Omarchy has a plain 2px accent; this is the showy
+# version: rounded, 6px, glowing). Tokyo Night colours.
+# Alternatives for active_color:
+#   plain      0xff7aa2f7
+#   gradient   'gradient(top_left=0xff7aa2f7,bottom_right=0xffbb9af7)'
 options=(
-  style=square
-  width=2.0
+  style=round
+  width=6.0
   hidpi=on
-  active_color=0xff7aa2f7
+  active_color='glow(0xff7aa2f7)'
   inactive_color=0xff3b4261
 )
 borders "${options[@]}"
