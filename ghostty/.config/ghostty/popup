@@ -1,0 +1,21 @@
+# ~/.config/ghostty/popup — omacos popup instance
+# A second Ghostty process (started by AeroSpace via omacos-popupd) whose only
+# job is the quick terminal: a floating panel, centred on the monitor under the
+# mouse, that AeroSpace never tiles. omacos-popup writes a request and fires the
+# private global hotkey below; omacos-popup-run picks the request up inside.
+# Loaded on top of ~/.config/ghostty/config (theme, font, padding come from there).
+
+initial-window = false
+command = omacos-popup-run
+wait-after-command = false
+font-size = 16
+
+quick-terminal-position = center
+quick-terminal-screen = mouse
+# Ghostty 1.3.1 ignores this for a centred quick terminal and uses 1760x720 pt; kept for later versions.
+quick-terminal-size = 45%,50%
+quick-terminal-autohide = true
+quick-terminal-animation-duration = 0
+
+# Nobody presses this by hand; omacos-popup sends it as a synthetic key event.
+keybind = global:ctrl+alt+shift+cmd+f19=toggle_quick_terminal

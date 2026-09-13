@@ -38,6 +38,7 @@ can be linked on its own: `stow --target=$HOME aerospace`.
 
 - **Karabiner-Elements** — Input Monitoring (and its driver extension under Login Items & Extensions)
 - **AeroSpace** — Accessibility
+- **Ghostty** — Accessibility (global hotkey of the popup panel)
 - **Sol** — Accessibility (window management, clipboard)
 - **Pearcleaner** — Full Disk Access to find leftovers; turn on *Sentinel* in its settings
 
@@ -51,11 +52,11 @@ Grant them once, then restart the app that asked.
 | `karabiner` | `~/.config/karabiner/` (Karabiner rewrites `karabiner.json` itself; backups are ignored) |
 | `tmux` | `~/.config/tmux/tmux.conf` |
 | `zsh` | `~/.zshrc`, `~/.p10k.zsh`, `~/.config/zsh/omarchy.zsh` |
-| `ghostty` | `~/.config/ghostty/config` |
+| `ghostty` | `~/.config/ghostty/config`, `~/.config/ghostty/popup` (the popup instance) |
 | `sketchybar`, `borders` | `~/.config/sketchybar/`, `~/.config/borders/bordersrc` |
 | `sol` | `~/.config/sol/` (Sol writes `config.json` itself; `state.json` is ignored) |
 | `nvim`, `git` | `~/.config/nvim/`, `~/.config/git/ignore` |
-| `bin` | `~/.local/bin/omacos-launcher`, `omacos-keys`, `omacos-scratchpad`, `omacos-popup` (centred floating Ghostty for any command) |
+| `bin` | `~/.local/bin/omacos-launcher`, `omacos-keys`, `omacos-scratchpad`, `omacos-popup`, `omacos-popupd`, `omacos-popup-run` |
 
 ## The modifier story
 
@@ -94,8 +95,7 @@ arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resiz
 `Alt + Tab` cycles windows on the workspace.
 
 **Help** — `Super + K` opens a searchable list of every binding (AeroSpace and tmux), generated
-from the config itself, in a floating Ghostty window centred on the monitor under the mouse.
-`Esc` closes it. Inside tmux, `Prefix + ?` lists the tmux keys.
+from the config itself, in the popup panel (below). `Esc` closes it. Inside tmux, `Prefix + ?` lists the tmux keys.
 
 ### Re-homed keys (no `Super + Alt` / `Super + Ctrl`)
 
@@ -137,6 +137,16 @@ Tokyo Night with Nerd Font glyphs. The macOS menu bar is hidden by `install.sh`.
 `~/Applications` and the system folders in a monochrome fzf list, most-launched first. `Enter`
 launches, `ctrl-x` opens the app in Pearcleaner with its leftovers listed for a clean uninstall,
 `Esc` closes. Launch counts live in `~/.local/state/omacos/launcher-history`.
+
+### The popup panel
+
+Launcher and help run in Ghostty's *quick terminal*: a floating panel, centred on the monitor
+under the mouse, that AeroSpace never tiles, so it appears in place with no jumps. A second
+Ghostty process started by AeroSpace (`omacos-popupd`, config `~/.config/ghostty/popup`) owns
+it. `omacos-popup <launcher|keys>` writes the request to `~/.local/state/omacos/popup-request`
+and fires that process's private global hotkey (`ctrl+alt+shift+cmd+F19`, never typed by hand);
+`omacos-popup-run` inside the panel then execs the requested script. When it exits, the panel
+disappears. Ghostty needs Accessibility for the global hotkey.
 
 [Sol](https://github.com/ospfranco/sol) stays around on `⌥ Space` for calculator, clipboard history
 and emoji; drop it from the Brewfile if you don't need those.

@@ -15,8 +15,8 @@ config-version = 2
 # Workspaces that always exist (config-version 2 no longer infers them from the bindings)
 persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'scratch']
 
-# sketchybar and borders run as brew services; nothing to start here
-after-startup-command = []
+# sketchybar and borders run as brew services. The popup Ghostty instance (Super+Space, Super+K) starts here.
+after-startup-command = ['exec-and-forget omacos-popupd']
 
 # Notify sketchybar about workspace changes
 exec-on-workspace-change = ['/bin/bash', '-c',
@@ -104,12 +104,6 @@ run = 'move-node-to-workspace 10'
 [[on-window-detected]]
 if.app-id = 'com.citrix.receiver.nomas'
 run = 'move-node-to-workspace 10'
-
-# Popups opened by omacos-popup (Super + K help etc.) float, centred by the script
-[[on-window-detected]]
-if.app-id = 'com.mitchellh.ghostty'
-if.window-title-regex-substring = '^omacos-'
-run = 'layout floating'
 
 # ================================================================ main mode
 [mode.main.binding]
@@ -200,8 +194,8 @@ ctrl-alt-cmd-shift-n     = 'exec-and-forget open -na Ghostty --args -e nvim'    
 ctrl-alt-cmd-shift-d     = 'exec-and-forget open -na Ghostty --args -e lazydocker'                         # Super + Shift + D  Docker
 ctrl-alt-cmd-shift-a     = 'exec-and-forget open -a NeoHtop'                                               # Super + Shift + A  Activity
 ctrl-alt-cmd-shift-g     = 'exec-and-forget open -a Telegram'                                              # Super + Shift + G  Messenger
-ctrl-alt-cmd-k           = 'exec-and-forget omacos-popup omacos-keys 120 45 omacos-keys'   # Super + K  Show keybindings
-ctrl-alt-cmd-space       = 'exec-and-forget OMACOS_POPUP_FONT_SIZE=16 omacos-popup omacos-launcher 60 22 omacos-launcher'   # Super + Space  Launcher
+ctrl-alt-cmd-k           = 'exec-and-forget omacos-popup keys'       # Super + K  Show keybindings
+ctrl-alt-cmd-space       = 'exec-and-forget omacos-popup launcher'   # Super + Space  Launcher
 # Super + Escape System menu, Super + Ctrl + L lock (use cmd-ctrl-q) -> not bound
 
 ctrl-alt-cmd-shift-semicolon = 'mode service'
