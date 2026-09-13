@@ -12,7 +12,7 @@ gui() { env -u TERM -u TERM_PROGRAM -u COLORTERM -u TMUX -u TMUX_PANE open "$@";
 # submenu and comes back here when it is left; "pick <cmd>" runs a picker that may come
 # back with status 3 (backspace); anything else is eval'd and ends the menu.
 show() {
-  title="$1"; items="$2"
+  local title="$1" items="$2" sel cmd
   while true; do
     sel="$(printf '%s\n' "$items" | omacos-fzf --exact --delimiter='\t' --with-nth=1 --nth=1 \
             --prompt="  $title  " --header=' enter  select  ·  backspace  back  ·  esc  close' \
