@@ -127,7 +127,8 @@ Citrix sessions (`.ica` files) are sent to workspace 10 by an `on-window-detecte
 ## Bar, borders, wallpaper
 
 `sketchybar/` is a Waybar clone in Tokyo Night with Nerd Font glyphs. Left: workspaces (focused =
-blue pill, occupied = bright, empty = dim, `scratch` only when in use). Centre: the focused app.
+filled blue pill, visible on the other monitor = outlined blue pill, occupied = bright, empty = dim,
+`scratch` only when in use). Centre: the focused app.
 Right, left to right:
 
 - mic / camera in use (best effort, follows macOS' sensor attribution log via `omacos-media-stream`)

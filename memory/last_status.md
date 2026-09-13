@@ -3,7 +3,7 @@
 Read this first when resuming work on this repo (new session or after a context compact).
 Keep it current: update it at the end of every working session.
 
-**Last updated:** 2026-09-13 (session 1, the initial build-out)
+**Last updated:** 2026-09-13 (session 2: other-monitor workspace marker in the bar)
 
 ## What this is
 
@@ -26,7 +26,7 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 | Super key | Caps Lock held = ctrl+alt+cmd (Karabiner), tap = Escape. Super+Shift = Caps+Shift. **No Meh key.** Caps+Shift+, . / are swallowed by Karabiner (macOS sysdiagnose) — never bind them |
 | Tiling | AeroSpace, `aerospace/.aerospace.toml`, config-version 2. Workspaces 1-5 + `scratch` on `CG437K P`, 6-10 on `Studio Display`; key 0 = workspace 10; `--auto-back-and-forth` on every workspace key (press again = go back). yabai and skhd are gone |
 | Alt | belongs to tmux (Ghostty `macos-option-as-alt = true`); AeroSpace only binds Alt+Tab |
-| Bar | sketchybar as Waybar clone (`sketchybar/`): workspaces · front app · mic/cam · brew updates · network · bluetooth · audio out · volume · cpu · mem · weather · clock. Menu bar hidden |
+| Bar | sketchybar as Waybar clone (`sketchybar/`): workspaces (filled pill = focused, outlined pill = visible on the other monitor, via `aerospace list-workspaces --monitor all --visible`) · front app · mic/cam · brew updates · network · bluetooth · audio out · volume · cpu · mem · weather · clock. Menu bar hidden |
 | Borders | JankyBorders (`borders/`), Tokyo Night blue |
 | Popups | a **second Ghostty instance** (`omacos-popupd`, config `ghostty/.config/ghostty/popup`, `initial-window=false`) owns a *quick terminal* panel (centred, monitor under the mouse, AeroSpace ignores it, fixed 1760x720 pt — Ghostty 1.3.1 ignores `quick-terminal-size`). `omacos-popup <launcher|keys|brew|audio|weather>` writes `~/.local/state/omacos/popup-request` and fires the instance's private global hotkey ctrl+alt+shift+cmd+F19 via System Events; `omacos-popup-run` execs the request inside. A running `brew upgrade` is never killed, only re-shown |
 | Launcher | Super+Space → `omacos-launcher`: fzf list of all apps (+ Finder, CoreServices user apps, actions Screensaver/Lock/Sleep), most-launched first (`~/.local/state/omacos/launcher-history`), ctrl-x → Pearcleaner deep link |
