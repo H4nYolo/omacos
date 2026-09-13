@@ -45,9 +45,10 @@ tmux_keys() {
   tmux list-keys -T prefix 2>/dev/null | awk '{ key=$4; $1=$2=$3=$4=""; sub(/^ +/,""); printf "%-28s %s\n", "tmux Prefix " key, $0 }'
 }
 
-# every alias of the interactive shell (Omarchy's, oh-my-zsh's, yours), the documented
-# every alias of the shell (Omarchy's, oh-my-zsh's, yours — ~/.zshrc sourced non-interactively,
-# an interactive zsh would grab the popup's tty and abort fzf), the documented
+# every alias of the shell (Omarchy's, oh-my-zsh's, yours; ~/.zshrc is sourced non-interactively,
+# an interactive zsh would grab the popup's tty and abort fzf), the documented tmux layout
+# functions from ~/.config/zsh/omarchy.zsh, the tools from the Brewfile (~/.config/omacos/tools.tsv)
+# and every omacos-* command
 shell_keys() {
   zsh -c 'source ~/.zshrc >/dev/null 2>&1; alias' </dev/null 2>/dev/null | sed -e "s/'\\\\'\$/'\\\\'''/" -e "s/'\\\\''/'/g" | awk -v cfg="$HOME/.config/zsh/omarchy.zsh" '
     BEGIN {
