@@ -190,7 +190,9 @@ and fires that process's private global hotkey (`ctrl+alt+shift+cmd+F19`, never 
 disappears. Ghostty needs Accessibility for the global hotkey.
 
 [Sol](https://github.com/ospfranco/sol) stays around on `⌥ Space` as a calculator; drop it from the
-Brewfile if you don't need it.
+Brewfile if you don't need it. Its built-in window management is switched off in `sol/.config/sol/config.json`:
+Sol's default `⌃⌥⌘ ←/→` (move window to the next screen) is `Super + ←/→` here, and with both active every
+focus change made the window jump.
 Uninstalling is Pearcleaner's job. Pick the app in the launcher with `ctrl-x`, or drag an app to
 the Trash: Pearcleaner's Sentinel (enable it in Pearcleaner's settings) pops up and offers to
 remove the leftovers. From a script: `/Applications/Pearcleaner.app/Contents/MacOS/Pearcleaner uninstall-all /Applications/Foo.app`.
