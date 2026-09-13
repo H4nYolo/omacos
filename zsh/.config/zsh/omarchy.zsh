@@ -59,10 +59,11 @@ alias cy='codex -s danger-full-access -a never'
 alias d='docker'
 alias r='rails'
 alias t='tmux attach || tmux new -s Work'
-alias ic='tdl c'
-alias ix='tdl cx'
-alias icx='tdl c cx'
+alias ic='tdl c'      # dev layout with opencode
+alias ix='tdl cx'     # dev layout with claude code
+alias icx='tdl c cx'  # dev layout with both
 alias mup='MISE_MINIMUM_RELEASE_AGE=0 mise up'
+# n [files]  – nvim, current directory when called without arguments
 n() { if [ "$#" -eq 0 ]; then command nvim . ; else command nvim "$@"; fi; }
 
 # ---------------------------------------------------------------- Git

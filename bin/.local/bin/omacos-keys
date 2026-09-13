@@ -2,7 +2,8 @@
 # omacos-keys — searchable list of every omacos keybinding (Omarchy's Super+K).
 # Reads the bindings and their comments straight from ~/.aerospace.toml, adds the
 # tmux bindings, and shows everything in fzf. Super+K shows both, `omacos-keys tmux`
-# (Super+Shift+K) only tmux, `omacos-keys aerospace` only the window manager.
+# (Super+Shift+K) only tmux, `omacos-keys aerospace` only the window manager,
+# `omacos-keys shell` the aliases, tmux layouts (tdl/ix/…) and omacos-* commands.
 PATH="/opt/homebrew/bin:$PATH"
 only="${1:-all}"
 CFG="$HOME/.aerospace.toml"
@@ -44,12 +45,53 @@ tmux_keys() {
   tmux list-keys -T prefix 2>/dev/null | awk '{ key=$4; $1=$2=$3=$4=""; sub(/^ +/,""); printf "%-28s %s\n", "tmux Prefix " key, $0 }'
 }
 
-{
-  echo "Super = Caps Lock held · Super+Shift = Caps Lock + Shift · tmux Prefix = Ctrl+Space"
+# every alias of the interactive shell (Omarchy's, oh-my-zsh's, yours), the documented
+# tmux layout functions from ~/.config/zsh/omarchy.zsh, the tools from the Brewfile
+# (~/.config/omacos/tools.tsv) and every omacos-* command
+shell_keys() {
+  zsh -ic 'alias' 2>/dev/null | sed "s/'\\\\''/'/g" | awk -v cfg="$HOME/.config/zsh/omarchy.zsh" '
+    BEGIN {
+      # trailing "# comment" on an alias line in omarchy.zsh becomes its description
+      while ((getline line < cfg) > 0) {
+        if (line ~ /^[[:space:]]*alias [A-Za-z_.]+=.*#/) {
+          n=line; sub(/^[[:space:]]*alias /, "", n); sub(/=.*/, "", n)
+          d=line; sub(/.*[[:space:]]#[[:space:]]*/, "", d); desc[n]=d
+        }
+      }
+    }
+    {
+      name=$0; sub(/=.*/, "", name)
+      cmd=$0; sub(/^[^=]*=/, "", cmd)
+      gsub(/^\x27|\x27$/, "", cmd)
+      sub(/^printf "[^"]*" && /, "", cmd)
+      if (name in desc) cmd=desc[name] "  (" cmd ")"
+      printf "%-28s %s\n", "shell " name, cmd
+    }'
   echo
-  [ "$only" != tmux ] && aerospace_keys
+  awk '/^# [a-z]+ (<|\[).*  [–-] / {
+      d=$0; sub(/^# /, "", d)
+      usage=d; sub(/  [–-] .*/, "", usage)
+      desc=d; sub(/^.*  [–-] /, "", desc)
+      printf "%-28s %s\n", "shell " usage, desc
+    }' "$HOME/.config/zsh/omarchy.zsh"
+  echo
+  awk -F'\t' '{ printf "%-28s %s\n", "tool " $1, $2 }' "$HOME/.config/omacos/tools.tsv" 2>/dev/null
+  echo
+  for f in "$HOME"/.local/bin/omacos-*; do
+    [ -x "$f" ] || continue
+    desc="$(sed -n 2p "$f" | sed 's/^# *//; s/^omacos-[a-z-]* *//; s/^— *//')"
+    printf "%-28s %s\n" "$(basename "$f")" "$desc"
+  done
+}
+
+{
+  echo "Super = Caps Lock held · Super+Shift = Caps Lock + Shift · tmux Prefix = Ctrl+Space · shell/tool = type it in a terminal"
+  echo
+  [ "$only" = all ] || [ "$only" = aerospace ] && aerospace_keys
   [ "$only" = all ] && echo
-  [ "$only" != aerospace ] && tmux_keys
+  [ "$only" = all ] || [ "$only" = tmux ] && tmux_keys
+  [ "$only" = all ] && echo
+  [ "$only" = all ] || [ "$only" = shell ] && shell_keys
 } | fzf --reverse --exact --no-info --cycle --prompt='  ' --pointer='' --header-lines=2 \
         --color='bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7,header:#565f89,info:#565f89' \
         --bind 'esc:abort,enter:abort,backward-eof:become(echo BACK)' | grep -qx BACK && exit 3

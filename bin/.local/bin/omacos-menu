@@ -53,6 +53,7 @@ menu_learn() {
     '󰌌  Keybindings	pick omacos-keys' \
     '󰌌  tmux keybindings	pick omacos-keys tmux' \
     '󰘳  AeroSpace keybindings	pick omacos-keys aerospace' \
+    '󰆍  Shell aliases, tmux layouts, omacos commands	pick omacos-keys shell' \
     "󰊤  omacos on GitHub	gui $REPO_URL" \
     '󰂺  Omarchy manual	gui https://learn.omacom.io/2/the-omarchy-manual' \
     '󰖲  AeroSpace guide	gui https://nikitabobko.github.io/AeroSpace/guide' \

@@ -98,7 +98,9 @@ arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resiz
 **Menus** — `Shift + Space` omacos menu · `Shift + C` capture · `Shift + E` emoji · `Shift + V` clipboard history
 
 **Help** — `Super + K` opens a searchable list of every binding (AeroSpace and tmux), generated
-from the config itself, in the popup panel (below). `Shift + K` shows only the tmux keys. `Esc` closes it.
+from the config itself, plus the shell aliases, tmux layouts (`ix`, `tdl`, `tsl`, …) and every
+`omacos-*` command, in the popup panel (below). `Shift + K` shows only the tmux keys, `omacos-keys shell`
+only the shell part. `Esc` closes it.
 
 ### Re-homed keys (no `Super + Alt` / `Super + Ctrl`)
 

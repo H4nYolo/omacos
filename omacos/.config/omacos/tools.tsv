@@ -1,0 +1,24 @@
+aerospace	AeroSpace is an i3-like tiling window manager for macOS
+bat	Clone of cat(1) with syntax highlighting and Git integration
+borders	A window border system for macOS
+eza	Modern, maintained replacement for ls
+fzf	Command-line fuzzy finder written in Go
+ghostty	Terminal emulator that uses platform-native UI and GPU acceleration
+jq	Lightweight and flexible command-line JSON processor
+karabiner-elements	Keyboard customiser
+lazydocker	Lazier way to manage everything docker
+lazygit	Simple terminal UI for git commands
+ncurses	tmux-256color terminfo (macOS ships an ncurses that is too old)
+neovim	Ambitious Vim-fork focused on extensibility and agility
+pearcleaner	Utility to uninstall apps and remove leftover files from old/uninstalled apps
+qrencode	QR Code generation
+sketchybar	Custom macOS statusbar with shell plugin, interaction and graph support
+sol	Launcher & command palette
+stow	GNU stow: symlinks the omacos packages into $HOME
+switchaudio-osx	SwitchAudioSource: change the audio output from the command line (bar → audio)
+tmux	Terminal multiplexer
+uv	Extremely fast Python package installer and resolver, written in Rust
+zoxide	Shell extension to navigate your filesystem faster
+zsh-autosuggestions	Fish-like fast/unobtrusive autosuggestions for zsh
+zsh-syntax-highlighting	Fish shell like syntax highlighting for zsh
+tte	terminaltexteffects — the screensaver animations (uv tool)
