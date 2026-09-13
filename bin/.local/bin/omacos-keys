@@ -49,7 +49,7 @@ tmux_keys() {
 # tmux layout functions from ~/.config/zsh/omarchy.zsh, the tools from the Brewfile
 # (~/.config/omacos/tools.tsv) and every omacos-* command
 shell_keys() {
-  zsh -ic 'alias' 2>/dev/null | sed "s/'\\\\''/'/g" | awk -v cfg="$HOME/.config/zsh/omarchy.zsh" '
+  zsh -ic 'alias' 2>/dev/null | sed -e "s/'\\\\'\$/'\\\\'''/" -e "s/'\\\\''/'/g" | awk -v cfg="$HOME/.config/zsh/omarchy.zsh" '
     BEGIN {
       # trailing "# comment" on an alias line in omarchy.zsh becomes its description
       while ((getline line < cfg) > 0) {
