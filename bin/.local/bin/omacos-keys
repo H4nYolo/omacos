@@ -35,14 +35,14 @@ aerospace_keys() {
       }
       if (desc == "") desc = rest
       prefix = (mode == "main") ? "" : "[" mode "] "
-      printf "%-28s %s\n", prefix key, desc
+      printf "%-30s %s\n", prefix key, desc
     }
   ' "$CFG"
 }
 
 tmux_keys() {
-  tmux list-keys -T root 2>/dev/null | awk '{ key=$4; $1=$2=$3=$4=""; sub(/^ +/,""); printf "%-28s %s\n", "tmux " key, $0 }'
-  tmux list-keys -T prefix 2>/dev/null | awk '{ key=$4; $1=$2=$3=$4=""; sub(/^ +/,""); printf "%-28s %s\n", "tmux Prefix " key, $0 }'
+  tmux list-keys -T root 2>/dev/null | awk '{ key=$4; $1=$2=$3=$4=""; sub(/^ +/,""); printf "%-30s %s\n", "tmux " key, $0 }'
+  tmux list-keys -T prefix 2>/dev/null | awk '{ key=$4; $1=$2=$3=$4=""; sub(/^ +/,""); printf "%-30s %s\n", "tmux Prefix " key, $0 }'
 }
 
 # every alias of the shell (Omarchy's, oh-my-zsh's, yours; ~/.zshrc is sourced non-interactively,
@@ -66,22 +66,22 @@ shell_keys() {
       gsub(/^\x27|\x27$/, "", cmd)
       sub(/^printf "[^"]*" && /, "", cmd)
       if (name in desc) cmd=desc[name] "  (" cmd ")"
-      printf "%-28s %s\n", "shell " name, cmd
+      printf "%-30s %s\n", "shell " name, cmd
     }'
   echo
   awk '/^# [a-z]+ (<|\[).*  [–-] / {
       d=$0; sub(/^# /, "", d)
       usage=d; sub(/  [–-] .*/, "", usage)
       desc=d; sub(/^.*  [–-] /, "", desc)
-      printf "%-28s %s\n", "shell " usage, desc
+      printf "%-30s %s\n", "shell " usage, desc
     }' "$HOME/.config/zsh/omarchy.zsh"
   echo
-  awk -F'\t' '{ printf "%-28s %s\n", "tool " $1, $2 }' "$HOME/.config/omacos/tools.tsv" 2>/dev/null
+  awk -F'\t' '{ printf "%-30s %s\n", "tool " $1, $2 }' "$HOME/.config/omacos/tools.tsv" 2>/dev/null
   echo
   for f in "$HOME"/.local/bin/omacos-*; do
     [ -x "$f" ] || continue
     desc="$(sed -n 2p "$f" | sed 's/^# *//; s/^omacos-[a-z-]* *//; s/^— *//')"
-    printf "%-28s %s\n" "$(basename "$f")" "$desc"
+    printf "%-30s %s\n" "$(basename "$f")" "$desc"
   done
 }
 
