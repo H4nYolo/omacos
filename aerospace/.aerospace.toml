@@ -7,7 +7,7 @@
 #   Omarchy Alt           -> Option (left to tmux / the terminal)
 #   Super + Alt / Super + Ctrl cannot be expressed; those bindings were re-homed (see README).
 #
-# Caps Lock + Space stays Raycast (Karabiner turns it into cmd-space) — not bound here.
+# Caps Lock + Space opens Sol (Karabiner turns it into option-space) — not bound here.
 # ctrl-alt-cmd-shift + , . / are swallowed by Karabiner to avoid macOS sysdiagnose — never bind them.
 
 config-version = 2
@@ -87,6 +87,10 @@ run = 'layout floating'
 
 [[on-window-detected]]
 if.app-id = 'com.raycast.macos'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.alienator88.Pearcleaner'
 run = 'layout floating'
 
 # Super + K keybinding popup
@@ -183,7 +187,7 @@ ctrl-alt-cmd-shift-d     = 'exec-and-forget open -na Ghostty --args -e lazydocke
 ctrl-alt-cmd-shift-a     = 'exec-and-forget open -a NeoHtop'                                               # Super + Shift + A  Activity
 ctrl-alt-cmd-shift-g     = 'exec-and-forget open -a Telegram'                                              # Super + Shift + G  Messenger
 ctrl-alt-cmd-k           = 'exec-and-forget open -na Ghostty --args --title=omacos-keys -e ~/.local/bin/omacos-keys'   # Super + K  Show keybindings
-# Super + Space  Launcher -> Raycast via Karabiner
+# Super + Space  Launcher -> Sol via Karabiner (option-space)
 # Super + Escape System menu, Super + Ctrl + L lock (use cmd-ctrl-q) -> not bound
 
 ctrl-alt-cmd-shift-semicolon = 'mode service'

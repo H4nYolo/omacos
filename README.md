@@ -15,6 +15,8 @@ aliases, Tokyo Night — onto AeroSpace, Ghostty, tmux, zsh and Karabiner.
 | Alacritty / Ghostty | Ghostty (`ghostty/`) |
 | LazyVim | LazyVim (`nvim/`) |
 | btop | [NeoHtop](https://github.com/Abdenasser/neohtop) on `Super + Shift + A` |
+| `Super + Space` launcher | [Sol](https://github.com/ospfranco/sol), free and open source |
+| Clean app uninstall | [Pearcleaner](https://github.com/alienator88/Pearcleaner), with its Sentinel watching the Trash |
 | Theme | Tokyo Night everywhere (`themes/`) |
 
 ## Install
@@ -43,7 +45,7 @@ Omarchy hangs everything on `Super`. macOS has no spare modifier, so:
 | `Alt` | `Option` | untouched, so tmux keeps its `Alt` bindings (Ghostty sends option as alt) |
 | `Super + Alt`, `Super + Ctrl` | – | not expressible; those bindings were re-homed (below) |
 
-`Caps Lock + Space` stays your launcher (Karabiner turns it into `⌘ Space` for Raycast).
+`Caps Lock + Space` opens Sol (Karabiner turns it into `⌥ Space`, Sol's hotkey).
 
 `Caps Lock + Shift + , . /` are swallowed by Karabiner — macOS would otherwise
 start sysdiagnose on them.
@@ -103,7 +105,13 @@ empty = dim, `scratch` only when in use), volume / cpu / memory / clock on the r
 Tokyo Night with Nerd Font glyphs. The macOS menu bar is hidden by `install.sh`.
 `borders/` draws Hyprland's 2px accent border around the focused window.
 `install.sh` fetches Omarchy's Tokyo Night wallpaper and sets it on every display.
-Raycast keeps its stock dark look: custom themes need Raycast Pro.
+
+## Launcher and uninstall
+
+Sol replaces Raycast: app launch, calculator, clipboard, emoji, unit conversion, all free.
+Uninstalling is Pearcleaner's job. Launch it from Sol and pick the app, or just drag an app to
+the Trash: Pearcleaner's Sentinel pops up and offers to remove the leftovers. A deep link does it
+from scripts too: `open 'pear://uninstallApp?path=/Applications/Foo.app'`.
 
 ## tmux
 

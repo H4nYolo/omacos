@@ -12,6 +12,10 @@ brew "FelixKratz/formulae/borders"
 # keyboard
 cask "karabiner-elements"
 
+# launcher (Omarchy menu / walker) and clean app uninstall
+cask "sol"
+cask "pearcleaner"
+
 # terminal & shell
 cask "ghostty"
 brew "tmux"
