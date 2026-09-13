@@ -217,7 +217,9 @@ Omarchy's tmux config as-is: prefix `Ctrl + Space`, `Alt + Enter` / `Alt + Shift
 
 `zsh/.config/zsh/omarchy.zsh` is Omarchy's `default/bash/aliases`, running
 unchanged in zsh (`ls`, `lt`, `ff`, zoxide `cd`, `c`/`cx` for AI agents,
-`t` for tmux, git shortcuts) plus the `tdl`, `tdlm` and `tsl` tmux layouts.
+`t` for tmux, git shortcuts) plus the `tdl`, `tdlm` and `tsl` tmux layouts. `ix ~/work/foo`
+(= `tdl cx ~/work/foo`) opens the editor / Claude Code / terminal layout in that folder and
+offers to create it when it does not exist yet.
 Secrets and machine-specific exports go in `~/.zshrc.local`, which is never committed.
 
 ## Credits

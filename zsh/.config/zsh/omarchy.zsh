@@ -59,8 +59,8 @@ alias cy='codex -s danger-full-access -a never'
 alias d='docker'
 alias r='rails'
 alias t='tmux attach || tmux new -s Work'
-alias ic='tdl c'      # dev layout with opencode
-alias ix='tdl cx'     # dev layout with claude code
+alias ic='tdl c'      # dev layout with opencode, optional <dir>
+alias ix='tdl cx'     # dev layout with claude code, optional <dir>
 alias icx='tdl c cx'  # dev layout with both
 alias mup='MISE_MINIMUM_RELEASE_AGE=0 mise up'
 # n [files]  – nvim, current directory when called without arguments
@@ -80,10 +80,25 @@ _tmux_require() {
   if [ -z "$TMUX" ]; then echo "Run this inside a tmux session (alias: t)"; return 1; fi
 }
 
-# tdl <ai> [<second_ai>]  – dev layout: editor | ai (+ second ai) / terminal
+# tdl <ai> [<second_ai>] [<dir>]  – dev layout: editor | ai (+ second ai) / terminal; dir is created on request
 tdl() {
   _tmux_require || return 1
-  local ai="${1:-cx}" ai2="$2" dir="$PWD"
+  local ai="" ai2="" dir="$PWD" arg
+  for arg in "$@"; do
+    # a directory is anything that exists as one or looks like a path (/, ~, .); the rest are agents
+    case "$arg" in
+      */*|~*|.*) dir="$arg" ;;
+      *) if [ -d "$arg" ]; then dir="$arg"; elif [ -z "$ai" ]; then ai="$arg"; else ai2="$arg"; fi ;;
+    esac
+  done
+  ai="${ai:-cx}"
+  dir="${dir/#\~/$HOME}"
+  if [ ! -d "$dir" ]; then
+    printf 'Create %s? [y/N] ' "$dir"; read -r yn
+    [[ "$yn" == [yY]* ]] || return 1
+    mkdir -p "$dir" || return 1
+  fi
+  dir="$(cd "$dir" && pwd)"
   tmux new-window -c "$dir" -n "$(basename "$dir")"
   tmux send-keys "n" C-m                          # pane 1: editor (nvim)
   tmux split-window -h -l 45% -c "$dir"           # pane 2: AI on the right
