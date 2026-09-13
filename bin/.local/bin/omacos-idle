@@ -1,12 +1,14 @@
 #!/bin/sh
 # omacos-idle — starts the screensaver after N idle minutes (~/.config/omacos/idle-minutes,
 # default 5), like hypridle does for Omarchy. Skips while an app asks macOS to keep the
-# display awake (video playback, calls). Started by AeroSpace at login; runs forever.
+# display awake (video playback, calls) and while ~/.local/state/omacos/idle-off exists
+# (menu → Toggle → Screensaver on idle). Started by AeroSpace at login; runs forever.
 PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
 while true; do
   sleep 30
   minutes="$(cat "$HOME/.config/omacos/idle-minutes" 2>/dev/null || echo 5)"
   [ "$minutes" -gt 0 ] 2>/dev/null || continue
+  [ -e "${XDG_STATE_HOME:-$HOME/.local/state}/omacos/idle-off" ] && continue
   idle="$(ioreg -c IOHIDSystem 2>/dev/null | awk '/HIDIdleTime/ {print int($NF/1000000000); exit}')"
   [ "${idle:-0}" -ge $((minutes * 60)) ] || continue
   pgrep -f '^/Applications/Ghostty.app/Contents/MacOS/ghostty --config-file=.*/ghostty/screensaver' >/dev/null && continue

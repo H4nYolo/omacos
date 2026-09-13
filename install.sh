@@ -72,6 +72,13 @@ LOCAL
 fi
 
 # --- 4b. terminaltexteffects for the screensaver ---------------------------------
+# OCR helper for the capture menu (Apple Vision), compiled once
+if [[ ! -x "$HOME/.cache/omacos/omacos-ocr" ]]; then
+  log "compiling OCR helper (swiftc, about a minute)"
+  mkdir -p "$HOME/.cache/omacos"
+  swiftc -O -o "$HOME/.cache/omacos/omacos-ocr" "$REPO/omacos/.config/omacos/ocr.swift" || echo "  swiftc failed — install the Command Line Tools (xcode-select --install) and rerun"
+fi
+
 if ! command -v tte >/dev/null; then
   log "installing terminaltexteffects"
   uv tool install terminaltexteffects >/dev/null

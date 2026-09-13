@@ -2,10 +2,17 @@
 # omacos-launcher — Omarchy's walker-style app menu: a monochrome fzf list in a
 # centred Ghostty popup (Super + Space). Enter launches, Ctrl+X hands the app to
 # Pearcleaner for a clean uninstall, Esc closes. Frequently launched apps float up.
+# `omacos-launcher --uninstall` (menu → Remove → App) makes Enter uninstall instead.
 PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
 STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/omacos"
 HISTORY="$STATE_DIR/launcher-history"
 mkdir -p "$STATE_DIR"; touch "$HISTORY"
+mode="${1:-launch}"
+if [ "$mode" = "--uninstall" ]; then
+  prompt='  uninstall  '; header=' enter  uninstall (Pearcleaner)  ·  esc  close'
+else
+  prompt='  '; header=' enter  launch  ·  ctrl-x  uninstall  ·  esc  close'
+fi
 
 apps() {
   # name<TAB>path, from every place macOS keeps apps, deduplicated by name.
@@ -39,14 +46,15 @@ TOKYO='--color=bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa
 
 out="$(ranked | fzf --reverse --exact --no-info --cycle \
         --delimiter='\t' --with-nth=1 \
-        --prompt='  ' --pointer='' \
-        --header=' enter  launch  ·  ctrl-x  uninstall  ·  esc  close' \
+        --prompt="$prompt" --pointer='' \
+        --header="$header" \
         --expect=ctrl-x $TOKYO)" || exit 0
 
 key="$(printf '%s\n' "$out" | sed -n 1p)"
 line="$(printf '%s\n' "$out" | sed -n 2p)"
 [ -n "$line" ] || exit 0
 name="${line%%	*}"; path="${line#*	}"
+[ "$mode" = "--uninstall" ] && key=ctrl-x
 
 case "$path" in
   action:screensaver) exec omacos-screensaver ;;

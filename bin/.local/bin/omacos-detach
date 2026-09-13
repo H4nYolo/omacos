@@ -1,0 +1,7 @@
+#!/bin/sh
+# omacos-detach <cmd...> — run a command once the popup panel has gone away.
+# Ghostty hangs up the popup's pty the moment the menu exits, so anything that
+# must act on the app that gets focus back (screenshots, Cmd+V, dialogs) is
+# started here with nohup and a short delay.
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+nohup sh -c 'sleep 0.4; exec "$@"' sh "$@" >/dev/null 2>&1 &

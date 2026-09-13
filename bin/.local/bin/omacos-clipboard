@@ -1,0 +1,31 @@
+#!/bin/sh
+# omacos-clipboard — clipboard history picker (Omarchy's Super+Ctrl+V). Newest first,
+# full entry in the preview. Enter copies it back and pastes into the app that had
+# focus, ctrl-x deletes the entry, alt-c clears the whole history.
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+DIR="${XDG_STATE_HOME:-$HOME/.local/state}/omacos/clipboard"
+mkdir -p "$DIR"
+
+list() {
+  ls -t "$DIR" 2>/dev/null | while read -r f; do
+    printf '%s\t%s\n' "$(tr '\n\t' '  ' < "$DIR/$f" | cut -c1-120)" "$DIR/$f"
+  done
+}
+
+while true; do
+  out="$(list | omacos-fzf --exact --delimiter='\t' --with-nth=1 --nth=1 --prompt='󰆏  ' \
+          --header=' enter  paste  ·  ctrl-x  delete  ·  alt-c  clear all  ·  esc  close' \
+          --preview='cat {2}' --preview-window='down:50%:wrap' \
+          --expect=ctrl-x,alt-c)" || exit 0
+  key="$(printf '%s\n' "$out" | sed -n 1p)"
+  line="$(printf '%s\n' "$out" | sed -n 2p)"
+  file="${line#*	}"
+  case "$key" in
+    ctrl-x) [ -n "$line" ] && rm -f "$file"; continue ;;
+    alt-c)  rm -f "$DIR"/*; continue ;;
+  esac
+  [ -n "$line" ] || exit 0
+  pbcopy < "$file"
+  omacos-detach omacos-paste
+  exit 0
+done

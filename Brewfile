@@ -35,6 +35,7 @@ brew "jq"
 brew "neovim"
 brew "lazygit"
 brew "lazydocker"
+brew "qrencode"           # menu → Capture → QR code
 
 # font
 cask "font-caskaydia-mono-nerd-font"

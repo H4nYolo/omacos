@@ -1,0 +1,29 @@
+#!/bin/sh
+# omacos-pkg-remove — pick installed Homebrew packages (explicitly installed formulae
+# and all casks) and uninstall them; dependencies nobody needs any more go too.
+# Apps that did not come from brew: launcher → ctrl-x (Pearcleaner).
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+
+list() {
+  brew leaves      2>/dev/null | awk '{ printf "%s\tformula\t󰏗\n", $0 }'
+  brew list --cask 2>/dev/null | awk '{ printf "%s\tcask\t\n", $0 }'
+}
+
+sel="$(list | omacos-fzf --multi --exact --delimiter='\t' --with-nth=3,1 --nth=1 \
+        --prompt='  remove  ' \
+        --color='pointer:#f7768e,marker:#f7768e,prompt:#f7768e' \
+        --header=' enter  uninstall  ·  tab  multi-select  ·  alt-p  preview  ·  esc  close' \
+        --preview='brew info --{2} {1} 2>/dev/null' \
+        --preview-window='down:60%:wrap' \
+        --preview-label=' alt-p toggle · alt-j/k scroll ' --preview-label-pos=bottom \
+        --bind 'alt-p:toggle-preview,alt-j:preview-down,alt-k:preview-up,alt-d:preview-half-page-down,alt-u:preview-half-page-up')" || exit 0
+[ -n "$sel" ] || exit 0
+
+formulae="$(printf '%s\n' "$sel" | awk -F'\t' '$2=="formula" {print $1}' | tr '\n' ' ')"
+casks="$(printf '%s\n' "$sel" | awk -F'\t' '$2=="cask" {print $1}' | tr '\n' ' ')"
+status=0
+[ -n "$formulae" ] && { brew uninstall --formula $formulae || status=$?; }
+[ -n "$casks" ]    && { brew uninstall --cask --zap $casks || status=$?; }
+brew autoremove
+if [ $status -eq 0 ]; then printf '\n\033[32m done\033[0m — press Enter to close'; else printf '\n\033[31m failed (%s)\033[0m — press Enter to close' "$status"; fi
+read -r _

@@ -1,0 +1,27 @@
+#!/bin/sh
+# omacos-pkg-install — Omarchy's fuzzy package picker, for Homebrew: every formula
+# and cask, `brew info` as preview, Tab for multi-select, Enter installs right here
+# in the popup. alt-p toggles the preview, alt-j/k scroll it.
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+
+list() {
+  brew formulae 2>/dev/null | awk '{ printf "%s\tformula\t󰏗\n", $0 }'
+  brew casks    2>/dev/null | awk '{ printf "%s\tcask\t\n", $0 }'
+}
+
+sel="$(list | omacos-fzf --multi --exact --delimiter='\t' --with-nth=3,1 --nth=1 \
+        --prompt='󰏗  install  ' \
+        --header=' enter  install  ·  tab  multi-select  ·  alt-p  preview  ·  esc  close' \
+        --preview='brew info --{2} {1} 2>/dev/null' \
+        --preview-window='down:60%:wrap' \
+        --preview-label=' alt-p toggle · alt-j/k scroll ' --preview-label-pos=bottom \
+        --bind 'alt-p:toggle-preview,alt-j:preview-down,alt-k:preview-up,alt-d:preview-half-page-down,alt-u:preview-half-page-up')" || exit 0
+[ -n "$sel" ] || exit 0
+
+formulae="$(printf '%s\n' "$sel" | awk -F'\t' '$2=="formula" {print $1}' | tr '\n' ' ')"
+casks="$(printf '%s\n' "$sel" | awk -F'\t' '$2=="cask" {print $1}' | tr '\n' ' ')"
+status=0
+[ -n "$formulae" ] && { brew install --formula $formulae || status=$?; }
+[ -n "$casks" ]    && { brew install --cask $casks || status=$?; }
+if [ $status -eq 0 ]; then printf '\n\033[32m done\033[0m — press Enter to close'; else printf '\n\033[31m failed (%s)\033[0m — press Enter to close' "$status"; fi
+read -r _

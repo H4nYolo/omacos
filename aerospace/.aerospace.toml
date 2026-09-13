@@ -16,7 +16,7 @@ config-version = 2
 persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'scratch']
 
 # sketchybar and borders run as brew services. The popup Ghostty instance (Super+Space, Super+K) starts here.
-after-startup-command = ['exec-and-forget omacos-popupd', 'exec-and-forget omacos-media-stream', 'exec-and-forget omacos-idle']
+after-startup-command = ['exec-and-forget omacos-popupd', 'exec-and-forget omacos-media-stream', 'exec-and-forget omacos-idle', 'exec-and-forget omacos-clipboardd']
 
 # Notify sketchybar about workspace changes
 exec-on-workspace-change = ['/bin/bash', '-c',
@@ -195,6 +195,11 @@ ctrl-alt-cmd-shift-d     = 'exec-and-forget open -na Ghostty --args -e lazydocke
 ctrl-alt-cmd-shift-a     = 'exec-and-forget open -a NeoHtop'                                               # Super + Shift + A  Activity (NeoHtop)
 ctrl-alt-cmd-shift-g     = 'exec-and-forget open -a Telegram'                                              # Super + Shift + G  Messenger (Telegram)
 ctrl-alt-cmd-k           = 'exec-and-forget omacos-popup keys'       # Super + K  Show keybindings (this help)
+ctrl-alt-cmd-shift-k     = 'exec-and-forget omacos-popup "keys tmux"'     # Super + Shift + K  tmux keybindings (Omarchy: Super+Alt+K)
+ctrl-alt-cmd-shift-space = 'exec-and-forget omacos-popup menu'            # Super + Shift + Space  omacos menu (Omarchy: Super+Space)
+ctrl-alt-cmd-shift-e     = 'exec-and-forget omacos-popup emoji'           # Super + Shift + E  Emoji picker (Omarchy: Super+Ctrl+E)
+ctrl-alt-cmd-shift-v     = 'exec-and-forget omacos-popup clipboard'       # Super + Shift + V  Clipboard history (Omarchy: Super+Ctrl+V)
+ctrl-alt-cmd-shift-c     = 'exec-and-forget omacos-popup "menu capture"'  # Super + Shift + C  Capture: screenshot, recording, OCR, QR (Omarchy: Super+Ctrl+C)
 ctrl-alt-cmd-space       = 'exec-and-forget omacos-popup launcher'   # Super + Space  App launcher
 # Super + Escape System menu, Super + Ctrl + L lock (use cmd-ctrl-q) -> not bound
 

@@ -1,0 +1,74 @@
+#!/bin/sh
+# omacos-capture <region|window|screen|record|record-mic|stop|text|qr|color>
+# Omarchy's capture menu on macOS. Screenshots go to ~/Pictures/Screenshots and to
+# the clipboard. Recordings use screencapture -v until "stop". "text" runs OCR
+# (Apple Vision, ~/.config/omacos/ocr.swift) on a selection and copies the text.
+# "qr" renders the clipboard as a QR code, "color" is the macOS colour picker → hex.
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+DIR="$HOME/Pictures/Screenshots"; mkdir -p "$DIR"
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/omacos"; mkdir -p "$STATE"
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/omacos"; mkdir -p "$CACHE"
+stamp="$(date +%Y-%m-%d_%H-%M-%S)"
+
+to_clipboard() { osascript -e "set the clipboard to (read (POSIX file \"$1\") as «class PNGf»)" >/dev/null 2>&1; }
+
+shot() {  # shot <screencapture flags...>
+  file="$DIR/$stamp.png"
+  screencapture "$@" "$file" 2>/dev/null
+  [ -s "$file" ] || { rm -f "$file"; exit 0; }   # cancelled with Esc
+  to_clipboard "$file"
+  omacos-notify "Screenshot saved" "$file — also in the clipboard"
+}
+
+ocr_bin() {
+  src="$HOME/.config/omacos/ocr.swift"; bin="$CACHE/omacos-ocr"
+  if [ ! -x "$bin" ] || [ "$src" -nt "$bin" ]; then
+    omacos-notify "omacos" "Compiling the OCR helper once, about a minute…"
+    swiftc -O -o "$bin" "$src" 2>/dev/null || { omacos-notify "omacos" "OCR helper failed to compile (need Command Line Tools)"; exit 1; }
+  fi
+  printf '%s' "$bin"
+}
+
+case "${1:-region}" in
+  region) shot -i ;;
+  window) shot -iW ;;
+  screen) shot ;;
+  record|record-mic)
+    file="$DIR/$stamp.mov"
+    [ "$1" = "record-mic" ] && mic="-g" || mic=""
+    screencapture -v -i $mic "$file" >/dev/null 2>&1 &
+    printf '%s\n%s\n' "$!" "$file" > "$STATE/recording"
+    ;;
+  stop)
+    [ -f "$STATE/recording" ] || { omacos-notify "omacos" "No recording running"; exit 0; }
+    pid="$(sed -n 1p "$STATE/recording")"; file="$(sed -n 2p "$STATE/recording")"
+    kill -INT "$pid" 2>/dev/null; rm -f "$STATE/recording"
+    sleep 1; [ -s "$file" ] && omacos-notify "Recording saved" "$file"
+    ;;
+  text)
+    tmp="$(mktemp -t omacos-ocr).png"
+    screencapture -i "$tmp" 2>/dev/null
+    [ -s "$tmp" ] || { rm -f "$tmp"; exit 0; }
+    bin="$(ocr_bin)" || exit 1
+    text="$("$bin" "$tmp")"; rm -f "$tmp"
+    if [ -n "$text" ]; then
+      printf '%s' "$text" | pbcopy
+      omacos-notify "Text copied" "$(printf '%s' "$text" | head -c 200)"
+    else
+      omacos-notify "omacos" "No text found"
+    fi
+    ;;
+  qr)
+    text="$(pbpaste 2>/dev/null)"
+    [ -n "$text" ] || { printf '\n clipboard is empty — press Enter to close'; read -r _; exit 0; }
+    printf '\n'; printf '%s' "$text" | qrencode -t ANSIUTF8 -m 2
+    printf '\n %s\n\n press Enter to close' "$(printf '%s' "$text" | head -c 100)"; read -r _
+    ;;
+  color)
+    rgb="$(osascript -e 'choose color' 2>/dev/null)" || exit 0
+    hex="$(printf '%s' "$rgb" | awk -F', ' '{ printf "#%02x%02x%02x", $1/257, $2/257, $3/257 }')"
+    printf '%s' "$hex" | pbcopy
+    omacos-notify "Colour copied" "$hex"
+    ;;
+  *) echo "usage: omacos-capture <region|window|screen|record|record-mic|stop|text|qr|color>" >&2; exit 2 ;;
+esac

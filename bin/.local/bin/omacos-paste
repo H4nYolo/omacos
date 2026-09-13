@@ -1,0 +1,3 @@
+#!/bin/sh
+# omacos-paste — send Cmd+V to the frontmost app (used after the emoji and clipboard pickers).
+exec osascript -e 'tell application "System Events" to keystroke "v" using command down'

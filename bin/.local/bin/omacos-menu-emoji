@@ -1,0 +1,11 @@
+#!/bin/sh
+# omacos-menu-emoji — Omarchy's emoji picker: fzf over ~/.config/omacos/emoji.tsv
+# (emoji, name, keywords). Enter copies the emoji and pastes it into the app that
+# had focus; Esc closes.
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+DB="$HOME/.config/omacos/emoji.tsv"
+sel="$(omacos-fzf --delimiter='\t' --with-nth=1,2 --nth=2,3 --prompt='󰞅  ' \
+        --header=' enter  paste  ·  esc  close' < "$DB")" || exit 0
+[ -n "$sel" ] || exit 0
+printf '%s' "${sel%%	*}" | pbcopy
+omacos-detach omacos-paste

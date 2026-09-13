@@ -3,7 +3,7 @@
 Read this first when resuming work on this repo (new session or after a context compact).
 Keep it current: update it at the end of every working session.
 
-**Last updated:** 2026-09-13 (session 2: other-monitor workspace marker in the bar)
+**Last updated:** 2026-09-13 (session 2: other-monitor workspace marker, Omarchy menu, brew picker, clipboard, emoji, capture)
 
 ## What this is
 
@@ -29,6 +29,7 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 | Bar | sketchybar as Waybar clone (`sketchybar/`): workspaces (filled pill = focused, outlined pill = visible on the other monitor, via `aerospace list-workspaces --monitor all --visible`) · front app · mic/cam · brew updates · network · bluetooth · audio out · volume · cpu · mem · weather · clock. Menu bar hidden |
 | Borders | JankyBorders (`borders/`), Tokyo Night blue |
 | Popups | a **second Ghostty instance** (`omacos-popupd`, config `ghostty/.config/ghostty/popup`, `initial-window=false`) owns a *quick terminal* panel (centred, monitor under the mouse, AeroSpace ignores it, fixed 1760x720 pt — Ghostty 1.3.1 ignores `quick-terminal-size`). `omacos-popup <launcher|keys|brew|audio|weather>` writes `~/.local/state/omacos/popup-request` and fires the instance's private global hotkey ctrl+alt+shift+cmd+F19 via System Events; `omacos-popup-run` execs the request inside. A running `brew upgrade` is never killed, only re-shown |
+| Menu | Super+Shift+Space → `omacos-menu [route]`: fzf tree (Apps, Learn, Capture, Clipboard, Emoji, Toggle, Install, Remove, Update, Info, System), Esc = one level up. Direct keys: Super+Shift+C capture, +E `omacos-menu-emoji` (`~/.config/omacos/emoji.tsv` from gemoji), +V `omacos-clipboard` (daemon `omacos-clipboardd` polls `pbpaste` 1/s → `~/.local/state/omacos/clipboard/`, 200 entries), +K tmux keys. `omacos-pkg-install`/`-remove` = fzf over `brew formulae`/`casks` (resp. `brew leaves` + casks) with `brew info` preview. `omacos-capture <region|window|screen|record|record-mic|stop|text|qr|color>` (screencapture; OCR = `~/.config/omacos/ocr.swift` compiled to `~/.cache/omacos/omacos-ocr`; qrencode). Actions that need the panel gone run via `omacos-detach` (nohup + 0.4s). `omacos-fzf` = fzf with the Tokyo Night look, `omacos-notify` = display notification |
 | Launcher | Super+Space → `omacos-launcher`: fzf list of all apps (+ Finder, CoreServices user apps, actions Screensaver/Lock/Sleep), most-launched first (`~/.local/state/omacos/launcher-history`), ctrl-x → Pearcleaner deep link |
 | Help | Super+K → `omacos-keys`: parses `.aerospace.toml` bindings + comments and tmux keys into fzf. Comments name the app so searches like "neohtop" hit |
 | Uninstall | Pearcleaner (Sentinel + CLI `Pearcleaner uninstall-all <path>`). Raycast is gone. Sol still installed on plain Option+Space (calculator/clipboard), optional |
@@ -36,7 +37,7 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 | Shell | OMZ + p10k kept, `zsh/.config/zsh/omarchy.zsh` = Omarchy aliases + `tdl`/`tdlm`/`tsl` (`ix` = `tdl cx`). zoxide replaced tiny-dc. Secrets + machine PATH in `~/.zshrc.local` (never committed) |
 | tmux | Omarchy config, prefix Ctrl+Space (Ctrl+b secondary), + Ctrl+hjkl navigator. tmux 3.7c |
 | Theme | Tokyo Night hard-wired everywhere; CaskaydiaMono Nerd Font; wallpaper downloaded by install.sh (gitignored). No theme switching yet |
-| Started at login by AeroSpace | `after-startup-command`: `omacos-popupd`, `omacos-media-stream`, `omacos-idle`. sketchybar + borders are brew services |
+| Started at login by AeroSpace | `after-startup-command`: `omacos-popupd`, `omacos-media-stream`, `omacos-idle`, `omacos-clipboardd`. sketchybar + borders are brew services |
 
 ## Gotchas learned the hard way
 
@@ -50,6 +51,7 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 - System Events: `set position of w` on a variable reference fails (-10006); address `window 1` / `window "name"` directly.
 - brew inside the sketchybar launchd service crashes on cask checks → the updates plugin counts `--formula` only. `updates=when_shown` is the default: hidden items never run their script → set `updates=on`.
 - Karabiner sometimes does not reload after in-place edits: `launchctl kickstart -k gui/$(id -u)/org.pqrs.service.agent.Karabiner-Console-User-Server`.
+- `brew install` inside the popup shares brew's lock with any running `brew upgrade`; the popup's "never kill brew" rule also protects installs.
 - Homebrew now requires `brew trust <tap>` for third-party taps (felixkratz/formulae, nikitabobko/tap).
 - The sketchybar formula 2.24.0 fails to build on macOS 26 (its `curl` for the docs cannot verify TLS inside the build sandbox). Ignored via `~/.config/omacos/updates-ignore`; issue text drafted for `felixkratz/homebrew-formulae`, user submits it.
 
@@ -58,7 +60,8 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 1. User: submit the sketchybar formula issue (`gh issue create -R felixkratz/homebrew-formulae …`, draft in `$TMPDIR/sketchybar-issue.md` — regenerate from the gotcha above if gone).
 2. Verify the mic/camera indicator during a real call (`log stream --predicate 'eventMessage CONTAINS "attributions changed"'`); adjust `omacos-media-stream` if the wording differs.
 3. First real logout/login: confirm AeroSpace brings up popupd, media-stream, idle; sketchybar/borders services; Ghostty may ask for Accessibility for the global hotkey.
-4. Decide on Sol (keep on Option+Space or uninstall via launcher ctrl-x + Brewfile).
+4. Decide on Sol (only calculator left now that clipboard + emoji are native; uninstall via menu → Remove → App, then drop from Brewfile + install.sh).
+4b. Verify in real use: screen recording start/stop (`screencapture -v -i`, first run asks for Screen Recording permission for Ghostty), OCR on a real selection, emoji/clipboard paste lands in the right app (Cmd+V 0.4s after the panel closes).
 5. Optional: Omarchy-style theme switching (one command for Ghostty, sketchybar, borders, tmux, nvim, wallpaper).
 6. Optional: remaining "doesn't hurt" cleanup candidates from closed issue #2 (Office apps, Final Cut, iMovie, Arc, Cursor, …) via Pearcleaner.
 

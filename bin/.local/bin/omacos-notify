@@ -1,0 +1,3 @@
+#!/bin/sh
+# omacos-notify <title> [body] — a macOS notification (Omarchy's notify-send).
+exec osascript -e "display notification \"$(printf '%s' "${2:-}" | sed 's/"/\\"/g')\" with title \"$(printf '%s' "$1" | sed 's/"/\\"/g')\""

@@ -1,10 +1,14 @@
 #!/bin/sh
 # omacos-popup-run — runs inside the popup quick terminal; executes whatever
-# omacos-popup asked for last (launcher, keys, ...).
+# omacos-popup asked for last: launcher (default), keys [tmux|aerospace], menu [route],
+# emoji, clipboard, weather, brew, audio.
 PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
 req="$(cat "${XDG_STATE_HOME:-$HOME/.local/state}/omacos/popup-request" 2>/dev/null)"
 case "$req" in
-  keys)   exec omacos-keys ;;
+  keys*)  exec omacos-keys ${req#keys} ;;
+  menu*)  exec omacos-menu ${req#menu} ;;
+  emoji)  exec omacos-menu-emoji ;;
+  clipboard) exec omacos-clipboard ;;
   weather) curl -s -m 15 'wttr.in/?F'; printf '\n press Enter to close'; read -r _ ;;
   brew)   brew upgrade --formula; printf '\n done — press Enter to close'; read -r _ ;;
   audio)  dev="$(SwitchAudioSource -a -t output | fzf --reverse --no-info --cycle --prompt='󰓃  ' --pointer='' \

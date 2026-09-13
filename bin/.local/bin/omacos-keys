@@ -1,8 +1,10 @@
 #!/bin/sh
 # omacos-keys — searchable list of every omacos keybinding (Omarchy's Super+K).
 # Reads the bindings and their comments straight from ~/.aerospace.toml, adds the
-# tmux bindings, and shows everything in fzf. Bound to Super+K, opens in a floating Ghostty.
+# tmux bindings, and shows everything in fzf. Super+K shows both, `omacos-keys tmux`
+# (Super+Shift+K) only tmux, `omacos-keys aerospace` only the window manager.
 PATH="/opt/homebrew/bin:$PATH"
+only="${1:-all}"
 CFG="$HOME/.aerospace.toml"
 
 aerospace_keys() {
@@ -45,9 +47,9 @@ tmux_keys() {
 {
   echo "Super = Caps Lock held · Super+Shift = Caps Lock + Shift · tmux Prefix = Ctrl+Space"
   echo
-  aerospace_keys
-  echo
-  tmux_keys
+  [ "$only" != tmux ] && aerospace_keys
+  [ "$only" = all ] && echo
+  [ "$only" != aerospace ] && tmux_keys
 } | fzf --reverse --exact --no-info --cycle --prompt='  ' --pointer='' --header-lines=2 \
         --color='bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7,header:#565f89,info:#565f89' \
         --bind 'esc:abort,enter:abort' >/dev/null

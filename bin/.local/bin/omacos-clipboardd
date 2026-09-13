@@ -1,0 +1,19 @@
+#!/bin/sh
+# omacos-clipboardd — clipboard history daemon (Omarchy uses cliphist). Polls the
+# pasteboard once a second and keeps the last 200 text entries as files in
+# ~/.local/state/omacos/clipboard/, newest last modified. Concealed entries
+# (password managers mark them) and non-text content are skipped.
+# Started by AeroSpace at login; runs forever.
+PATH="/opt/homebrew/bin:$PATH"
+DIR="${XDG_STATE_HOME:-$HOME/.local/state}/omacos/clipboard"
+mkdir -p "$DIR"
+last="$(pbpaste 2>/dev/null)"
+while true; do
+  sleep 1
+  cur="$(pbpaste 2>/dev/null)"
+  [ -n "$cur" ] && [ "$cur" != "$last" ] || continue
+  last="$cur"
+  osascript -e 'clipboard info' 2>/dev/null | grep -qi 'conceal' && continue
+  printf '%s' "$cur" > "$DIR/$(printf '%s' "$cur" | md5 -q)"
+  ls -t "$DIR" | tail -n +201 | while read -r old; do rm -f "$DIR/$old"; done
+done

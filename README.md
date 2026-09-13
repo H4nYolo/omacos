@@ -95,8 +95,10 @@ arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resiz
 
 `Alt + Tab` cycles windows on the workspace.
 
+**Menus** — `Shift + Space` omacos menu · `Shift + C` capture · `Shift + E` emoji · `Shift + V` clipboard history
+
 **Help** — `Super + K` opens a searchable list of every binding (AeroSpace and tmux), generated
-from the config itself, in the popup panel (below). `Esc` closes it. Inside tmux, `Prefix + ?` lists the tmux keys.
+from the config itself, in the popup panel (below). `Shift + K` shows only the tmux keys. `Esc` closes it.
 
 ### Re-homed keys (no `Super + Alt` / `Super + Ctrl`)
 
@@ -111,6 +113,9 @@ from the config itself, in the popup panel (below). `Esc` closes it. Inside tmux
 | `Super + Ctrl + T` activity | `Super + Shift + A` |
 | `Super + Ctrl + F` native fullscreen | macOS `⌃⌘F` |
 | `Super + Ctrl + L` lock | macOS `⌃⌘Q` |
+| `Super + Space` Omarchy menu / `Super + Alt + Space` apps | `Super + Shift + Space` / `Super + Space` |
+| `Super + Ctrl + C` capture · `Super + Ctrl + E` emoji · `Super + Ctrl + V` clipboard | `Super + Shift + C` · `E` · `V` |
+| `Super + Alt + K` tmux keybindings | `Super + Shift + K` |
 
 ### Not portable
 
@@ -140,7 +145,31 @@ Right, left to right:
 `borders/` draws Hyprland's 2px accent border around the focused window.
 `install.sh` fetches Omarchy's Tokyo Night wallpaper and sets it on every display.
 
-## Launcher and uninstall
+## Menu, launcher and uninstall
+
+`Super + Shift + Space` opens `omacos-menu`, Omarchy's menu as a tree of fzf lists in the popup
+panel (`Esc` goes up a level):
+
+- **Apps** — the launcher below
+- **Learn** — keybindings (all / tmux / AeroSpace), the omacos repo, the Omarchy manual, AeroSpace, Ghostty and tmux docs
+- **Capture** (`Super + Shift + C`) — screenshot of a region, window or screen (saved to `~/Pictures/Screenshots` and copied),
+  screen recording with or without microphone (the entry turns into *Stop* while recording),
+  text recognition (OCR) from a selection straight into the clipboard, the clipboard as a QR code, a colour picker that copies hex
+- **Clipboard** (`Super + Shift + V`) — history of the last 200 text entries (`omacos-clipboardd`, started by AeroSpace);
+  `Enter` pastes into the app that had focus, `ctrl-x` deletes, `alt-c` clears. Password managers' concealed entries are skipped
+- **Emoji** (`Super + Shift + E`) — search by name or keyword, `Enter` pastes
+- **Toggle** — screensaver on idle, bar, borders, microphone mute
+- **Install** — `omacos-pkg-install`: every Homebrew formula and cask in fzf with `brew info` as preview, `Tab` multi-select,
+  `Enter` installs right there. Or the App Store
+- **Remove** — `omacos-pkg-remove`: the same for what is installed (`brew leaves` + casks, unused dependencies go too), or an app via Pearcleaner
+- **Update** — `brew upgrade`, `brew outdated`, macOS software update
+- **Info** — time, weather and network as notifications, About
+- **System** — screensaver, lock, sleep, logout, restart, shutdown
+
+The OCR helper is Apple's Vision framework (`~/.config/omacos/ocr.swift`); `install.sh` compiles it once
+into `~/.cache/omacos/omacos-ocr`, the capture menu does the same on first use if needed.
+
+### Launcher
 
 `Super + Space` opens `omacos-launcher`, the walker look-alike: every app from `/Applications`,
 `~/Applications` and the system folders in a monochrome fzf list, most-launched first. `Enter`
@@ -152,13 +181,13 @@ launches, `ctrl-x` opens the app in Pearcleaner with its leftovers listed for a 
 Launcher and help run in Ghostty's *quick terminal*: a floating panel, centred on the monitor
 under the mouse, that AeroSpace never tiles, so it appears in place with no jumps. A second
 Ghostty process started by AeroSpace (`omacos-popupd`, config `~/.config/ghostty/popup`) owns
-it. `omacos-popup <launcher|keys>` writes the request to `~/.local/state/omacos/popup-request`
+it. `omacos-popup <launcher|keys|menu [route]|emoji|clipboard>` writes the request to `~/.local/state/omacos/popup-request`
 and fires that process's private global hotkey (`ctrl+alt+shift+cmd+F19`, never typed by hand);
 `omacos-popup-run` inside the panel then execs the requested script. When it exits, the panel
 disappears. Ghostty needs Accessibility for the global hotkey.
 
-[Sol](https://github.com/ospfranco/sol) stays around on `⌥ Space` for calculator, clipboard history
-and emoji; drop it from the Brewfile if you don't need those.
+[Sol](https://github.com/ospfranco/sol) stays around on `⌥ Space` as a calculator; drop it from the
+Brewfile if you don't need it.
 Uninstalling is Pearcleaner's job. Pick the app in the launcher with `ctrl-x`, or drag an app to
 the Trash: Pearcleaner's Sentinel (enable it in Pearcleaner's settings) pops up and offers to
 remove the leftovers. From a script: `/Applications/Pearcleaner.app/Contents/MacOS/Pearcleaner uninstall-all /Applications/Foo.app`.

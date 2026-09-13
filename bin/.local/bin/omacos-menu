@@ -1,0 +1,133 @@
+#!/bin/sh
+# omacos-menu [route] — Omarchy's Super+Space menu (Super+Shift+Space here): a tree of
+# fzf menus in the popup. Esc goes one level up, Esc at the root closes.
+# Routes: root (default), learn, capture, toggle, install, remove, update, info, system.
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/omacos"; mkdir -p "$STATE"
+REPO_URL="https://github.com/H4nYolo/omacos"
+gui() { env -u TERM -u TERM_PROGRAM -u COLORTERM -u TMUX -u TMUX_PANE open "$@"; }
+
+# show <title> <items>: items are "label<TAB>command" lines. A command "menu_x" opens a
+# submenu and comes back here when it is left; anything else is eval'd and ends the menu.
+show() {
+  title="$1"; items="$2"
+  while true; do
+    sel="$(printf '%s\n' "$items" | omacos-fzf --exact --delimiter='\t' --with-nth=1 --nth=1 \
+            --prompt="  $title  " --header=' enter  select  ·  esc  back')" || return 1
+    [ -n "$sel" ] || return 1
+    cmd="${sel#*	}"
+    case "$cmd" in
+      menu_*) "$cmd" || continue; return 0 ;;
+      *) eval "$cmd"; return 0 ;;
+    esac
+  done
+}
+
+state() { [ -e "$STATE/$1" ] && printf 'off' || printf 'on'; }
+toggle_flag() { [ -e "$STATE/$1" ] && rm -f "$STATE/$1" || : > "$STATE/$1"; }
+bar_state() { sketchybar --query bar 2>/dev/null | grep -q '"hidden": *"on"' && printf 'off' || printf 'on'; }
+borders_state() { pgrep -x borders >/dev/null && printf 'on' || printf 'off'; }
+
+menu_root() {
+  show "omacos" "$(printf '%s\n' \
+    '  Apps	exec omacos-launcher' \
+    '󰧑  Learn	menu_learn' \
+    '󰄀  Capture	menu_capture' \
+    '󰆏  Clipboard	exec omacos-clipboard' \
+    '󰞅  Emoji	exec omacos-menu-emoji' \
+    '󰔡  Toggle	menu_toggle' \
+    '󰏗  Install	menu_install' \
+    '  Remove	menu_remove' \
+    '󰚰  Update	menu_update' \
+    '󰋼  Info	menu_info' \
+    '  System	menu_system')"
+}
+
+menu_learn() {
+  show "learn" "$(printf '%s\n' \
+    '󰌌  Keybindings	exec omacos-keys' \
+    '󰌌  tmux keybindings	exec omacos-keys tmux' \
+    '󰘳  AeroSpace keybindings	exec omacos-keys aerospace' \
+    "  omacos on GitHub	gui $REPO_URL" \
+    '  Omarchy manual	gui https://learn.omacom.io/2/the-omarchy-manual' \
+    '  AeroSpace guide	gui https://nikitabobko.github.io/AeroSpace/guide' \
+    '  Ghostty docs	gui https://ghostty.org/docs' \
+    '  tmux wiki	gui https://github.com/tmux/tmux/wiki')"
+}
+
+menu_capture() {
+  if [ -f "$STATE/recording" ]; then rec='󰑊  Stop screenrecording	omacos-capture stop'
+  else rec="$(printf '%s\n' '󰕧  Screenrecord	omacos-detach omacos-capture record' '󰍬  Screenrecord with microphone	omacos-detach omacos-capture record-mic')"; fi
+  show "capture" "$(printf '%s\n' \
+    '󰆞  Screenshot region	omacos-detach omacos-capture region' \
+    '󰖯  Screenshot window	omacos-detach omacos-capture window' \
+    '󰍹  Screenshot screen	omacos-detach omacos-capture screen' \
+    "$rec" \
+    '󰦨  Text (OCR) from selection	omacos-detach omacos-capture text' \
+    '󰐲  QR code from clipboard	omacos-capture qr' \
+    '󰏘  Colour picker	omacos-detach omacos-capture color')"
+}
+
+menu_toggle() {
+  show "toggle" "$(printf '%s\n' \
+    "󰒲  Screensaver on idle  [$(state idle-off)]	toggle_flag idle-off" \
+    "󰍜  Bar  [$(bar_state)]	sketchybar --bar hidden=toggle" \
+    "󰃣  Borders  [$(borders_state)]	if pgrep -x borders >/dev/null; then brew services stop borders; else brew services start borders; fi" \
+    "󰍬  Microphone mute  [$(osascript -e 'input volume of (get volume settings)' | awk '{print ($1==0)?"muted":"on"}')]	if [ \"\$(osascript -e 'input volume of (get volume settings)')\" = 0 ]; then osascript -e 'set volume input volume 100'; else osascript -e 'set volume input volume 0'; fi")"
+}
+
+menu_install() {
+  show "install" "$(printf '%s\n' \
+    '󰏗  Package (brew)	exec omacos-pkg-install' \
+    '  App Store	gui -a "App Store"')"
+}
+
+menu_remove() {
+  show "remove" "$(printf '%s\n' \
+    '󰏗  Package (brew)	exec omacos-pkg-remove' \
+    '  App (Pearcleaner)	exec omacos-launcher --uninstall')"
+}
+
+menu_update() {
+  show "update" "$(printf '%s\n' \
+    '󰚰  Upgrade packages (brew)	brew update && brew upgrade --formula && brew upgrade --cask; printf "\n done — press Enter to close"; read -r _' \
+    '󰒓  Show outdated	brew outdated --verbose; printf "\n press Enter to close"; read -r _' \
+    '  macOS software update	gui "x-apple.systempreferences:com.apple.Software-Update-Settings.extension"')"
+}
+
+menu_info() {
+  show "info" "$(printf '%s\n' \
+    '󰥔  Time	omacos-notify "$(date "+%H:%M")" "$(date "+%A, %d %B %Y")"' \
+    '  Weather	omacos-notify "Weather" "$(curl -s -m 10 "wttr.in/?format=%l:+%c+%t,+%w")"' \
+    '󰖩  Network	omacos-notify "Network" "$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || echo offline) · $(curl -s -m 5 ifconfig.me)"' \
+    '󰋼  About	about')"
+}
+
+about() {
+  printf '\n'; sed 's/^/   /' "$HOME/.config/omacos/screensaver.txt" 2>/dev/null
+  printf '\n   omacos — Omarchy look & feel on macOS\n   %s\n\n' "$REPO_URL"
+  printf '   macOS      %s\n' "$(sw_vers -productVersion)"
+  printf '   AeroSpace  %s\n' "$(aerospace --version 2>/dev/null | head -1)"
+  printf '   Ghostty    %s\n' "$(/Applications/Ghostty.app/Contents/MacOS/ghostty --version 2>/dev/null | head -1)"
+  printf '   tmux       %s\n' "$(tmux -V 2>/dev/null)"
+  printf '   uptime     %s\n' "$(uptime | sed 's/.*up \(.*\), [0-9]* user.*/\1/')"
+  printf '\n   press Enter to close'; read -r _
+}
+
+menu_system() {
+  show "system" "$(printf '%s\n' \
+    '󰒲  Screensaver	exec omacos-screensaver' \
+    '󰌾  Lock	osascript -e '"'"'tell application "System Events" to keystroke "q" using {control down, command down}'"'"'' \
+    '󰤄  Sleep	pmset sleepnow' \
+    '󰍃  Logout	osascript -e '"'"'tell application "System Events" to log out'"'"'' \
+    '󰜉  Restart	osascript -e '"'"'tell application "System Events" to restart'"'"'' \
+    '󰐥  Shutdown	osascript -e '"'"'tell application "System Events" to shut down'"'"'')"
+}
+
+route="${1:-root}"
+case "$route" in
+  root) menu_root ;;
+  learn|capture|toggle|install|remove|update|info|system) "menu_$route" ;;
+  *) echo "omacos-menu: unknown route '$route'" >&2; exit 2 ;;
+esac
+exit 0
