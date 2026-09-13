@@ -55,7 +55,7 @@ Grant them once, then restart the app that asked.
 | `sketchybar`, `borders` | `~/.config/sketchybar/`, `~/.config/borders/bordersrc` |
 | `sol` | `~/.config/sol/` (Sol writes `config.json` itself; `state.json` is ignored) |
 | `nvim`, `git` | `~/.config/nvim/`, `~/.config/git/ignore` |
-| `bin` | `~/.local/bin/omacos-keys`, `~/.local/bin/omacos-scratchpad` |
+| `bin` | `~/.local/bin/omacos-keys`, `omacos-scratchpad`, `omacos-popup` (centred floating Ghostty for any command) |
 
 ## The modifier story
 
@@ -94,7 +94,8 @@ arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resiz
 `Alt + Tab` cycles windows on the workspace.
 
 **Help** — `Super + K` opens a searchable list of every binding (AeroSpace and tmux), generated
-from the config itself. Inside tmux, `Prefix + ?` lists the tmux keys.
+from the config itself, in a floating Ghostty window centred on the monitor under the mouse.
+`Esc` closes it. Inside tmux, `Prefix + ?` lists the tmux keys.
 
 ### Re-homed keys (no `Super + Alt` / `Super + Ctrl`)
 
