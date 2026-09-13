@@ -1,0 +1,106 @@
+{
+    "profiles": [
+        {
+            "complex_modifications": {
+                "rules": [
+                    {
+                        "description": "omacos: CAPS_LOCK held = SUPER (ctrl+option+command), tapped = ESCAPE",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "caps_lock",
+                                    "modifiers": { "optional": ["any"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "left_command",
+                                        "modifiers": ["left_control", "left_option"]
+                                    }
+                                ],
+                                "to_if_alone": [{ "key_code": "escape" }],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "Avoid macOS sysdiagnose on SUPER+SHIFT+,",
+                                "from": {
+                                    "key_code": "comma",
+                                    "modifiers": { "mandatory": ["command", "shift", "option", "control"] }
+                                },
+                                "to": [],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "Avoid macOS sysdiagnose on SUPER+SHIFT+.",
+                                "from": {
+                                    "key_code": "period",
+                                    "modifiers": { "mandatory": ["command", "shift", "option", "control"] }
+                                },
+                                "to": [],
+                                "type": "basic"
+                            },
+                            {
+                                "description": "Avoid macOS sysdiagnose on SUPER+SHIFT+/",
+                                "from": {
+                                    "key_code": "slash",
+                                    "modifiers": { "mandatory": ["command", "shift", "option", "control"] }
+                                },
+                                "to": [],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "omacos: SUPER + SPACE = Raycast (command+space)",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "spacebar",
+                                    "modifiers": { "mandatory": ["left_command", "left_control", "left_option"] }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "spacebar",
+                                        "modifiers": ["left_command"]
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Toggle CAPS_LOCK with LEFT_SHIFT + RIGHT_SHIFT",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "left_shift",
+                                    "modifiers": {
+                                        "mandatory": ["right_shift"],
+                                        "optional": ["caps_lock"]
+                                    }
+                                },
+                                "to": [{ "key_code": "caps_lock" }],
+                                "to_if_alone": [{ "key_code": "left_shift" }],
+                                "type": "basic"
+                            },
+                            {
+                                "from": {
+                                    "key_code": "right_shift",
+                                    "modifiers": {
+                                        "mandatory": ["left_shift"],
+                                        "optional": ["caps_lock"]
+                                    }
+                                },
+                                "to": [{ "key_code": "caps_lock" }],
+                                "to_if_alone": [{ "key_code": "right_shift" }],
+                                "type": "basic"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "name": "Default profile",
+            "selected": true,
+            "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
+        }
+    ]
+}

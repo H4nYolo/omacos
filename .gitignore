@@ -1,0 +1,11 @@
+# Karabiner rewrites these on every change
+karabiner/.config/karabiner/automatic_backups/
+
+# machine-specific / secrets live outside the repo
+zsh/.zshrc.local
+*.local
+
+# editor / OS noise
+.DS_Store
+nvim/.config/nvim/lazy-lock.json.bak
+.scratch/

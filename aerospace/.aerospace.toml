@@ -1,0 +1,194 @@
+# ~/.aerospace.toml — omacos
+# Omarchy (Hyprland tiling-v2 + bindings.conf) ported to AeroSpace.
+#
+# Modifier mapping (Karabiner, see karabiner/):
+#   Omarchy Super         -> Caps Lock held  = ctrl-alt-cmd
+#   Omarchy Super + Shift -> Caps Lock + Shift = ctrl-alt-cmd-shift
+#   Omarchy Alt           -> Option (left to tmux / the terminal)
+#   Super + Alt / Super + Ctrl cannot be expressed; those bindings were re-homed (see README).
+#
+# Caps Lock + Space stays Raycast (Karabiner turns it into cmd-space) — not bound here.
+# ctrl-alt-cmd-shift + , . / are swallowed by Karabiner to avoid macOS sysdiagnose — never bind them.
+
+after-startup-command = [
+  'exec-and-forget sketchybar',
+]
+
+# Notify sketchybar about workspace changes
+exec-on-workspace-change = ['/bin/bash', '-c',
+  'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
+]
+
+start-at-login = true
+
+# Hyprland "dwindle" ≈ tiles with normalization
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+accordion-padding = 30
+
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+automatically-unhide-macos-hidden-apps = false
+
+[key-mapping]
+    preset = 'qwerty'
+
+[exec]
+    env-vars.PATH = '${HOME}/.local/bin:/opt/homebrew/bin:${PATH}'
+
+# Omarchy: gaps_in 5 / gaps_out 10. outer.top makes room for sketchybar (set in the sketchybar step).
+[gaps]
+    inner.horizontal = 10
+    inner.vertical   = 10
+    outer.left       = 10
+    outer.bottom     = 10
+    outer.top        = 10
+    outer.right      = 80   # TODO: sketchybar still on the right; becomes 10 when the bar moves to the top
+
+# Workspaces 1-5 + scratch on the 4K, 6-9 on the Studio Display.
+# Falls back to the main monitor when the other one is missing.
+[workspace-to-monitor-force-assignment]
+    1 = ['CG437K P', 'main']
+    2 = ['CG437K P', 'main']
+    3 = ['CG437K P', 'main']
+    4 = ['CG437K P', 'main']
+    5 = ['CG437K P', 'main']
+    6 = ['Studio Display', 'secondary', 'main']
+    7 = ['Studio Display', 'secondary', 'main']
+    8 = ['Studio Display', 'secondary', 'main']
+    9 = ['Studio Display', 'secondary', 'main']
+    scratch = ['CG437K P', 'main']
+
+# ---------------------------------------------------------------- Floating windows (Omarchy windows.conf)
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.calculator'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.ActivityMonitor'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.archiveutility'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'org.pqrs.Karabiner-Elements.Settings'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.raycast.macos'
+run = 'layout floating'
+
+# ================================================================ main mode
+[mode.main.binding]
+
+# ---- Windows
+ctrl-alt-cmd-w = 'close'                                  # Super + W  Close
+ctrl-alt-cmd-q = 'close'                                  # Super + Q  Close
+ctrl-alt-cmd-t = 'layout floating tiling'                 # Super + T  Toggle float
+ctrl-alt-cmd-j = 'layout horizontal vertical'             # Super + J  Toggle split
+ctrl-alt-cmd-f = 'fullscreen'                             # Super + F  Fullscreen
+# Super + O  Sticky           -> not supported by AeroSpace (nikitabobko/AeroSpace#2)
+# Super + L  Scrolling layout -> no equivalent
+# Super + Shift + Backspace  Toggle gaps -> no equivalent
+
+# ---- Focus / Swap (Super + Arrows / Super + Shift + Arrows)
+ctrl-alt-cmd-left  = 'focus --boundaries all-monitors-outer-frame left'
+ctrl-alt-cmd-right = 'focus --boundaries all-monitors-outer-frame right'
+ctrl-alt-cmd-up    = 'focus --boundaries all-monitors-outer-frame up'
+ctrl-alt-cmd-down  = 'focus --boundaries all-monitors-outer-frame down'
+
+ctrl-alt-cmd-shift-left  = 'move left'
+ctrl-alt-cmd-shift-right = 'move right'
+ctrl-alt-cmd-shift-up    = 'move up'
+ctrl-alt-cmd-shift-down  = 'move down'
+
+# ---- Resize (single 50px step; Omarchy's Alt/Ctrl steps don't exist here)
+ctrl-alt-cmd-minus       = 'resize smart -50'             # Super + Minus
+ctrl-alt-cmd-equal       = 'resize smart +50'             # Super + Equal
+ctrl-alt-cmd-shift-minus = 'resize smart-opposite -50'    # Super + Shift + Minus
+ctrl-alt-cmd-shift-equal = 'resize smart-opposite +50'    # Super + Shift + Equal
+ctrl-alt-cmd-home        = 'balance-sizes'                # stand-in for Super + Home save/restore width
+
+# ---- Workspaces
+ctrl-alt-cmd-1 = 'workspace 1'
+ctrl-alt-cmd-2 = 'workspace 2'
+ctrl-alt-cmd-3 = 'workspace 3'
+ctrl-alt-cmd-4 = 'workspace 4'
+ctrl-alt-cmd-5 = 'workspace 5'
+ctrl-alt-cmd-6 = 'workspace 6'
+ctrl-alt-cmd-7 = 'workspace 7'
+ctrl-alt-cmd-8 = 'workspace 8'
+ctrl-alt-cmd-9 = 'workspace 9'
+ctrl-alt-cmd-0 = 'workspace-back-and-forth'               # Super + Ctrl + Tab  Former workspace (re-homed)
+
+ctrl-alt-cmd-tab       = 'workspace --wrap-around next'   # Super + Tab
+ctrl-alt-cmd-shift-tab = 'workspace --wrap-around prev'   # Super + Shift + Tab
+
+ctrl-alt-cmd-shift-1 = ['move-node-to-workspace 1', 'workspace 1']   # Super + Shift + N  Move + follow
+ctrl-alt-cmd-shift-2 = ['move-node-to-workspace 2', 'workspace 2']
+ctrl-alt-cmd-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
+ctrl-alt-cmd-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
+ctrl-alt-cmd-shift-5 = ['move-node-to-workspace 5', 'workspace 5']
+ctrl-alt-cmd-shift-6 = ['move-node-to-workspace 6', 'workspace 6']
+ctrl-alt-cmd-shift-7 = ['move-node-to-workspace 7', 'workspace 7']
+ctrl-alt-cmd-shift-8 = ['move-node-to-workspace 8', 'workspace 8']
+ctrl-alt-cmd-shift-9 = ['move-node-to-workspace 9', 'workspace 9']
+
+# ---- Scratchpad = workspace "scratch"
+ctrl-alt-cmd-s             = 'exec-and-forget omacos-scratchpad'      # Super + S
+ctrl-alt-cmd-backtick      = 'exec-and-forget omacos-scratchpad'      # Super + `
+ctrl-alt-cmd-shift-s       = 'move-node-to-workspace scratch'         # Super + Alt + S  (re-homed)
+ctrl-alt-cmd-shift-backtick = 'move-node-to-workspace scratch'        # Super + Shift + `
+
+# ---- Monitors
+ctrl-alt-cmd-shift-home = 'move-workspace-to-monitor --wrap-around prev'   # Super + Shift + Alt + Left  (re-homed)
+ctrl-alt-cmd-shift-end  = 'move-workspace-to-monitor --wrap-around next'   # Super + Shift + Alt + Right (re-homed)
+ctrl-alt-tab       = 'focus-monitor --wrap-around next'                    # Ctrl + Alt + Tab  Cycle monitors
+ctrl-alt-shift-tab = 'focus-monitor --wrap-around prev'
+
+# ---- Alt + Tab  Cycle windows on the workspace
+alt-tab       = 'focus --boundaries-action wrap-around-the-workspace dfs-next'
+alt-shift-tab = 'focus --boundaries-action wrap-around-the-workspace dfs-prev'
+
+# ---- Groups (Hyprland groups ≈ accordion containers)
+ctrl-alt-cmd-g       = 'layout tiles accordion'                                        # Super + G  Toggle group
+ctrl-alt-cmd-slash   = 'focus --boundaries-action wrap-around-the-workspace dfs-next'  # Super + Alt + Tab  Next in group (re-homed)
+ctrl-alt-cmd-shift-u = 'flatten-workspace-tree'                                        # Super + Alt + G  Ungroup (re-homed; Super+Shift+/ is reserved by macOS)
+# Join a window into a neighbour's group: service mode (Super + Shift + ;) then Shift + Arrow
+
+# ---- Launchers
+ctrl-alt-cmd-enter       = 'exec-and-forget open -na Ghostty'                                              # Super + Return  Terminal
+ctrl-alt-cmd-shift-t     = 'exec-and-forget open -na Ghostty --args -e zsh -lic "tmux attach || tmux new -s Work"'   # Super + Alt + Return  Tmux terminal (re-homed)
+ctrl-alt-cmd-shift-enter = 'exec-and-forget open -a Zen'                                                   # Super + Shift + Return  Browser
+ctrl-alt-cmd-shift-f     = 'exec-and-forget open -a Finder ~'                                              # Super + Shift + F  Files
+ctrl-alt-cmd-shift-n     = 'exec-and-forget open -na Ghostty --args -e nvim'                               # Super + Shift + N  Editor
+ctrl-alt-cmd-shift-d     = 'exec-and-forget open -na Ghostty --args -e lazydocker'                         # Super + Shift + D  Docker
+ctrl-alt-cmd-shift-a     = 'exec-and-forget open -a NeoHtop'                                               # Super + Shift + A  Activity
+ctrl-alt-cmd-shift-g     = 'exec-and-forget open -a Telegram'                                              # Super + Shift + G  Messenger
+# Super + Space  Launcher -> Raycast via Karabiner
+# Super + Escape System menu, Super + K keybindings, Super + Ctrl + L lock (use cmd-ctrl-q) -> not bound
+
+ctrl-alt-cmd-shift-semicolon = 'mode service'
+
+# ================================================================ service mode
+[mode.service.binding]
+    esc = ['reload-config', 'mode main']
+    r = ['flatten-workspace-tree', 'mode main']            # reset layout
+    f = ['layout floating tiling', 'mode main']
+    backspace = ['close-all-windows-but-current', 'mode main']
+
+    shift-left  = ['join-with left', 'mode main']          # move into neighbour's group
+    shift-down  = ['join-with down', 'mode main']
+    shift-up    = ['join-with up', 'mode main']
+    shift-right = ['join-with right', 'mode main']
+
+    down = 'volume down'
+    up = 'volume up'
+    shift-down = ['volume set 0', 'mode main']
