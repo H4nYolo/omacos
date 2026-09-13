@@ -61,13 +61,10 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 
 ## Open / next
 
-1. User: submit the sketchybar formula issue (`gh issue create -R felixkratz/homebrew-formulae …`, draft in `$TMPDIR/sketchybar-issue.md` — regenerate from the gotcha above if gone).
-2. Verify in real use (cannot be simulated): mic/camera indicator during a call (`log stream --predicate 'eventMessage CONTAINS "attributions changed"'`); screen recording start/stop from the capture menu (first run asks for Screen Recording permission for Ghostty); OCR on a real selection; emoji/clipboard paste landing in the right app (Cmd+V 0.4 s after the panel closes, delay lives in `omacos-detach`).
-3. First real logout/login: AeroSpace must bring up popupd, media-stream, idle, clipboardd; sketchybar/borders services; Ghostty may ask for Accessibility for the global hotkey.
-4. Decide on Sol (only calculator left; remove via menu → Remove → App, then drop `cask "sol"` from Brewfile, the `sol` stow package and the launch line in install.sh).
-5. Cosmetics, in this order: theme switcher (`omacos-theme-set <name>` for Ghostty, sketchybar, borders, tmux, nvim, wallpaper — Omarchy ships ~15 themes under `themes/`), background switcher (cycle the theme's wallpapers), font switcher (Nerd Font casks + rewrite Ghostty/sketchybar font lines).
-6. Optional: remaining "doesn't hurt" cleanup candidates from closed issue #2 (Office apps, Final Cut, iMovie, Arc, Cursor, …) via menu → Remove → App.
-7. A `brew upgrade` started from the popup hung for 4.5 h on 2026-09-13 because opening another popup killed its shell (fixed in omacos-popup: brew is now detected anywhere on the panel's tty). `brew postinstall llvm` was rerun afterwards; check `brew outdated` once.
+Tracked as GitHub issues (`gh issue list`): #5 theme switcher, #6 background switcher, #7 font
+switcher (build in that order, "Kosmetik 8-10"), #8 decide on Sol, #9 verification checklist for
+things a script cannot test (recording, OCR, paste, mic/camera, logout/login, upstream sketchybar
+issue). Open a new issue for every new piece of work; close it with the commit that finishes it.
 
 ## Archive
 
