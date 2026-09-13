@@ -1,0 +1,53 @@
+#!/bin/sh
+# omacos-keys — searchable list of every omacos keybinding (Omarchy's Super+K).
+# Reads the bindings and their comments straight from ~/.aerospace.toml, adds the
+# tmux bindings, and shows everything in fzf. Bound to Super+K, opens in a floating Ghostty.
+PATH="/opt/homebrew/bin:$PATH"
+CFG="$HOME/.aerospace.toml"
+
+aerospace_keys() {
+  awk '
+    BEGIN {
+      names["backtick"]="`"; names["minus"]="-"; names["equal"]="="; names["slash"]="/"; names["semicolon"]=";"
+      names["enter"]="Enter"; names["backspace"]="Backspace"; names["esc"]="Esc"; names["tab"]="Tab"
+      names["left"]="Left"; names["right"]="Right"; names["up"]="Up"; names["down"]="Down"
+      names["home"]="Home"; names["end"]="End"; names["shift"]="Shift"; names["ctrl"]="Ctrl"; names["alt"]="Alt"; names["cmd"]="Cmd"
+    }
+    /^\[mode\.[a-z]+\.binding\]/ { mode=$0; sub(/^\[mode\./,"",mode); sub(/\.binding\].*/,"",mode); next }
+    mode != "" && /^[[:space:]]*[a-z0-9-]+[[:space:]]*=/ {
+      line=$0
+      key=line; sub(/^[[:space:]]*/,"",key); sub(/[[:space:]]*=.*/,"",key)
+      rest=line; sub(/^[^=]*=[[:space:]]*/,"",rest)
+      desc=""
+      if (match(rest, /[[:space:]]+#[[:space:]]*/)) { desc=substr(rest, RSTART+RLENGTH); rest=substr(rest, 1, RSTART-1) }
+      gsub(/^[\x27\[]+|[\x27\]]+$/, "", rest); gsub(/\x27, \x27/, " · ", rest)
+      gsub(/ctrl-alt-cmd-shift/, "Super+Shift", key)
+      gsub(/ctrl-alt-cmd/, "Super", key)
+      n = split(key, parts, "-"); key = ""
+      for (i = 1; i <= n; i++) {
+        t = parts[i]
+        if (t in names) t = names[t]
+        else if (length(t) == 1) t = toupper(t)
+        key = key (i > 1 ? "+" : "") t
+      }
+      if (desc == "") desc = rest
+      prefix = (mode == "main") ? "" : "[" mode "] "
+      printf "%-28s %s\n", prefix key, desc
+    }
+  ' "$CFG"
+}
+
+tmux_keys() {
+  tmux list-keys -T root 2>/dev/null | awk '{ key=$4; $1=$2=$3=$4=""; sub(/^ +/,""); printf "%-28s %s\n", "tmux " key, $0 }'
+  tmux list-keys -T prefix 2>/dev/null | awk '{ key=$4; $1=$2=$3=$4=""; sub(/^ +/,""); printf "%-28s %s\n", "tmux Prefix " key, $0 }'
+}
+
+{
+  echo "Super = Caps Lock held · Super+Shift = Caps Lock + Shift · tmux Prefix = Ctrl+Space"
+  echo
+  aerospace_keys
+  echo
+  tmux_keys
+} | fzf --reverse --exact --no-info --cycle --prompt='  ' --pointer='' --header-lines=2 \
+        --color='bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7,header:#565f89,info:#565f89' \
+        --bind 'esc:abort,enter:abort' >/dev/null

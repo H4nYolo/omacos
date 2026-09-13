@@ -1,0 +1,58 @@
+#!/bin/sh
+# omacos-launcher — Omarchy's walker-style app menu: a monochrome fzf list in a
+# centred Ghostty popup (Super + Space). Enter launches, Ctrl+X hands the app to
+# Pearcleaner for a clean uninstall, Esc closes. Frequently launched apps float up.
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/omacos"
+HISTORY="$STATE_DIR/launcher-history"
+mkdir -p "$STATE_DIR"; touch "$HISTORY"
+
+apps() {
+  # name<TAB>path, from every place macOS keeps apps, deduplicated by name.
+  # CoreServices itself is full of internal agents, so only Finder and its
+  # user-facing Applications/ subfolder (Keychain Access, Archive Utility, ...) are included.
+  {
+    for dir in /Applications /Applications/Utilities "$HOME/Applications" /System/Applications /System/Applications/Utilities /System/Library/CoreServices/Applications; do
+      [ -d "$dir" ] || continue
+      for app in "$dir"/*.app; do
+        [ -e "$app" ] || continue
+        printf '%s\t%s\n' "$(basename "$app" .app)" "$app"
+      done
+    done
+    printf 'Finder\t/System/Library/CoreServices/Finder.app\n'
+  } | sort -t "$(printf '\t')" -k1,1 -u
+}
+
+# rank: history count (desc), then name
+ranked() {
+  apps | awk -F'\t' -v hist="$HISTORY" '
+    BEGIN { while ((getline line < hist) > 0) { n = index(line, " "); count[substr(line, n+1)] = substr(line, 1, n-1) } }
+    { c = ($1 in count) ? count[$1] : 0; printf "%08d\t%s\t%s\n", 99999999 - c, $1, $2 }
+  ' | sort | cut -f2,3
+}
+
+TOKYO='--color=bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7,marker:#9ece6a,header:#565f89,info:#565f89,spinner:#7aa2f7,border:#3b4261'
+
+out="$(ranked | fzf --reverse --exact --no-info --cycle \
+        --delimiter='\t' --with-nth=1 \
+        --prompt='  ' --pointer='' \
+        --header=' enter  launch  ·  ctrl-x  uninstall  ·  esc  close' \
+        --expect=ctrl-x $TOKYO)" || exit 0
+
+key="$(printf '%s\n' "$out" | sed -n 1p)"
+line="$(printf '%s\n' "$out" | sed -n 2p)"
+[ -n "$line" ] || exit 0
+name="${line%%	*}"; path="${line#*	}"
+
+case "$key" in
+  ctrl-x)
+    # Pearcleaner shows the app's leftovers and asks before deleting.
+    # It must not inherit TERM, or it turns into its CLI and exits.
+    env -u TERM -u TERM_PROGRAM -u COLORTERM open "pear://uninstallApp?path=$path"
+    ;;
+  *)
+    # bump the launch counter
+    awk -v n="$name" '$0 ~ ("^[0-9]+ " n "$") { split($0, a, " "); print a[1]+1 " " n; found=1; next } { print } END { if (!found) print "1 " n }' "$HISTORY" > "$HISTORY.tmp" && mv "$HISTORY.tmp" "$HISTORY"
+    env -u TERM -u TERM_PROGRAM -u COLORTERM open -a "$path"
+    ;;
+esac

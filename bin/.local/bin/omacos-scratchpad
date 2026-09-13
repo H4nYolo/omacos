@@ -1,0 +1,9 @@
+#!/bin/sh
+# Toggle the "scratch" workspace — Omarchy's Super+S scratchpad on AeroSpace.
+# Jumps to `scratch`; if already there, jumps back to the previous workspace.
+PATH="/opt/homebrew/bin:$PATH"
+if [ "$(aerospace list-workspaces --focused)" = "scratch" ]; then
+  aerospace workspace-back-and-forth
+else
+  aerospace workspace scratch
+fi

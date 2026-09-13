@@ -3,7 +3,6 @@ karabiner/.config/karabiner/automatic_backups/
 
 # machine-specific / secrets live outside the repo
 zsh/.zshrc.local
-*.local
 
 # editor / OS noise
 .DS_Store
