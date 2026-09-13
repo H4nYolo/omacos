@@ -1,0 +1,11 @@
+#!/bin/bash
+# ~/.config/borders/bordersrc — omacos
+# Hyprland-style border around the focused window (Omarchy: 2px, theme accent). Tokyo Night.
+options=(
+  style=square
+  width=2.0
+  hidpi=on
+  active_color=0xff7aa2f7
+  inactive_color=0xff3b4261
+)
+borders "${options[@]}"

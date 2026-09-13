@@ -15,9 +15,8 @@ config-version = 2
 # Workspaces that always exist (config-version 2 no longer infers them from the bindings)
 persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'scratch']
 
-after-startup-command = [
-  'exec-and-forget sketchybar',
-]
+# sketchybar and borders run as brew services; nothing to start here
+after-startup-command = []
 
 # Notify sketchybar about workspace changes
 exec-on-workspace-change = ['/bin/bash', '-c',
@@ -42,14 +41,14 @@ automatically-unhide-macos-hidden-apps = false
 [exec.env-vars]
     PATH = '${HOME}/.local/bin:/opt/homebrew/bin:${PATH}'
 
-# Omarchy: gaps_in 5 / gaps_out 10. outer.top makes room for sketchybar (set in the sketchybar step).
+# Omarchy: gaps_in 5 / gaps_out 10. outer.top = sketchybar height (32) + 10.
 [gaps]
     inner.horizontal = 10
     inner.vertical   = 10
     outer.left       = 10
     outer.bottom     = 10
-    outer.top        = 10
-    outer.right      = 80   # TODO: sketchybar still on the right; becomes 10 when the bar moves to the top
+    outer.top        = 42
+    outer.right      = 10
 
 # Workspaces 1-5 + scratch on the 4K, 6-9 on the Studio Display.
 # Falls back to the main monitor when the other one is missing.

@@ -1,0 +1,47 @@
+#!/usr/bin/env sh
+# ~/.config/sketchybar/sketchybarrc — omacos
+# Omarchy's Waybar, rebuilt with sketchybar: workspaces on the left,
+# volume / cpu / memory / clock on the right. Tokyo Night, Nerd Font glyphs.
+
+PATH="/opt/homebrew/bin:$PATH"
+CONFIG_DIR="$HOME/.config/sketchybar"
+ITEM_DIR="$CONFIG_DIR/items"
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+source "$CONFIG_DIR/colors.sh"
+
+FONT="CaskaydiaMono Nerd Font"
+BAR_HEIGHT=32     # AeroSpace outer.top gap = BAR_HEIGHT + 10
+
+sketchybar --bar     height=$BAR_HEIGHT           \
+                     color=$BAR_COLOR             \
+                     position=top                 \
+                     sticky=on                    \
+                     padding_left=10              \
+                     padding_right=10             \
+                     topmost=off                  \
+                                                  \
+           --default updates=when_shown           \
+                     icon.font="$FONT:Bold:15.0"  \
+                     icon.color=$ICON_COLOR       \
+                     icon.padding_left=6          \
+                     icon.padding_right=4         \
+                     label.font="$FONT:Regular:14.0" \
+                     label.color=$LABEL_COLOR     \
+                     label.padding_left=0         \
+                     label.padding_right=8        \
+                     background.padding_left=2    \
+                     background.padding_right=2
+
+# Left
+source "$ITEM_DIR/workspaces.sh"
+
+# Right (added in reverse order: sketchybar stacks right items from the edge)
+source "$ITEM_DIR/clock.sh"
+source "$ITEM_DIR/memory.sh"
+source "$ITEM_DIR/cpu.sh"
+source "$ITEM_DIR/volume.sh"
+
+sketchybar --update
+
+# Paint the current workspace state right away instead of waiting for the first change
+sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE="$(aerospace list-workspaces --focused 2>/dev/null)"

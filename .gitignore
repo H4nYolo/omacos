@@ -9,3 +9,6 @@ zsh/.zshrc.local
 .DS_Store
 nvim/.config/nvim/lazy-lock.json.bak
 .scratch/
+
+# wallpaper is downloaded by install.sh from the Omarchy repo
+themes/*/wallpaper.*

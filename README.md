@@ -95,6 +95,14 @@ Workspaces `1-5` and `scratch` live on the main display, `6-9` on the second
 one (`workspace-to-monitor-force-assignment` in `aerospace/.aerospace.toml`).
 Edit the monitor names there for your setup — `aerospace list-monitors` prints them.
 
+## Bar, borders, wallpaper
+
+`sketchybar/` is a Waybar clone: workspaces on the left (focused = blue pill, occupied = bright,
+empty = dim, `scratch` only when in use), volume / cpu / memory / clock on the right, all in
+Tokyo Night with Nerd Font glyphs. The macOS menu bar is hidden by `install.sh`.
+`borders/` draws Hyprland's 2px accent border around the focused window.
+`install.sh` fetches Omarchy's Tokyo Night wallpaper and sets it on every display.
+
 ## tmux
 
 Omarchy's tmux config as-is: prefix `Ctrl + Space`, `Alt + Enter` / `Alt + Shift + Enter` split,

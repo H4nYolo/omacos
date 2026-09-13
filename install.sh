@@ -27,6 +27,7 @@ fi
 log "macOS defaults"
 # Hide the Apple menu bar: sketchybar takes its place at the top
 defaults write NSGlobalDomain _HIHideMenuBar -bool true
+osascript -e 'tell application "System Events" to tell dock preferences to set autohide menu bar to true' || true
 # No "Displays have separate Spaces" prompt games: AeroSpace manages workspaces itself
 defaults write com.apple.spaces spans-displays -bool false
 # Faster key repeat, like a Linux desktop
@@ -86,10 +87,14 @@ open -a AeroSpace
 aerospace reload-config || true
 open -a Karabiner-Elements
 
-# --- 7. Wallpaper ---------------------------------------------------------------
-if [[ -f "$REPO/themes/tokyo-night/wallpaper.jpg" ]]; then
-  log "wallpaper"
-  osascript -e "tell application \"System Events\" to set picture of every desktop to \"$REPO/themes/tokyo-night/wallpaper.jpg\""
+# --- 7. Wallpaper (Omarchy's Tokyo Night default) --------------------------------
+WALL="$REPO/themes/tokyo-night/wallpaper.jpg"
+if [[ ! -f "$WALL" ]]; then
+  log "downloading wallpaper"
+  curl -fsSL -o "$WALL.webp" https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/tokyo-night/backgrounds/0-winding-road.webp
+  sips -s format jpeg "$WALL.webp" --out "$WALL" >/dev/null && rm -f "$WALL.webp"
 fi
+log "wallpaper"
+osascript -e "tell application \"System Events\" to set picture of every desktop to \"$WALL\""
 
 log "done — log out and back in (or restart AeroSpace) if the menu bar is still visible"
