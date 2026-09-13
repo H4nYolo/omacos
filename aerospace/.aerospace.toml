@@ -50,7 +50,7 @@ automatically-unhide-macos-hidden-apps = false
     outer.top        = 42
     outer.right      = 10
 
-# Workspaces 1-6 + scratch on the 4K, 7-10 (keys 7 8 9 0) on the Studio Display.
+# Workspaces 1-5 + scratch on the 4K, 6-10 (keys 6 7 8 9 0) on the Studio Display.
 # Falls back to the main monitor when the other one is missing.
 [workspace-to-monitor-force-assignment]
     1 = ['CG437K P', 'main']
@@ -58,7 +58,7 @@ automatically-unhide-macos-hidden-apps = false
     3 = ['CG437K P', 'main']
     4 = ['CG437K P', 'main']
     5 = ['CG437K P', 'main']
-    6 = ['CG437K P', 'main']
+    6 = ['Studio Display', 'secondary', 'main']
     7 = ['Studio Display', 'secondary', 'main']
     8 = ['Studio Display', 'secondary', 'main']
     9 = ['Studio Display', 'secondary', 'main']

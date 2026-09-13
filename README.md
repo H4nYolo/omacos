@@ -118,7 +118,7 @@ focus-follows-mouse have no AeroSpace equivalent.
 
 ## Workspaces & monitors
 
-Workspaces `1-6` and `scratch` live on the main display, `7-10` (keys `7 8 9 0`) on the second
+Workspaces `1-5` and `scratch` live on the main display, `6-10` (keys `6 7 8 9 0`) on the second
 one (`workspace-to-monitor-force-assignment` in `aerospace/.aerospace.toml`).
 Edit the monitor names there for your setup — `aerospace list-monitors` prints them.
 
