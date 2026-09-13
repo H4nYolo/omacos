@@ -13,7 +13,7 @@
 config-version = 2
 
 # Workspaces that always exist (config-version 2 no longer infers them from the bindings)
-persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'scratch']
+persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'scratch']
 
 # sketchybar and borders run as brew services; nothing to start here
 after-startup-command = []
@@ -50,7 +50,7 @@ automatically-unhide-macos-hidden-apps = false
     outer.top        = 42
     outer.right      = 10
 
-# Workspaces 1-5 + scratch on the 4K, 6-9 on the Studio Display.
+# Workspaces 1-6 + scratch on the 4K, 7-10 (keys 7 8 9 0) on the Studio Display.
 # Falls back to the main monitor when the other one is missing.
 [workspace-to-monitor-force-assignment]
     1 = ['CG437K P', 'main']
@@ -58,10 +58,11 @@ automatically-unhide-macos-hidden-apps = false
     3 = ['CG437K P', 'main']
     4 = ['CG437K P', 'main']
     5 = ['CG437K P', 'main']
-    6 = ['Studio Display', 'secondary', 'main']
+    6 = ['CG437K P', 'main']
     7 = ['Studio Display', 'secondary', 'main']
     8 = ['Studio Display', 'secondary', 'main']
     9 = ['Studio Display', 'secondary', 'main']
+    10 = ['Studio Display', 'secondary', 'main']
     scratch = ['CG437K P', 'main']
 
 # ---------------------------------------------------------------- Floating windows (Omarchy windows.conf)
@@ -131,16 +132,17 @@ ctrl-alt-cmd-shift-equal = 'resize smart-opposite +50'    # Super + Shift + Equa
 ctrl-alt-cmd-home        = 'balance-sizes'                # stand-in for Super + Home save/restore width
 
 # ---- Workspaces
-ctrl-alt-cmd-1 = 'workspace 1'
-ctrl-alt-cmd-2 = 'workspace 2'
-ctrl-alt-cmd-3 = 'workspace 3'
-ctrl-alt-cmd-4 = 'workspace 4'
-ctrl-alt-cmd-5 = 'workspace 5'
-ctrl-alt-cmd-6 = 'workspace 6'
-ctrl-alt-cmd-7 = 'workspace 7'
-ctrl-alt-cmd-8 = 'workspace 8'
-ctrl-alt-cmd-9 = 'workspace 9'
-ctrl-alt-cmd-0 = 'workspace-back-and-forth'               # Super + Ctrl + Tab  Former workspace (re-homed)
+ctrl-alt-cmd-1 = 'workspace --auto-back-and-forth 1'
+ctrl-alt-cmd-2 = 'workspace --auto-back-and-forth 2'
+ctrl-alt-cmd-3 = 'workspace --auto-back-and-forth 3'
+ctrl-alt-cmd-4 = 'workspace --auto-back-and-forth 4'
+ctrl-alt-cmd-5 = 'workspace --auto-back-and-forth 5'
+ctrl-alt-cmd-6 = 'workspace --auto-back-and-forth 6'
+ctrl-alt-cmd-7 = 'workspace --auto-back-and-forth 7'
+ctrl-alt-cmd-8 = 'workspace --auto-back-and-forth 8'
+ctrl-alt-cmd-9 = 'workspace --auto-back-and-forth 9'
+ctrl-alt-cmd-0 = 'workspace --auto-back-and-forth 10'
+# Former workspace (Super + Ctrl + Tab in Omarchy): press the current workspace's key again (--auto-back-and-forth)
 
 ctrl-alt-cmd-tab       = 'workspace --wrap-around next'   # Super + Tab
 ctrl-alt-cmd-shift-tab = 'workspace --wrap-around prev'   # Super + Shift + Tab
@@ -154,6 +156,7 @@ ctrl-alt-cmd-shift-6 = ['move-node-to-workspace 6', 'workspace 6']
 ctrl-alt-cmd-shift-7 = ['move-node-to-workspace 7', 'workspace 7']
 ctrl-alt-cmd-shift-8 = ['move-node-to-workspace 8', 'workspace 8']
 ctrl-alt-cmd-shift-9 = ['move-node-to-workspace 9', 'workspace 9']
+ctrl-alt-cmd-shift-0 = ['move-node-to-workspace 10', 'workspace 10']
 
 # ---- Scratchpad = workspace "scratch"
 ctrl-alt-cmd-s             = 'exec-and-forget omacos-scratchpad'      # Super + S

@@ -80,8 +80,8 @@ Everything Omarchy has, on the same keys, with `Super` = Caps Lock.
 **Windows** — `W`/`Q` close · `T` float · `J` split · `F` fullscreen ·
 arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resize the other axis · `Home` balance
 
-**Workspaces** — `1-9` jump · `Shift + 1-9` move window & follow · `Tab`/`Shift + Tab` next/prev ·
-`0` previous workspace · `S` or `` ` `` toggle scratchpad · `Shift + S` send to scratchpad
+**Workspaces** — `1-9`, `0` (= 10) jump, press the current one again to go back · `Shift + 1-9`, `Shift + 0` move window & follow ·
+`Tab`/`Shift + Tab` next/prev · `S` or `` ` `` toggle scratchpad · `Shift + S` send to scratchpad
 
 **Monitors** — `Ctrl + Alt + Tab` cycle · `Shift + Home`/`End` move workspace to prev/next monitor
 
@@ -101,7 +101,7 @@ from the config itself, in a floating Ghostty window centred on the monitor unde
 
 | Omarchy | Here |
 |---|---|
-| `Super + Ctrl + Tab` previous workspace | `Super + 0` |
+| `Super + Ctrl + Tab` previous workspace | press the current workspace's key again |
 | `Super + Alt + S` move to scratchpad | `Super + Shift + S` |
 | `Super + Alt + Return` tmux terminal | `Super + Shift + T` |
 | `Super + Alt + Tab` next in group | `Super + /` |
@@ -118,7 +118,7 @@ focus-follows-mouse have no AeroSpace equivalent.
 
 ## Workspaces & monitors
 
-Workspaces `1-5` and `scratch` live on the main display, `6-9` on the second
+Workspaces `1-6` and `scratch` live on the main display, `7-10` (keys `7 8 9 0`) on the second
 one (`workspace-to-monitor-force-assignment` in `aerospace/.aerospace.toml`).
 Edit the monitor names there for your setup — `aerospace list-monitors` prints them.
 

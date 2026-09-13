@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 # AeroSpace workspaces. Persistent list mirrors persistent-workspaces in ~/.aerospace.toml,
 # so the bar comes up correctly even when AeroSpace is not running yet.
-WORKSPACES="1 2 3 4 5 6 7 8 9 scratch"
+WORKSPACES="1 2 3 4 5 6 7 8 9 10 scratch"
 
 sketchybar --add event aerospace_workspace_change
 

@@ -8,7 +8,7 @@ focused="${FOCUSED_WORKSPACE:-$(aerospace list-workspaces --focused 2>/dev/null)
 occupied="$(aerospace list-workspaces --monitor all --empty no 2>/dev/null)"
 
 args=()
-for ws in 1 2 3 4 5 6 7 8 9 scratch; do
+for ws in 1 2 3 4 5 6 7 8 9 10 scratch; do
   if [ "$ws" = "$focused" ]; then
     args+=(--set "space.$ws" background.drawing=on icon.highlight=on drawing=on)
   elif grep -qx "$ws" <<< "$occupied"; then
