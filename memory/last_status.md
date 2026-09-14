@@ -3,7 +3,7 @@
 Read this first when resuming work on this repo (new session or after a context compact).
 Keep it current: update it at the end of every working session.
 
-**Last updated:** 2026-09-14 evening, session 4 (theme #5, background #6, font #7 switchers and wallpaper packs #14 done; before that: native Swift panel #10, menu.json, disclaimer, email leak fixed, dwindle, notes, glow borders) (other-monitor workspace marker, Omarchy menu with Backspace = back, brew picker, clipboard, emoji, capture, help with aliases/tools, weather-location, Super+W quits last window, tdl <dir>, Sol hotkey conflict fixed, glow borders). Open work is in GitHub issues #5-#9.
+**Last updated:** 2026-09-14 night, end of session 4 (theme #5, background #6, font #7 switchers, wallpaper packs #14 incl. cyberpunk/fantasy and a private death-note pack, Ghostty title bar, Super moved to Left Command, README as landing page + docs/ manual, Mac renamed to h4nstudio, GitHub repo subscriptions cleared). Open: #8 Sol, #9 verification.
 
 ## What this is
 
@@ -76,9 +76,12 @@ issue), #10 omacos-shell = native Swift Panel (grilled 2026-09-14, decisions in 
 
 ## Next
 
-Cosmetics 5-7 are done. Left: #8 decide on Sol (calculator only, hotkeys nulled), #9 real-use verification
-(recording start/stop, OCR, mic/camera indicator, logout/login with panel + daemons autostart, upstream
-sketchybar formula issue). Wallpaper packs cyberpunk + fantasy shipped. Death Note (franchise fan art, never for the repo) lives as a private pack `~/.local/share/omacos/wallpapers/death-note.txt` (15 Wallhaven pictures via `https://wallhaven.cc/api/v1/search?q=…&categories=110&purity=100&ratios=16x9&atleast=2560x1440&sorting=favorites`, `.path` = direct URL), installed under `packs/death-note/`.
+Nothing is being built. Open issues: #8 decide on Sol (calculator only, hotkeys nulled), #9 real-use verification —
+the user agreed to do it next: recording start/stop, OCR, mic/camera indicator, logout/login (panel + daemons
+autostart via AeroSpace after-startup-command), upstream sketchybar formula issue. Also worth a check after the
+Super change: every Super+Shift chord with the thumb, Cmd shortcuts via Caps in GUI apps, `omacos-paste` (System
+Events Cmd+V, unaffected by Karabiner). Private wallpaper packs on request: one Wallhaven API line
+(see Background row).
 
 ## README / docs layout (2026-09-14 evening)
 
