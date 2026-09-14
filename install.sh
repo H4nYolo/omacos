@@ -3,6 +3,7 @@
 #
 #   ./install.sh            full run: brew bundle, macOS defaults, stow, services
 #   ./install.sh --no-brew  skip brew bundle
+#   ./install.sh --yes      skip the confirmation prompt
 #
 # Idempotent: re-running only re-links and re-applies settings.
 set -euo pipefail
@@ -13,8 +14,37 @@ PACKAGES=(aerospace karabiner tmux zsh ghostty sketchybar borders nvim git sol o
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 
+NO_BREW=0; YES=0
+for arg in "$@"; do
+  case "$arg" in
+    --no-brew) NO_BREW=1 ;;
+    --yes|-y)  YES=1 ;;
+    *) echo "unknown option: $arg" >&2; exit 2 ;;
+  esac
+done
+
+# --- 0. Say what is about to happen -------------------------------------------
+if [[ $YES -eq 0 ]]; then
+  cat <<EOM
+
+  omacos is a personal, unfinished setup — tested on exactly one Mac. This script will:
+
+    - install/upgrade the packages in Brewfile (AeroSpace, sketchybar, borders, Karabiner, Ghostty, ...)
+    - remap Caps Lock: held = ctrl+alt+cmd ("Super"), tapped = Escape (Karabiner)
+    - hand window management to AeroSpace and hide the macOS menu bar
+    - replace ~/.tmux.conf, ~/.zshrc, ~/.p10k.zsh and the Ghostty, nvim, git, sketchybar, borders
+      configs with symlinks into this repo (existing files are moved to $ARCHIVE, not deleted)
+    - start sketchybar and borders as brew services and launch AeroSpace, Karabiner, Sol
+
+  Undoing it is manual: unstow the packages, restore the archive, uninstall the packages.
+
+EOM
+  read -r -p "  Continue? [y/N] " answer
+  [[ "$answer" == [yY]* ]] || { echo "  aborted, nothing changed"; exit 1; }
+fi
+
 # --- 1. Homebrew ---------------------------------------------------------------
-if [[ "${1:-}" != "--no-brew" ]]; then
+if [[ $NO_BREW -eq 0 ]]; then
   if ! command -v brew >/dev/null; then
     echo "Homebrew is required: https://brew.sh" >&2
     exit 1

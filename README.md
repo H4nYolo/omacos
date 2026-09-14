@@ -1,5 +1,18 @@
 # omacos
 
+> **Status: personal fun project, very much in the testing phase.**
+> This is my own machine's setup, published as-is. It is not a product, not finished, not
+> tested on any Mac but mine (a Mac Studio with two monitors, a Kinesis keyboard, macOS 26 Tahoe),
+> and it changes daily. Nothing here is endorsed by or affiliated with Omarchy or Basecamp.
+>
+> **Read before running `install.sh`:** it rewires your keyboard (Caps Lock becomes a modifier,
+> Escape on tap), takes over window management (AeroSpace), hides the macOS menu bar, replaces
+> your tmux, zsh, Ghostty, nvim and git configs (the old ones are moved to `~/.config-archive/`,
+> not deleted), installs a dozen brew packages and starts several background services.
+> Restoring everything is possible but manual. Read the script, use it for ideas, copy what you
+> like into your own dotfiles, and only run it on a machine you are happy to reset.
+> No warranty of any kind; see `LICENSE`.
+
 Omarchy look & feel on macOS. A port of the terminal and tiling experience of
 [Omarchy](https://github.com/basecamp/omarchy) — Hyprland keybindings, tmux, shell
 aliases, Tokyo Night — onto AeroSpace, Ghostty, tmux, zsh and Karabiner.
