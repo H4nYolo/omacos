@@ -49,6 +49,19 @@ private let json = """
         #expect(rows.map(\.label) == ["Bar  [on]", "Notes", "tmux keys"])
     }
 
+    @Test func descendantsCarryBreadcrumbsAndPaths() throws {
+        let menu = try JSONDecoder().decode(MenuFile.self, from: Data(json.utf8))
+        let all = menu.descendants(below: [])!
+        #expect(all.map(\.label) == ["Apps", "Toggle", "Toggle › Bar", "Toggle › Stop", "Toggle › Notes", "Toggle › tmux keys"])
+        #expect(all[2].path == ["toggle"] && all[2].depth == 1)
+        #expect(all[1].path == [] && all[1].depth == 0)
+        #expect(menu.descendants(below: ["toggle"])?.map(\.label) == ["Bar", "Stop", "Notes", "tmux keys"])
+        #expect(menu.descendants(below: ["nope"]) == nil)
+        let resolved = all.resolved(with: FakeShell())
+        #expect(resolved.map(\.label) == ["Apps", "Toggle", "Toggle › Bar  [on]", "Toggle › Notes", "Toggle › tmux keys"])
+        #expect(resolved[2].path == ["toggle"])
+    }
+
     @Test func entryWithoutKindFails() {
         let bad = Data(#"{ "entries": [ { "label": "broken" } ] }"#.utf8)
         #expect(throws: (any Error).self) { try JSONDecoder().decode(MenuFile.self, from: bad) }
@@ -58,7 +71,7 @@ private let json = """
         let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
             .appendingPathComponent("omacos/.config/omacos/menu.json")
         let menu = try MenuFile.load(from: url)
-        #expect(menu.entries.count == 12)
+        #expect(menu.entries.count == 13)
         #expect(menu.level(at: ["capture"])?.count == 9)
     }
 }

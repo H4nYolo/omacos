@@ -73,6 +73,27 @@ public extension MenuFile {
         }
         return current
     }
+
+    /// Every entry at or below the level at `path`, in file order, depth first. Entries below the
+    /// level carry a breadcrumb label ("Style › Background") so a search from the top finds them.
+    /// nil if the path is unknown.
+    func descendants(below path: [String]) -> [ResolvedEntry]? {
+        guard let entries = level(at: path) else { return nil }
+        var out: [ResolvedEntry] = []
+        func walk(_ entries: [MenuEntry], path: [String], crumbs: [String]) {
+            for e in entries {
+                let label = (crumbs + [e.label]).joined(separator: MenuFile.crumbSeparator)
+                out.append(ResolvedEntry(entry: e, label: label, path: path, depth: crumbs.count))
+                if case .menu(let id, let children) = e.kind {
+                    walk(children, path: path + [id], crumbs: crumbs + [e.label])
+                }
+            }
+        }
+        walk(entries, path: path, crumbs: [])
+        return out
+    }
+
+    static let crumbSeparator = " › "
 }
 
 /// A shell runner, injectable so tests need no /bin/sh.
@@ -81,21 +102,36 @@ public protocol ShellRunner {
     func run(_ command: String) -> (output: String, status: Int32)
 }
 
+/// A Menu entry as shown in a level: its display label (breadcrumb and state included), the
+/// level it lives in (`path`, submenu ids from the root) and how far below the opened level it sits.
 public struct ResolvedEntry: Equatable {
     public let entry: MenuEntry
     public let label: String
-    public init(entry: MenuEntry, label: String) { self.entry = entry; self.label = label }
-    public static func == (a: ResolvedEntry, b: ResolvedEntry) -> Bool { a.label == b.label && a.entry.kind == b.entry.kind }
+    public let path: [String]
+    public let depth: Int
+    public init(entry: MenuEntry, label: String, path: [String] = [], depth: Int = 0) {
+        self.entry = entry; self.label = label; self.path = path; self.depth = depth
+    }
+    public static func == (a: ResolvedEntry, b: ResolvedEntry) -> Bool {
+        a.label == b.label && a.entry.kind == b.entry.kind && a.path == b.path
+    }
 }
 
 public extension Array where Element == MenuEntry {
     /// Evaluate `when` (drop) and `state` (append " [output]") with the given shell.
     func resolved(with shell: ShellRunner) -> [ResolvedEntry] {
-        compactMap { e in
-            if let w = e.when, shell.run(w).status != 0 { return nil }
-            var label = e.label
-            if let s = e.state { label += "  [\(shell.run(s).output)]" }
-            return ResolvedEntry(entry: e, label: label)
+        map { ResolvedEntry(entry: $0, label: $0.label) }.resolved(with: shell)
+    }
+}
+
+public extension Array where Element == ResolvedEntry {
+    /// Evaluate `when` (drop) and `state` (append " [output]") with the given shell, keeping labels and paths.
+    func resolved(with shell: ShellRunner) -> [ResolvedEntry] {
+        compactMap { r in
+            if let w = r.entry.when, shell.run(w).status != 0 { return nil }
+            var label = r.label
+            if let s = r.entry.state { label += "  [\(shell.run(s).output)]" }
+            return ResolvedEntry(entry: r.entry, label: label, path: r.path, depth: r.depth)
         }
     }
 }

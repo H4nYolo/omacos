@@ -10,7 +10,8 @@ enum RowIcon {
 enum RowAction {
     case app(AppItem)
     case launcherAction(LauncherAction)
-    case entry(MenuEntry)
+    /// a Menu entry and the level it lives in (deep search shows entries below the opened level)
+    case entry(MenuEntry, path: [String])
     case emoji(String)
     case clip(URL)
     case text
@@ -66,7 +67,8 @@ final class PanelModel: ObservableObject {
     private var apps: [AppItem] = []
     private var history = LaunchHistory()
     private var menu: MenuFile?
-    private var level: [ResolvedEntry] = []
+    /// the opened level and everything below it (depth 0 = the level itself), breadcrumb labels
+    private var tree: [ResolvedEntry] = []
     private var levelGeneration = 0
     private var iconCache: [String: NSImage] = [:]
     private var emojis: [EmojiEntry] = []
@@ -138,17 +140,17 @@ final class PanelModel: ObservableObject {
             refilter()
         case .menu(let path):
             menu = try? MenuFile.load(from: menuURL)
-            let entries = menu?.level(at: path) ?? []
-            level = entries.map { ResolvedEntry(entry: $0, label: $0.label) }
+            let entries = menu?.descendants(below: path) ?? []
+            tree = entries
             refilter()
-            guard entries.contains(where: { $0.state != nil || $0.when != nil }) else { return }
+            guard entries.contains(where: { $0.entry.state != nil || $0.entry.when != nil }) else { return }
             levelGeneration += 1
             let generation = levelGeneration
             DispatchQueue.global(qos: .userInitiated).async {
                 let resolved = entries.resolved(with: SystemShell())
                 DispatchQueue.main.async { [weak self] in
                     guard let self, generation == self.levelGeneration else { return }
-                    self.level = resolved
+                    self.tree = resolved
                     self.refilter()
                 }
             }
@@ -187,9 +189,11 @@ final class PanelModel: ObservableObject {
             let ranked = Matcher.rank(launcherItems(), query: query, label: { $0.label }, rank: { history.count($0.label) })
             rows = ranked.enumerated().map { i, item in Row(id: i, icon: item.icon, label: item.label, action: item.action) }
         case .menu:
-            // file order while nothing is typed, matched order otherwise
-            let ranked = query.isEmpty ? level : Matcher.rank(level, query: query, label: { $0.label })
-            rows = ranked.enumerated().map { i, r in Row(id: i, icon: .glyph(r.entry.icon), label: r.label, action: .entry(r.entry)) }
+            // the level in file order while nothing is typed; typing searches the whole tree below
+            // it, matched order, entries of the level itself ahead of deeper ones on equal scores
+            let ranked = query.isEmpty ? tree.filter { $0.depth == 0 }
+                                       : Matcher.rank(tree, query: query, label: { $0.label }, rank: { -$0.depth })
+            rows = ranked.enumerated().map { i, r in Row(id: i, icon: .glyph(r.entry.icon), label: r.label, action: .entry(r.entry, path: r.path)) }
         case .emoji:
             let ranked = query.isEmpty ? emojis : Matcher.rank(emojis, query: query, label: { $0.searchText })
             rows = ranked.prefix(400).enumerated().map { i, e in Row(id: i, icon: .glyph(e.emoji), label: e.name, action: .emoji(e.emoji)) }
@@ -240,8 +244,8 @@ final class PanelModel: ObservableObject {
         case .launcherAction(let action):
             bump(row.label)
             return .hideThen { SystemShell.detach(action.command) }
-        case .entry(let entry):
-            return activate(entry)
+        case .entry(let entry, let path):
+            return activate(entry, at: path)
         case .emoji(let emoji):
             return .hideThen { Self.pasteboard(emoji); SystemShell.detach("sleep 0.15; omacos-paste") }
         case .clip(let url):
@@ -287,8 +291,9 @@ final class PanelModel: ObservableObject {
         return .hideThen { NSWorkspace.shared.open(url) }
     }
 
-    private func activate(_ entry: MenuEntry) -> Outcome {
-        guard case .menu(let path) = mode else { return .keepOpen }
+    /// `path` is the level the entry lives in: a submenu opens below it, a view returns there on Backspace.
+    private func activate(_ entry: MenuEntry, at path: [String]) -> Outcome {
+        guard case .menu = mode else { return .keepOpen }
         switch entry.kind {
         case .menu(let id, _):
             open(.menu(path: path + [id]))

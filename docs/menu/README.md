@@ -21,8 +21,9 @@ needs a terminal (brew pickers, upgrades, notes, the style pickers) and which ke
 
 ## The menu
 
-Omarchy's menu as a tree. `Backspace` on an empty query goes up a level, also out of the pickers;
-`Esc` closes. The tree is data: `~/.config/omacos/menu.json` (icon, label, and one of `menu`,
+Omarchy's menu as a tree. Typing searches everything below the current level, so `back` at the
+top finds `Style › Background` without opening Style first; `Enter` on such a row acts as if you had
+walked there. `Backspace` on an empty query goes up a level, also out of the pickers; `Esc` closes. The tree is data: `~/.config/omacos/menu.json` (icon, label, and one of `menu`,
 `view`, `popup`, `run`; optional `state` and `when` shell commands for dynamic labels and
 visibility). Edit it to add entries; `omacos-menu <route> --list` shows what a level resolves to.
 
