@@ -1,4 +1,4 @@
-![omacos: Super + Space launcher over the Tokyo Night wallpaper, sketchybar on top](docs/screenshot-launcher.jpg)
+![omacos: Super + Space launcher panel over an Omarchy wallpaper, sketchybar on top](docs/screenshot-launcher.jpg)
 
 # omacos
 
@@ -173,6 +173,8 @@ names of the theme's wallpapers. `omacos-theme set <name>` renders the templates
   `~/.local/share/omacos/backgrounds/<name>/` and set on every display (the rest follows in the background)
 - macOS switches to light or dark appearance to match the theme
 
+![Style → Theme: the picker in the popup with the palette of the highlighted theme](docs/screenshot-theme.jpg)
+
 `omacos-theme list | current | set <name> | next | menu`. The menu's **Style → Theme** entry opens a
 picker with colour swatches. **Style → Background** picks one of the theme's wallpapers with an image
 preview (chafa, kitty graphics in the popup), `Super + Shift + B` or **Next background** cycles them
@@ -213,6 +215,8 @@ Right, left to right:
 `install.sh` applies Tokyo Night (`OMACOS_THEME=<name> ./install.sh` for another one), which also sets the wallpaper on every display.
 
 ## Menu, launcher and uninstall
+
+![Super + Shift + Space: the menu panel](docs/screenshot-menu.jpg)
 
 `Super + Space` and `Super + Shift + Space` open the **native panel**, `omacos-shell` (`shell/`,
 Swift, built by `install.sh`): one resident process that shows a compact floating window centred
