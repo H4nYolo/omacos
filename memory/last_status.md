@@ -66,7 +66,7 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 Tracked as GitHub issues (`gh issue list`): #5 theme switcher, #6 background switcher, #7 font
 switcher (build in that order, "Kosmetik 8-10"), #8 decide on Sol, #9 verification checklist for
 things a script cannot test (recording, OCR, paste, mic/camera, logout/login, upstream sketchybar
-issue). Open a new issue for every new piece of work; close it with the commit that finishes it.
+issue), #10 omacos-shell = native Swift panel replacing the fzf popups for launcher/menu/emoji/clipboard/keys (decided: Swift, not Rust; grill session first, logic stays in the scripts). Open a new issue for every new piece of work; close it with the commit that finishes it.
 
 ## Archive
 
