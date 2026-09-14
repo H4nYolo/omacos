@@ -38,7 +38,8 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 | Shell | OMZ + p10k kept, `zsh/.config/zsh/omarchy.zsh` = Omarchy aliases + `tdl`/`tdlm`/`tsl` (`ix` = `tdl cx`). zoxide replaced tiny-dc. Secrets + machine PATH in `~/.zshrc.local` (never committed) |
 | tmux | Omarchy config, prefix Ctrl+Space (Ctrl+b secondary), + Ctrl+hjkl navigator. tmux 3.7c |
 | Theme | Tokyo Night hard-wired everywhere; CaskaydiaMono Nerd Font; wallpaper downloaded by install.sh (gitignored). No theme switching yet |
-| Started at login by AeroSpace | `after-startup-command`: `omacos-popupd`, `omacos-media-stream`, `omacos-idle`, `omacos-clipboardd`. sketchybar + borders are brew services |
+| Dwindle | `omacos-dwindled` polls `aerospace list-windows --all` every 0.3 s; new tiled window whose parent container holds ≥3 windows → `join-with --window-id <id> left|up` (nested container gets the opposite orientation via normalization). First window of a workspace → `layout --root h_tiles` because AeroSpace keeps the last root orientation after flattening. `on-window-detected` accepts `exec-and-forget` but gives no window id, hence the poller |
+| Started at login by AeroSpace | `after-startup-command`: `omacos-popupd`, `omacos-media-stream`, `omacos-idle`, `omacos-clipboardd`, `omacos-dwindled`. sketchybar + borders are brew services |
 
 ## Gotchas learned the hard way
 

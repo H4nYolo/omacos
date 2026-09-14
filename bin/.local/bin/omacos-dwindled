@@ -1,0 +1,36 @@
+#!/bin/sh
+# omacos-dwindled — Hyprland's dwindle layout for AeroSpace. AeroSpace puts every new
+# window next to its siblings in the same container, so three windows end up side by
+# side. Hyprland instead splits the focused window in the opposite direction. This
+# watcher polls for new tiled windows; when a new window joins a container that already
+# holds two or more windows, it is joined with its neighbour into a nested container,
+# which AeroSpace's normalization gives the opposite orientation.
+# Started by AeroSpace at login; runs forever. Kill it to get plain AeroSpace behaviour.
+PATH="/opt/homebrew/bin:$PATH"
+known="$(aerospace list-windows --all --format '%{window-id}' 2>/dev/null)"
+while true; do
+  sleep 0.3
+  now="$(aerospace list-windows --all --format '%{window-id}|%{workspace}|%{window-parent-container-layout}' 2>/dev/null)" || continue
+  ids="$(printf '%s\n' "$now" | cut -d'|' -f1)"
+  new="$(printf '%s\n' "$ids" | grep -vxF -f <(printf '%s\n' "$known") 2>/dev/null)"
+  known="$ids"
+  [ -n "$new" ] || continue
+  for id in $new; do
+    line="$(printf '%s\n' "$now" | grep "^$id|")"
+    ws="${line#*|}"; ws="${ws%%|*}"; layout="${line##*|}"
+    case "$layout" in
+      h_tiles) dir=left ;;
+      v_tiles) dir=up ;;
+      *) continue ;;   # floating, accordion: leave alone
+    esac
+    # siblings = windows in that workspace whose parent has the same layout (depth-0 approximation)
+    n="$(printf '%s\n' "$now" | grep "|$ws|$layout\$" | wc -l | tr -d ' ')"
+    # first window of a workspace: AeroSpace keeps whatever orientation the root had last
+    # (a flattened vertical pair leaves it vertical) — start every workspace side by side
+    [ "$n" -eq 1 ] && aerospace layout --window-id "$id" --root h_tiles 2>/dev/null
+    [ "$n" -ge 3 ] || continue
+    aerospace join-with --window-id "$id" "$dir" 2>/dev/null || {
+      [ "$dir" = left ] && aerospace join-with --window-id "$id" right 2>/dev/null || aerospace join-with --window-id "$id" down 2>/dev/null
+    }
+  done
+done

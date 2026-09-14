@@ -124,6 +124,15 @@ only the shell part. `Esc` closes it.
 Sticky windows, scrolling layout, pseudo-tiling, gap toggling and
 focus-follows-mouse have no AeroSpace equivalent.
 
+## Dwindle layout
+
+AeroSpace has no dwindle: every new window is put next to its siblings, so three windows end up
+side by side. `omacos-dwindled` (started by AeroSpace) watches for new tiled windows and, whenever
+one joins a container that already holds two or more, joins it with its neighbour into a nested
+container, which AeroSpace's normalization gives the opposite orientation — Hyprland's spiral:
+first split side by side, the next one top/bottom, and so on. A fresh workspace always starts
+side by side. Kill the watcher to get plain AeroSpace behaviour; `Super + J` still toggles a split by hand.
+
 ## Workspaces & monitors
 
 Workspaces `1-5` and `scratch` live on the main display, `6-10` (keys `6 7 8 9 0`) on the second
