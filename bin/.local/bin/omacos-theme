@@ -1,5 +1,5 @@
 #!/bin/bash
-# omacos-theme <list|current|set <name>|next|menu|preview <name>|dir <name>> — switch the theme (colours, wallpaper, appearance)
+# omacos-theme <list|current|set <name>|next|menu|preview <name>|dir <name>|backgrounds <name>> — switch the theme (colours, wallpaper, appearance)
 #
 # A theme is a directory with a colors.toml (Omarchy's format), found in
 # ~/.config/omacos/themes/<name> (shipped) or ~/.local/share/omacos/themes/<name> (yours).
@@ -101,6 +101,14 @@ fetch_background() {
   [[ -f $out ]] && echo "$out"
 }
 
+# Download every background of a theme (for omacos-background's cycling).
+fetch_all_backgrounds() {
+  local name="$1" dir file
+  dir=$(theme_dir "$name") || return 1
+  [[ -s "$dir/backgrounds.txt" ]] || return 0
+  while IFS= read -r file; do [[ -n $file ]] && fetch_background "$name" "$file" >/dev/null; done <"$dir/backgrounds.txt"
+}
+
 set_background() {
   local name="$1" dir first file path
   dir=$(theme_dir "$name") || return 1
@@ -109,8 +117,8 @@ set_background() {
   path=$(fetch_background "$name" "$first") || { echo "omacos-theme: could not download the wallpaper, keeping the old one" >&2; return 0; }
   ln -sfn "$path" "$STATE/background"
   osascript -e "tell application \"System Events\" to set picture of every desktop to \"$path\"" >/dev/null 2>&1 || true
-  # the rest of the theme's backgrounds, for cycling, in the background
-  ( while IFS= read -r file; do [[ -n $file ]] && fetch_background "$name" "$file" >/dev/null; done <"$dir/backgrounds.txt" ) >/dev/null 2>&1 &
+  # the rest of the theme's backgrounds, for omacos-background, in the background
+  ( trap '' HUP; fetch_all_backgrounds "$name" ) >/dev/null 2>&1 </dev/null &
   disown
 }
 
@@ -170,6 +178,7 @@ case "${1:-}" in
     nxt=$(list | awk -v cur="$cur" '{ if (NR == 1) first = $1; if (found && !printed) { print; printed = 1 }; if ($1 == cur) found = 1 } END { if (!printed && NR > 0) print first }')
     [[ -n $nxt ]] && set_theme "$nxt" ;;
   preview) preview "${2:?name}" ;;
+  backgrounds) fetch_all_backgrounds "${2:-$(current)}" ;;
   menu) menu ;;
   *) sed -n 2p "$0"; exit 1 ;;
 esac

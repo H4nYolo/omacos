@@ -3,7 +3,7 @@
 Read this first when resuming work on this repo (new session or after a context compact).
 Keep it current: update it at the end of every working session.
 
-**Last updated:** 2026-09-14 evening, session 4 (theme switcher #5 done; before that: native Swift panel #10, menu.json, disclaimer, email leak fixed, dwindle, notes, glow borders) (other-monitor workspace marker, Omarchy menu with Backspace = back, brew picker, clipboard, emoji, capture, help with aliases/tools, weather-location, Super+W quits last window, tdl <dir>, Sol hotkey conflict fixed, glow borders). Open work is in GitHub issues #5-#9.
+**Last updated:** 2026-09-14 evening, session 4 (theme switcher #5 and background switcher #6 done; before that: native Swift panel #10, menu.json, disclaimer, email leak fixed, dwindle, notes, glow borders) (other-monitor workspace marker, Omarchy menu with Backspace = back, brew picker, clipboard, emoji, capture, help with aliases/tools, weather-location, Super+W quits last window, tdl <dir>, Sol hotkey conflict fixed, glow borders). Open work is in GitHub issues #5-#9.
 
 ## What this is
 
@@ -40,6 +40,7 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 | Shell | OMZ + p10k kept, `zsh/.config/zsh/omarchy.zsh` = Omarchy aliases + `tdl`/`tdlm`/`tsl` (`ix` = `tdl cx`). zoxide replaced tiny-dc. Secrets + machine PATH in `~/.zshrc.local` (never committed) |
 | tmux | Omarchy config, prefix Ctrl+Space (Ctrl+b secondary), + Ctrl+hjkl navigator. tmux 3.7c |
 | Theme | `omacos-theme <list|current|set|next|menu|preview>` (#5, done 2026-09-14): 22 Omarchy palettes vendored as `omacos/.config/omacos/themes/<name>/colors.toml` (+ `neovim.lua`, `backgrounds.txt`), templates in `omacos/.config/omacos/themed/*.tpl` (`{{ key }}`, `{{ key_strip }}`, `{{ key_argb }}`, `{{ name }}`, `{{ mode }}`) rendered by `omacos-theme-colors` (awk port of Omarchy's fallback cascade) into `~/.local/state/omacos/theme/` (ghostty.conf, colors.sh, fzf.colors, panel.conf, neovim.lua, name, mode). Consumers: Ghostty `config-file = ?…/ghostty.conf` + OSC 4/10/11/12/17/19 written to every user tty for running windows (tmux status colours resolve against the outer Ghostty palette, so the OSC must hit the *client* tty — writing to all ttys covers it); sketchybar `colors.sh` sources the rendered file (workspaces use `$ACCENT`); `bordersrc` sources it and re-runs `borders` live; `omacos-fzf` reads `fzf.colors` (every picker goes through it now); Panel `Theme.reload()` on every show; nvim `lua/plugins/theme.lua` dofiles the rendered spec (next start); wallpaper = first of `backgrounds.txt`, downloaded from the Omarchy repo to `~/.local/share/omacos/backgrounds/<theme>/` (webp→jpg via sips, rest downloaded in background for #6), `~/.local/state/omacos/background` symlink; macOS appearance follows `mode`. Menu: Style → Theme (popup `theme` → `omacos-theme menu`, fzf with swatch preview). Tokyo Night stays the fallback in every config. `install.sh` runs `omacos-theme set ${OMACOS_THEME:-tokyo-night}` |
+| Background | `omacos-background <next|prev|set|current|list|menu>` (#6, done 2026-09-14): cycles the jpg/png files in `~/.local/share/omacos/backgrounds/<current theme>/` (name order, wrap-around), `menu` = fzf in the Popup with `chafa -f kitty` image preview (Ghostty renders kitty graphics inside fzf's preview window). Super+Shift+B = next (Omarchy's Super+Ctrl+Space, re-homed); menu Style → Background / Next background. `omacos-theme backgrounds <name>` downloads a theme's whole set synchronously (the async download after `theme set` runs with `trap '' HUP` so a closing popup does not kill it) |
 | Dwindle | `omacos-dwindled` polls `aerospace list-windows --all` every 0.3 s; new tiled window whose parent container holds ≥3 windows → `join-with --window-id <id> left|up` (nested container gets the opposite orientation via normalization). First window of a workspace → `layout --root h_tiles` because AeroSpace keeps the last root orientation after flattening. `on-window-detected` accepts `exec-and-forget` but gives no window id, hence the poller |
 | Started at login by AeroSpace | `after-startup-command`: `omacos-popupd`, `omacos-media-stream`, `omacos-idle`, `omacos-clipboardd`, `omacos-dwindled`, `omacos-shell`. sketchybar + borders are brew services |
 
@@ -66,19 +67,19 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 
 ## Open / next
 
-Tracked as GitHub issues (`gh issue list`): #5 theme switcher (done 2026-09-14), #6 background switcher, #7 font
-switcher (build in that order, "Kosmetik 8-10"), #8 decide on Sol, #9 verification checklist for
+Tracked as GitHub issues (`gh issue list`): #5 theme switcher and #6 background switcher (both done 2026-09-14), #7 font
+switcher (next, "Kosmetik 8-10"), #8 decide on Sol, #9 verification checklist for
 things a script cannot test (recording, OCR, paste, mic/camera, logout/login, upstream sketchybar
 issue), #10 omacos-shell = native Swift Panel (grilled 2026-09-14, decisions in #10 and ADRs 0001-0003; glossary in CONTEXT.md). Work packages: #11 menu.json (done), #12 Panel v1 launcher+menu (done 2026-09-14), #13 Panel v2 emoji/clipboard/keys (done 2026-09-14). #10 closed. Verified by the user: paste after Enter, click outside, look. Still untested: logout/login with the panel in after-startup-command. Open a new issue for every new piece of work; close it with the commit that finishes it.
 
-## Next: background switcher (#6), then font switcher (#7)
+## Next: font switcher (#7)
 
-#6: `omacos-theme` already downloads every background of the theme and keeps `~/.local/state/omacos/background`;
-build `omacos-background <next|set|menu>` on top (Omarchy: Super+Ctrl+Space cycles → re-home to a Style menu entry
-and maybe Super+Shift+B), per-display option via `set picture of desktop N`. #7: font family in Ghostty, sketchybar
-(`FONT` in sketchybarrc), Panel `Theme.fontName`, tmux nothing; keep CaskaydiaMono as default; Omarchy's
-`omarchy-font-set` swaps the family in the terminal config and restarts. Light themes were tested (rose-pine flips
-macOS to light and back).
+Font family is hard-wired as CaskaydiaMono Nerd Font in `ghostty/.config/ghostty/config`, `sketchybar/.config/sketchybar/sketchybarrc`
+(`FONT=`), `shell/Sources/omacos-shell/Theme.swift` (`fontName`), and nvim/tmux take it from the terminal. Plan: `omacos-font
+<list|current|set|menu>` over the installed Nerd Fonts (`fc-list` or `system_profiler SPFontsDataType` — the Brewfile installs
+several `font-*-nerd-font` casks), a `font` file in `~/.local/state/omacos/`, Ghostty `font-family` via a second optional
+include (`~/.local/state/omacos/theme/font.conf` or a `font.conf` next to it), sketchybar sources it, the Panel reads
+`panel.conf` `font=`. Menu: Style → Font. Then #8 (Sol) and #9 (verification) remain.
 
 ## Archive
 

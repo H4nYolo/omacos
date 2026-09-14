@@ -19,6 +19,7 @@ case "$req" in
   brew)    brew update && brew upgrade --formula && brew upgrade --cask; printf '\n done — press Enter to close'; read -r _ ;;
   outdated) brew outdated --verbose; printf '\n press Enter to close'; read -r _ ;;
   theme)   exec omacos-theme menu ;;
+  background) exec omacos-background menu ;;
   audio)  dev="$(SwitchAudioSource -a -t output | omacos-fzf --prompt='󰓃  ')" \
           && [ -n "$dev" ] && SwitchAudioSource -t output -s "$dev" >/dev/null ;;
   *)      exec omacos-launcher ;;

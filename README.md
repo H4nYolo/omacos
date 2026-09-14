@@ -110,7 +110,7 @@ arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resiz
 
 `Alt + Tab` cycles windows on the workspace.
 
-**Menus** — `Shift + Space` omacos menu · `Shift + C` capture · `Shift + E` emoji · `Shift + V` clipboard history
+**Menus** — `Shift + Space` omacos menu · `Shift + C` capture · `Shift + E` emoji · `Shift + V` clipboard history · `Shift + B` next wallpaper
 
 **Help** — `Super + K` opens a searchable list of every binding (AeroSpace and tmux), generated
 from the config itself, plus the shell aliases, tmux layouts (`ix`, `tdl`, `tsl`, …) and every
@@ -133,6 +133,7 @@ only the shell part. `Esc` closes it.
 | `Super + Space` Omarchy menu / `Super + Alt + Space` apps | `Super + Shift + Space` / `Super + Space` |
 | `Super + Ctrl + C` capture · `Super + Ctrl + E` emoji · `Super + Ctrl + V` clipboard | `Super + Shift + C` · `E` · `V` |
 | `Super + Alt + K` tmux keybindings | `Super + Shift + K` |
+| `Super + Ctrl + Space` next background | `Super + Shift + B` |
 | `Super + Shift + N` editor · `Super + Shift + W` Omawrite | `Super + Shift + W` editor · `Super + Shift + N` quick notes |
 
 ### Not portable
@@ -173,7 +174,10 @@ names of the theme's wallpapers. `omacos-theme set <name>` renders the templates
 - macOS switches to light or dark appearance to match the theme
 
 `omacos-theme list | current | set <name> | next | menu`. The menu's **Style → Theme** entry opens a
-picker with colour swatches. Tokyo Night is the default and stays hard-wired as the fallback in every
+picker with colour swatches. **Style → Background** picks one of the theme's wallpapers with an image
+preview (chafa, kitty graphics in the popup), `Super + Shift + B` or **Next background** cycles them
+(`omacos-background next | prev | set <file> | menu`). Your own pictures go into
+`~/.local/share/omacos/backgrounds/<theme>/`. Tokyo Night is the default and stays hard-wired as the fallback in every
 config, so nothing breaks before the first `set`. Your own theme: a directory with a `colors.toml`
 under `~/.local/share/omacos/themes/<name>/`.
 
@@ -222,7 +226,7 @@ the native panel of issue #10.
 - **Emoji** (`Super + Shift + E`) — search by name or keyword, `Enter` pastes
 - **Notes** (`Super + Shift + N`) — Raycast-Notes-style scratch pad: `~/notes/quick.md` (path in `~/.config/omacos/notes-file`) in nvim,
   cursor under a fresh timestamp in insert mode, every keystroke saved; `Esc` `:q` or just closing the panel keeps everything
-- **Style** — theme picker (see [Themes](#themes)); background and font switchers will join it
+- **Style** — theme and background pickers (see [Themes](#themes)); the font switcher will join it
 - **Toggle** — screensaver on idle, bar, borders, microphone mute
 - **Install** — `omacos-pkg-install`: every Homebrew formula and cask in fzf with `brew info` as preview, `Tab` multi-select,
   `Enter` installs right there. Or the App Store

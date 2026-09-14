@@ -1,0 +1,73 @@
+#!/bin/bash
+# omacos-background <next|prev|set <file>|current|list|menu> — switch the wallpaper within the current theme
+#
+# Backgrounds of the current theme live in ~/.local/share/omacos/backgrounds/<theme>/ (downloaded
+# by omacos-theme from the Omarchy repo; drop your own jpg/png there too). `next`/`prev` cycle
+# in name order on every display, `menu` is a picker with image preview (chafa) in the Popup.
+# The current one is the symlink ~/.local/state/omacos/background.
+set -u
+
+STATE="$HOME/.local/state/omacos"
+LINK="$STATE/background"
+
+theme=$(omacos-theme current)
+dir="$HOME/.local/share/omacos/backgrounds/$theme"
+
+list() {
+  [[ -d $dir ]] || return 0
+  find "$dir" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.heic' \) | sort
+}
+
+current() { readlink "$LINK" 2>/dev/null; }
+
+set_background() {
+  local path="$1"
+  [[ -f $path ]] || { echo "omacos-background: no such file: $path" >&2; exit 1; }
+  osascript -e "tell application \"System Events\" to set picture of every desktop to \"$path\"" >/dev/null 2>&1 || true
+  mkdir -p "$STATE"
+  ln -sfn "$path" "$LINK"
+}
+
+ensure() {
+  [[ -n $(list) ]] && return 0
+  omacos-theme backgrounds "$theme" >/dev/null 2>&1
+  [[ -n $(list) ]] || { omacos-notify "Background" "No backgrounds for $theme"; exit 1; }
+}
+
+cycle() {
+  local step="$1" cur i n
+  ensure
+  local -a all
+  while IFS= read -r line; do all+=("$line"); done < <(list)
+  n=${#all[@]}
+  cur=$(current)
+  i=-1
+  for idx in "${!all[@]}"; do [[ ${all[$idx]} == "$cur" ]] && { i=$idx; break; }; done
+  if (( i == -1 )); then i=0; else i=$(( (i + step + n) % n )); fi
+  set_background "${all[$i]}"
+}
+
+menu() {
+  local cur choice
+  ensure
+  cur=$(basename "$(current)" 2>/dev/null)
+  choice=$(list | xargs -n1 basename | omacos-fzf --prompt='󰸉  background  ' \
+      --header="current: ${cur:-none}  ·  enter  apply  ·  esc  close" \
+      --preview="chafa -f kitty -s \${FZF_PREVIEW_COLUMNS}x\${FZF_PREVIEW_LINES} --animate off '$dir'/{}" \
+      --preview-window=right,60% \
+      --bind 'backward-eof:become(echo BACK)') || exit 0
+  case "$choice" in
+    BACK|"") exit 3 ;;
+  esac
+  set_background "$dir/$choice"
+}
+
+case "${1:-}" in
+  next) cycle 1 ;;
+  prev) cycle -1 ;;
+  set) set_background "${2:?file}" ;;
+  current) current ;;
+  list) list ;;
+  menu) menu ;;
+  *) sed -n 2p "$0"; exit 1 ;;
+esac
