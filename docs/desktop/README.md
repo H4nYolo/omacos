@@ -18,7 +18,9 @@ side by side. Kill the watcher to get plain AeroSpace behaviour; `Super + J` sti
 Workspaces `1-5` and `scratch` live on the main display, `6-10` (keys `6 7 8 9 0`) on the second
 one (`workspace-to-monitor-force-assignment` in `aerospace/.aerospace.toml`).
 Edit the monitor names there for your setup — `aerospace list-monitors` prints them.
-Citrix sessions (`.ica` files) are sent to workspace 10 by an `on-window-detected` rule.
+Some apps always open on a fixed workspace (`on-window-detected` rules in `aerospace/.aerospace.toml`):
+Telegram and Messages on `9`, Teams and Mail on `8`, Citrix sessions (`.ica` files) on `10`.
+Add your own with the app's bundle id from `aerospace list-windows --all --format '%{app-bundle-id} %{app-name}'`.
 
 `Super + G` turns a workspace into a group (AeroSpace's accordion): one window at a time, the
 others stacked behind it. It looks like fullscreen; `Super + G` again brings the tiles back.
