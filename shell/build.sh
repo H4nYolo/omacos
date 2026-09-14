@@ -4,8 +4,8 @@
 # Needs only the Command Line Tools. Called by install.sh; run it by hand after changing shell/.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
-swift build -c release 2>&1 | grep -E 'error|Build complete' || true
-BIN="$(swift build -c release --show-bin-path)/omacos-shell"
+swift build -c release --scratch-path .build/app 2>&1 | grep -E 'error|Build complete' || true
+BIN="$(swift build -c release --scratch-path .build/app --show-bin-path)/omacos-shell"
 [[ -x "$BIN" ]] || { echo "build failed" >&2; exit 1; }
 
 APP="$HOME/.local/share/omacos/omacos-shell.app"

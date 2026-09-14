@@ -15,20 +15,32 @@ struct PanelView: View {
 
             Rectangle().fill(Theme.border).frame(height: 1).padding(.horizontal, 12)
 
-            ScrollViewReader { proxy in
-                ScrollView(showsIndicators: false) {
-                    LazyVStack(alignment: .leading, spacing: 0) {
-                        ForEach(model.rows) { row in
-                            RowView(row: row, selected: row.id == model.selected)
-                                .id(row.id)
-                                .contentShape(Rectangle())
-                                .onTapGesture { model.selected = row.id; model.activateRequested?() }
+            HStack(spacing: 0) {
+                ScrollViewReader { proxy in
+                    ScrollView(showsIndicators: false) {
+                        LazyVStack(alignment: .leading, spacing: 0) {
+                            ForEach(model.rows) { row in
+                                RowView(row: row, selected: row.id == model.selected)
+                                    .id(row.id)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture { model.selected = row.id; model.activateRequested?() }
+                            }
                         }
+                        .padding(.vertical, 6)
                     }
-                    .padding(.vertical, 6)
+                    .onChange(of: model.selected) { _, new in proxy.scrollTo(new) }
+                    .onChange(of: model.rows.count) { _, _ in proxy.scrollTo(0) }
                 }
-                .onChange(of: model.selected) { _, new in proxy.scrollTo(new) }
-                .onChange(of: model.rows.count) { _, _ in proxy.scrollTo(0) }
+                if model.mode.hasPreview {
+                    Rectangle().fill(Theme.border).frame(width: 1).padding(.vertical, 8)
+                    ScrollView(showsIndicators: false) {
+                        Text(model.preview)
+                            .font(Theme.font(13)).foregroundColor(Theme.fg)
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                            .padding(12)
+                    }
+                    .frame(width: 400)
+                }
             }
 
             Text(model.footer)
@@ -49,13 +61,11 @@ struct RowView: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            Group {
-                switch row.icon {
-                case .glyph(let g): Text(g).foregroundColor(selected ? Theme.fg : Theme.accent)
-                case .image(let img): Image(nsImage: img).resizable().frame(width: 20, height: 20)
-                }
+            switch row.icon {
+            case .glyph(let g): Text(g).foregroundColor(selected ? Theme.fg : Theme.accent).frame(width: 24, alignment: .center)
+            case .image(let img): Image(nsImage: img).resizable().frame(width: 20, height: 20).frame(width: 24, alignment: .center)
+            case .none: EmptyView()
             }
-            .frame(width: 24, alignment: .center)
             Text(row.label).foregroundColor(Theme.fg).lineLimit(1)
             Spacer(minLength: 0)
         }

@@ -49,6 +49,12 @@ final class PanelController {
         case "menu":
             let route = parts.count > 1 ? parts[1] : "root"
             toggle(.menu(path: route == "root" ? [] : [route]))
+        case "emoji":
+            toggle(.emoji)
+        case "clipboard":
+            toggle(.clipboard)
+        case "keys":
+            toggle(.keys(section: parts.count > 1 ? parts[1] : "all"))
         case "hide":
             hide()
         case "reload":
@@ -70,8 +76,9 @@ final class PanelController {
         let mouse = NSEvent.mouseLocation
         let screen = NSScreen.screens.first { NSMouseInRect(mouse, $0.frame, false) } ?? NSScreen.main ?? NSScreen.screens[0]
         let area = screen.visibleFrame
-        let origin = NSPoint(x: area.midX - Self.size.width / 2, y: area.midY - Self.size.height / 2)
-        panel.setFrame(NSRect(origin: origin, size: Self.size), display: true)
+        let size = model.mode.size
+        let origin = NSPoint(x: area.midX - size.width / 2, y: area.midY - size.height / 2)
+        panel.setFrame(NSRect(origin: origin, size: size), display: true)
         panel.makeKeyAndOrderFront(nil)
         panel.orderFrontRegardless()
         if keyMonitor == nil {
@@ -122,6 +129,7 @@ final class PanelController {
             default: return true
             }
         }
+        if flags.contains(.option) && chars == "c" { perform(model.clearAll()); return true }
         if flags.contains(.command) { return false }
         if let text = event.characters, !text.isEmpty, !text.unicodeScalars.contains(where: { $0.value < 32 }) {
             model.append(text)

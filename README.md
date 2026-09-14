@@ -179,9 +179,11 @@ Right, left to right:
 Swift, built by `install.sh`): one resident process that shows a compact floating window centred
 on the monitor under the mouse — no process start, app icons from macOS, the app you were in keeps
 focus. `Esc` or the same hotkey closes it, another view's hotkey switches in place, `Backspace`
-on an empty query goes up a level, a click outside closes. The same views also exist as fzf lists
-in the popup terminal (`omacos-launcher`, `omacos-menu`), which the panel opens for anything that
-needs a terminal (brew pickers, upgrades, notes) and which keep working over SSH.
+on an empty query goes up a level, a click outside closes. Emoji (`Super + Shift + E`), clipboard
+history (`Super + Shift + V`, with a preview column) and the keybindings list (`Super + K`, `Super + Shift + K`
+for tmux only) are views of the same panel. The same views also exist as fzf lists in the popup terminal
+(`omacos-launcher`, `omacos-menu`, `omacos-menu-emoji`, `omacos-clipboard`, `omacos-keys`), which the panel
+opens for anything that needs a terminal (brew pickers, upgrades, notes) and which keep working over SSH.
 
 The menu is Omarchy's menu as a tree (`Backspace` on an empty query goes up a level, also out of the pickers; `Esc` closes).
 The tree is data: `~/.config/omacos/menu.json` (icon, label, and one of `menu`, `view`, `popup`, `run`;

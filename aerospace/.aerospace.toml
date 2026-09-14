@@ -195,11 +195,11 @@ ctrl-alt-cmd-shift-n     = 'exec-and-forget omacos-popup notes'                 
 ctrl-alt-cmd-shift-d     = 'exec-and-forget open -na Ghostty --args -e lazydocker'                         # Super + Shift + D  Docker (lazydocker)
 ctrl-alt-cmd-shift-a     = 'exec-and-forget open -a NeoHtop'                                               # Super + Shift + A  Activity (NeoHtop)
 ctrl-alt-cmd-shift-g     = 'exec-and-forget open -a Telegram'                                              # Super + Shift + G  Messenger (Telegram)
-ctrl-alt-cmd-k           = 'exec-and-forget omacos-popup keys'       # Super + K  Show keybindings (this help)
-ctrl-alt-cmd-shift-k     = 'exec-and-forget omacos-popup "keys tmux"'     # Super + Shift + K  tmux keybindings (Omarchy: Super+Alt+K)
+ctrl-alt-cmd-k           = 'exec-and-forget omacos-shell keys'       # Super + K  Show keybindings (this help)
+ctrl-alt-cmd-shift-k     = 'exec-and-forget omacos-shell keys tmux'     # Super + Shift + K  tmux keybindings (Omarchy: Super+Alt+K)
 ctrl-alt-cmd-shift-space = 'exec-and-forget omacos-shell menu'            # Super + Shift + Space  omacos menu (Omarchy: Super+Space)
-ctrl-alt-cmd-shift-e     = 'exec-and-forget omacos-popup emoji'           # Super + Shift + E  Emoji picker (Omarchy: Super+Ctrl+E)
-ctrl-alt-cmd-shift-v     = 'exec-and-forget omacos-popup clipboard'       # Super + Shift + V  Clipboard history (Omarchy: Super+Ctrl+V)
+ctrl-alt-cmd-shift-e     = 'exec-and-forget omacos-shell emoji'           # Super + Shift + E  Emoji picker (Omarchy: Super+Ctrl+E)
+ctrl-alt-cmd-shift-v     = 'exec-and-forget omacos-shell clipboard'       # Super + Shift + V  Clipboard history (Omarchy: Super+Ctrl+V)
 ctrl-alt-cmd-shift-c     = 'exec-and-forget omacos-shell menu capture'  # Super + Shift + C  Capture: screenshot, recording, OCR, QR (Omarchy: Super+Ctrl+C)
 ctrl-alt-cmd-space       = 'exec-and-forget omacos-shell launcher'   # Super + Space  App launcher
 # Super + Escape System menu, Super + Ctrl + L lock (use cmd-ctrl-q) -> not bound

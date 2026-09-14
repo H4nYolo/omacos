@@ -4,8 +4,10 @@
 # tmux bindings, and shows everything in fzf. Super+K shows both, `omacos-keys tmux`
 # (Super+Shift+K) only tmux, `omacos-keys aerospace` only the window manager,
 # `omacos-keys shell` the aliases, tmux layouts (tdl/ix/…) and omacos-* commands.
+# `--list` prints the lines instead of opening fzf (the native Panel reads them).
 PATH="/opt/homebrew/bin:$PATH"
-only="${1:-all}"
+only=all; list=0
+for arg in "$@"; do case "$arg" in --list) list=1 ;; *) only="$arg" ;; esac; done
 CFG="$HOME/.aerospace.toml"
 
 aerospace_keys() {
@@ -93,7 +95,7 @@ shell_keys() {
   [ "$only" = all ] || [ "$only" = tmux ] && tmux_keys
   [ "$only" = all ] && echo
   [ "$only" = all ] || [ "$only" = shell ] && shell_keys
-} | fzf --reverse --exact --no-info --cycle --prompt='  ' --pointer='' --header-lines=2 \
+} | if [ "$list" -eq 1 ]; then cat; exit 0; else fzf --reverse --exact --no-info --cycle --prompt='  ' --pointer='' --header-lines=2 \
         --color='bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7,header:#565f89,info:#565f89' \
-        --bind 'esc:abort,enter:abort,backward-eof:become(echo BACK)' | grep -qx BACK && exit 3
+        --bind 'esc:abort,enter:abort,backward-eof:become(echo BACK)' | grep -qx BACK && exit 3; fi
 exit 0

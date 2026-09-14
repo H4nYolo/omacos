@@ -4,12 +4,16 @@ import OmacosCore
 enum RowIcon {
     case glyph(String)
     case image(NSImage)
+    case none
 }
 
 enum RowAction {
     case app(AppItem)
     case launcherAction(LauncherAction)
     case entry(MenuEntry)
+    case emoji(String)
+    case clip(URL)
+    case text
 }
 
 struct Row: Identifiable {
@@ -31,6 +35,18 @@ final class PanelModel: ObservableObject {
     enum Mode: Equatable {
         case launcher(uninstall: Bool)
         case menu(path: [String])
+        case emoji
+        case clipboard
+        case keys(section: String)
+
+        /// panel size per view: the wide ones carry a preview or long lines
+        var size: NSSize {
+            switch self {
+            case .clipboard, .keys: return NSSize(width: 980, height: 520)
+            default: return NSSize(width: 720, height: 480)
+            }
+        }
+        var hasPreview: Bool { if case .clipboard = self { return true } else { return false } }
     }
 
     @Published var mode: Mode = .launcher(uninstall: false)
@@ -44,6 +60,8 @@ final class PanelModel: ObservableObject {
     private let home = NSHomeDirectory()
     private var menuURL: URL { URL(fileURLWithPath: home + "/.config/omacos/menu.json") }
     private var historyURL: URL { URL(fileURLWithPath: home + "/.local/state/omacos/launcher-history") }
+    private var emojiURL: URL { URL(fileURLWithPath: home + "/.config/omacos/emoji.tsv") }
+    private var clipboardDir: URL { URL(fileURLWithPath: home + "/.local/state/omacos/clipboard") }
 
     private var apps: [AppItem] = []
     private var history = LaunchHistory()
@@ -51,13 +69,26 @@ final class PanelModel: ObservableObject {
     private var level: [ResolvedEntry] = []
     private var levelGeneration = 0
     private var iconCache: [String: NSImage] = [:]
-    /// the menu level the launcher was opened from (Backspace returns there)
-    private var launcherParent: [String]?
+    private var emojis: [EmojiEntry] = []
+    private var clips: [URL] = []
+    private var keyLines: [String] = []
+    /// the menu level a view was opened from (Backspace returns there)
+    private var parent: [String]?
+
+    /// full text of the selected clipboard entry (clipboard view only)
+    var preview: String {
+        guard case .clipboard = mode, rows.indices.contains(selected), case .clip(let url) = rows[selected].action,
+              let text = try? String(contentsOf: url, encoding: .utf8) else { return "" }
+        return String(text.prefix(20_000))
+    }
 
     var prompt: String {
         switch mode {
         case .launcher(let uninstall): return uninstall ? "\u{F05E9}  uninstall" : "\u{F003B}"
         case .menu(let path): return "\u{F0493}  " + (path.last ?? "omacos")
+        case .emoji: return "\u{F0785}"
+        case .clipboard: return "\u{F018F}"
+        case .keys(let section): return "\u{F030C}  " + (section == "all" ? "keys" : section)
         }
     }
 
@@ -67,6 +98,9 @@ final class PanelModel: ObservableObject {
             return uninstall ? "enter  uninstall (Pearcleaner)  ·  backspace  back  ·  esc  close"
                              : "enter  launch  ·  ctrl-x  uninstall  ·  backspace  back  ·  esc  close"
         case .menu: return "enter  select  ·  backspace  back  ·  esc  close"
+        case .emoji: return "enter  paste  ·  backspace  back  ·  esc  close"
+        case .clipboard: return "enter  paste  ·  ctrl-x  delete  ·  alt-c  clear all  ·  backspace  back  ·  esc  close"
+        case .keys: return "type to search  ·  backspace  back  ·  esc  close"
         }
     }
 
@@ -76,7 +110,7 @@ final class PanelModel: ObservableObject {
         mode = newMode
         query = ""
         selected = 0
-        launcherParent = parent
+        self.parent = parent
         reload()
     }
 
@@ -85,6 +119,22 @@ final class PanelModel: ObservableObject {
         case .launcher:
             apps = AppScanner.scan()
             history = LaunchHistory(text: (try? String(contentsOf: historyURL, encoding: .utf8)) ?? "")
+            refilter()
+        case .emoji:
+            if emojis.isEmpty { emojis = EmojiTable.parse((try? String(contentsOf: emojiURL, encoding: .utf8)) ?? "") }
+            refilter()
+        case .clipboard:
+            let fm = FileManager.default
+            let urls = (try? fm.contentsOfDirectory(at: clipboardDir, includingPropertiesForKeys: [.contentModificationDateKey])) ?? []
+            clips = urls.sorted { a, b in
+                let da = (try? a.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                let db = (try? b.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate) ?? .distantPast
+                return da > db
+            }
+            refilter()
+        case .keys(let section):
+            let out = SystemShell().run("omacos-keys \(section == "all" ? "" : section) --list").output
+            keyLines = out.split(separator: "\n", omittingEmptySubsequences: true).map(String.init)
             refilter()
         case .menu(let path):
             menu = try? MenuFile.load(from: menuURL)
@@ -116,13 +166,13 @@ final class PanelModel: ObservableObject {
             return .keepOpen
         }
         switch mode {
-        case .launcher:
-            if let parent = launcherParent { open(.menu(path: parent)); return .keepOpen }
-            return .hide
         case .menu(let path):
             if path.isEmpty { return .hide }
             open(.menu(path: Array(path.dropLast())))
             return .keepOpen
+        default:
+            if let parent { open(.menu(path: parent)); return .keepOpen }
+            return .hide
         }
     }
 
@@ -140,6 +190,20 @@ final class PanelModel: ObservableObject {
             // file order while nothing is typed, matched order otherwise
             let ranked = query.isEmpty ? level : Matcher.rank(level, query: query, label: { $0.label })
             rows = ranked.enumerated().map { i, r in Row(id: i, icon: .glyph(r.entry.icon), label: r.label, action: .entry(r.entry)) }
+        case .emoji:
+            let ranked = query.isEmpty ? emojis : Matcher.rank(emojis, query: query, label: { $0.searchText })
+            rows = ranked.prefix(400).enumerated().map { i, e in Row(id: i, icon: .glyph(e.emoji), label: e.name, action: .emoji(e.emoji)) }
+        case .clipboard:
+            let items = clips.map { url -> (URL, String) in
+                let text = (try? String(contentsOf: url, encoding: .utf8)) ?? ""
+                let line = text.replacingOccurrences(of: "\n", with: " ").replacingOccurrences(of: "\t", with: " ")
+                return (url, String(line.prefix(140)))
+            }
+            let ranked = query.isEmpty ? items : Matcher.rank(items, query: query, label: { $0.1 })
+            rows = ranked.enumerated().map { i, c in Row(id: i, icon: .none, label: c.1, action: .clip(c.0)) }
+        case .keys:
+            let ranked = query.isEmpty ? keyLines : Matcher.rank(keyLines, query: query, label: { $0 })
+            rows = ranked.enumerated().map { i, l in Row(id: i, icon: .none, label: l, action: .text) }
         }
         if selected >= rows.count { selected = max(rows.count - 1, 0) }
     }
@@ -178,13 +242,41 @@ final class PanelModel: ObservableObject {
             return .hideThen { SystemShell.detach(action.command) }
         case .entry(let entry):
             return activate(entry)
+        case .emoji(let emoji):
+            return .hideThen { Self.pasteboard(emoji); SystemShell.detach("sleep 0.15; omacos-paste") }
+        case .clip(let url):
+            guard let text = try? String(contentsOf: url, encoding: .utf8) else { return .keepOpen }
+            return .hideThen { Self.pasteboard(text); SystemShell.detach("sleep 0.15; omacos-paste") }
+        case .text:
+            return .hide
         }
     }
 
-    /// ctrl-x in the launcher
+    /// ctrl-x: uninstall in the launcher, delete in the clipboard
     func secondary() -> Outcome {
-        guard rows.indices.contains(selected), case .app(let app) = rows[selected].action else { return .keepOpen }
-        return uninstallOutcome(app)
+        guard rows.indices.contains(selected) else { return .keepOpen }
+        switch rows[selected].action {
+        case .app(let app): return uninstallOutcome(app)
+        case .clip(let url):
+            try? FileManager.default.removeItem(at: url)
+            reload()
+            return .keepOpen
+        default: return .keepOpen
+        }
+    }
+
+    /// alt-c in the clipboard: clear the history
+    func clearAll() -> Outcome {
+        guard case .clipboard = mode else { return .keepOpen }
+        for url in clips { try? FileManager.default.removeItem(at: url) }
+        reload()
+        return .keepOpen
+    }
+
+    private static func pasteboard(_ text: String) {
+        let pb = NSPasteboard.general
+        pb.clearContents()
+        pb.setString(text, forType: .string)
     }
 
     private func uninstallOutcome(_ app: AppItem) -> Outcome {
@@ -202,13 +294,16 @@ final class PanelModel: ObservableObject {
             open(.menu(path: path + [id]))
             return .keepOpen
         case .view(let name, let args):
-            if name == "launcher" {
-                open(.launcher(uninstall: args.contains("--uninstall")), from: path)
-                return .keepOpen
+            switch name {
+            case "launcher": open(.launcher(uninstall: args.contains("--uninstall")), from: path)
+            case "emoji": open(.emoji, from: path)
+            case "clipboard": open(.clipboard, from: path)
+            case "keys": open(.keys(section: args.isEmpty ? "all" : args), from: path)
+            default:
+                let request = args.isEmpty ? name : "\(name) \(args)"
+                return .hideThen { SystemShell.detach("omacos-popup " + SystemShell.quoted(request)) }
             }
-            // views that still live in the Popup (issue #13)
-            let request = args.isEmpty ? name : "\(name) \(args)"
-            return .hideThen { SystemShell.detach("omacos-popup " + SystemShell.quoted(request)) }
+            return .keepOpen
         case .popup(let name):
             return .hideThen { SystemShell.detach("omacos-popup " + SystemShell.quoted(name)) }
         case .run(let command):
