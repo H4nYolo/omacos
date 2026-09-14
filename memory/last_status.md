@@ -3,7 +3,7 @@
 Read this first when resuming work on this repo (new session or after a context compact).
 Keep it current: update it at the end of every working session.
 
-**Last updated:** 2026-09-14 night, end of session 4 (theme #5, background #6, font #7 switchers, wallpaper packs #14 incl. cyberpunk/fantasy and a private death-note pack, Ghostty title bar, Super moved to Left Command, README as landing page + docs/ manual, Mac renamed to h4nstudio, GitHub repo subscriptions cleared). Open: #8 Sol, #9 verification.
+**Last updated:** 2026-09-14 night, end of session 4 (theme #5, background #6, font #7 switchers, wallpaper packs #14 incl. cyberpunk/fantasy and a private death-note pack, Ghostty title bar, Super moved to Left Command, README as landing page + docs/ manual, Mac renamed to h4nstudio, GitHub repo subscriptions cleared). Late addition, same night: AeroSpace rules pin Telegram + Messages to workspace 9 and Teams + Mail to 8 (794b764); the panel's menu search covers the whole tree below the current level with breadcrumb rows, `back` finds `Style › Background` from the top (fb48b9c, user-tested). Open: #8 Sol, #9 verification.
 
 ## What this is
 
