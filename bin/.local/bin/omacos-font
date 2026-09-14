@@ -22,7 +22,7 @@ set_font() {
   list | grep -qxF "$family" || { echo "omacos-font: '$family' is not an installed Nerd Font (omacos-font list)" >&2; exit 1; }
   mkdir -p "$STATE"
   echo "$family" >"$STATE/font"
-  printf 'font-family = %s\nwindow-title-font-family = %s\n' "$family" "$family" >"$STATE/font.conf"
+  printf 'font-family = %s\n' "$family" >"$STATE/font.conf"   # no window-title-font-family: Ghostty truncates the title with a custom title font
   pkill -USR2 -x ghostty 2>/dev/null || true
   sketchybar --reload >/dev/null 2>&1 || true
   omacos-notify "Font" "$family" >/dev/null 2>&1 || true

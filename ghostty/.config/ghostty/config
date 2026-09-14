@@ -15,12 +15,12 @@ confirm-close-surface = false
 resize-overlay = never
 
 # Title bar in the theme's background colour: no traffic lights (Super+W closes), no folder
-# icon, title from tmux (set-titles), title in the omacos font. Only new windows pick a
-# change of the style up. The popup and the screensaver keep theirs hidden.
+# icon, title from tmux (set-titles). Only new windows pick a change of the style up. The
+# popup and the screensaver keep theirs hidden. No window-title-font-family: Ghostty 1.3.1
+# truncates the title after ~10 characters as soon as a custom title font is set.
 macos-titlebar-style = transparent
 macos-window-buttons = hidden
 macos-titlebar-proxy-icon = hidden
-window-title-font-family = CaskaydiaMono Nerd Font
 
 # Omarchy's tmux bindings live on Alt (Alt+Enter, Alt+1-9, Alt+arrows) — Option must send Alt.
 macos-option-as-alt = true
