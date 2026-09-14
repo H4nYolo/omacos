@@ -69,7 +69,7 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 Tracked as GitHub issues (`gh issue list`): #5 theme switcher, #6 background switcher, #7 font
 switcher (build in that order, "Kosmetik 8-10"), #8 decide on Sol, #9 verification checklist for
 things a script cannot test (recording, OCR, paste, mic/camera, logout/login, upstream sketchybar
-issue), #10 omacos-shell = native Swift Panel (grilled 2026-09-14, decisions in #10 and ADRs 0001-0003; glossary in CONTEXT.md). Work packages: #11 menu.json (done), #12 Panel v1 launcher+menu (done 2026-09-14), #13 Panel v2 emoji/clipboard/keys (done 2026-09-14). #10 closed. Untested by hand: the paste after Enter in emoji/clipboard (Cmd+V lands in the previous app), click outside, real logout/login with the panel in after-startup-command. Open a new issue for every new piece of work; close it with the commit that finishes it.
+issue), #10 omacos-shell = native Swift Panel (grilled 2026-09-14, decisions in #10 and ADRs 0001-0003; glossary in CONTEXT.md). Work packages: #11 menu.json (done), #12 Panel v1 launcher+menu (done 2026-09-14), #13 Panel v2 emoji/clipboard/keys (done 2026-09-14). #10 closed. Verified by the user: paste after Enter, click outside, look. Still untested: logout/login with the panel in after-startup-command. Open a new issue for every new piece of work; close it with the commit that finishes it.
 
 ## Archive
 
