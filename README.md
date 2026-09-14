@@ -1,4 +1,4 @@
-![omacos: Super + Space launcher panel over an Omarchy wallpaper, sketchybar on top](docs/screenshot-launcher.jpg)
+![omacos: Super + Space launcher panel over an Omarchy wallpaper, sketchybar on top](docs/screenshot-launcher-panel.jpg)
 
 # omacos
 
