@@ -1,140 +1,78 @@
 #!/bin/sh
-# omacos-menu [route] — Omarchy's Super+Space menu (Super+Shift+Space here): a tree of
-# fzf menus in the popup. Backspace on an empty query goes one level up (also out of
-# the pickers), Esc closes the whole thing.
-# Routes: root (default), learn, capture, toggle, install, remove, update, info, system.
+# omacos-menu [route] [--list] — Omarchy's menu as fzf lists in the Popup, driven by
+# ~/.config/omacos/menu.json (shared with the native Panel, see docs/adr/0003).
+# Backspace on an empty query goes one level up (also out of the pickers), Esc closes.
+# `--list` prints the entries of a level as "icon  label<TAB>kind<TAB>value" and exits.
+# Routes: root (default) or the id of any submenu (learn, capture, toggle, install, remove, update, info, system).
 PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
-STATE="${XDG_STATE_HOME:-$HOME/.local/state}/omacos"; mkdir -p "$STATE"
-REPO_URL="https://github.com/H4nYolo/omacos"
-gui() { env -u TERM -u TERM_PROGRAM -u COLORTERM -u TMUX -u TMUX_PANE open "$@"; }
+MENU="$HOME/.config/omacos/menu.json"
 
-# show <title> <items>: items are "label<TAB>command" lines. A command "menu_x" opens a
-# submenu and comes back here when it is left; "pick <cmd>" runs a picker that may come
-# back with status 3 (backspace); anything else is eval'd and ends the menu.
+# entries <path...>: one line per entry of that level, tab-separated:
+# idx  icon  label  kind  value  args  state  when   (kind: menu|view|popup|run; value: id|view|popup name|command)
+entries() {
+  path='[]'; [ $# -gt 0 ] && path="$(printf '%s\n' "$@" | jq -R . | jq -s -c .)"
+  jq -r --argjson path "$path" '
+    def at($p): if ($p | length) == 0 then . else (.[] | select(.id == $p[0]) | .menu | at($p[1:])) end;
+    .entries | at($path) | to_entries[] | .value as $e |
+    [ .key, $e.icon, $e.label,
+      (if $e.menu then "menu" elif $e.view then "view" elif $e.popup then "popup" else "run" end),
+      ($e.id // $e.view // $e.popup // $e.run // ""), ($e.args // ""), ($e.state // ""), ($e.when // "") ] | @tsv' "$MENU"
+}
+
+# resolved <path...>: entries after evaluating `when` (drop) and `state` (append " [out]").
+# awk, not `read`: a tab-separated line with empty fields would collapse under IFS.
+resolved() {
+  entries "$@" | awk -F'\t' -v OFS='\t' '{
+    if ($8 != "" && system($8 " >/dev/null 2>&1") != 0) next
+    if ($7 != "") { st = ""; ($7 " 2>/dev/null") | getline st; close($7 " 2>/dev/null"); $3 = $3 "  [" st "]" }
+    print $1, $2, $3, $4, $5, $6
+  }'
+}
+
+# run_view <view> <args>: the fzf implementation of a Panel view; status 3 = backspace
+run_view() {
+  case "$1" in
+    launcher)  omacos-launcher $2 ;;
+    emoji)     omacos-menu-emoji ;;
+    clipboard) omacos-clipboard ;;
+    keys)      omacos-keys $2 ;;
+    *) echo "omacos-menu: unknown view '$1'" >&2; return 1 ;;
+  esac
+}
+
+# show <path...>: returns 1 = backspace (go up), 2 = esc (close), 0 = done
 show() {
-  local title="$1" items="$2" sel cmd
+  local title lines sel idx kind value args
+  title="${*:-omacos}"; title="${title##* }"
   while true; do
-    sel="$(printf '%s\n' "$items" | omacos-fzf --exact --delimiter='\t' --with-nth=1 --nth=1 \
+    lines="$(resolved "$@")"
+    sel="$(printf '%s\n' "$lines" | awk -F'\t' '{ printf "%s  %s\t%s\n", $2, $3, $1 }' | omacos-fzf --exact --delimiter='\t' --with-nth=1 --nth=1 \
             --prompt="  $title  " --header=' enter  select  ·  backspace  back  ·  esc  close' \
             --bind 'backward-eof:become(echo BACK)')" || return 2
     [ -n "$sel" ] || return 2
     [ "$sel" = BACK ] && return 1
-    cmd="${sel#*	}"
-    case "$cmd" in
-      menu_*) "$cmd"; [ $? -eq 1 ] && continue; return 0 ;;
-      pick\ *) ${cmd#pick }; [ $? -eq 3 ] && continue; return 0 ;;
-      *) eval "$cmd"; return 0 ;;
+    idx="${sel##*	}"
+    line="$(printf '%s\n' "$lines" | awk -F'\t' -v i="$idx" '$1 == i')"
+    kind="$(printf '%s' "$line" | cut -f4)"; value="$(printf '%s' "$line" | cut -f5)"; args="$(printf '%s' "$line" | cut -f6)"
+    case "$kind" in
+      menu)  show "$@" "$value"; [ $? -eq 1 ] && continue; return 0 ;;
+      view)  run_view "$value" "$args"; [ $? -eq 3 ] && continue; return 0 ;;
+      popup) exec omacos-popup-run "$value" ;;
+      run)   omacos-detach sh -c "$value"; return 0 ;;
     esac
   done
 }
 
-state() { [ -e "$STATE/$1" ] && printf 'off' || printf 'on'; }
-toggle_flag() { [ -e "$STATE/$1" ] && rm -f "$STATE/$1" || : > "$STATE/$1"; }
-bar_state() { sketchybar --query bar 2>/dev/null | grep -q '"hidden": *"on"' && printf 'off' || printf 'on'; }
-borders_state() { pgrep -x borders >/dev/null && printf 'on' || printf 'off'; }
-
-menu_root() {
-  show "omacos" "$(printf '%s\n' \
-    '󰀻  Apps	pick omacos-launcher' \
-    '󰂺  Learn	menu_learn' \
-    '󰄀  Capture	menu_capture' \
-    '󰆏  Clipboard	pick omacos-clipboard' \
-    '󰎞  Notes	exec omacos-notes' \
-    '󰞅  Emoji	pick omacos-menu-emoji' \
-    '󰔡  Toggle	menu_toggle' \
-    '󰏗  Install	menu_install' \
-    '󰆴  Remove	menu_remove' \
-    '󰚰  Update	menu_update' \
-    '󰋼  Info	menu_info' \
-    '󰒓  System	menu_system')"
-}
-
-menu_learn() {
-  show "learn" "$(printf '%s\n' \
-    '󰌌  Keybindings	pick omacos-keys' \
-    '󰌌  tmux keybindings	pick omacos-keys tmux' \
-    '󰘳  AeroSpace keybindings	pick omacos-keys aerospace' \
-    '󰆍  Shell aliases, tmux layouts, omacos commands	pick omacos-keys shell' \
-    "󰊤  omacos on GitHub	gui $REPO_URL" \
-    '󰂺  Omarchy manual	gui https://learn.omacom.io/2/the-omarchy-manual' \
-    '󰖲  AeroSpace guide	gui https://nikitabobko.github.io/AeroSpace/guide' \
-    '󰆍  Ghostty docs	gui https://ghostty.org/docs' \
-    '󰆍  tmux wiki	gui https://github.com/tmux/tmux/wiki')"
-}
-
-menu_capture() {
-  if [ -f "$STATE/recording" ]; then rec='󰑊  Stop screenrecording	omacos-capture stop'
-  else rec="$(printf '%s\n' '󰕧  Screenrecord	omacos-detach omacos-capture record' '󰍬  Screenrecord with microphone	omacos-detach omacos-capture record-mic')"; fi
-  show "capture" "$(printf '%s\n' \
-    '󰆞  Screenshot region	omacos-detach omacos-capture region' \
-    '󰖯  Screenshot window	omacos-detach omacos-capture window' \
-    '󰍹  Screenshot screen	omacos-detach omacos-capture screen' \
-    "$rec" \
-    '󰦨  Text (OCR) from selection	omacos-detach omacos-capture text' \
-    '󰐲  QR code from clipboard	omacos-capture qr' \
-    '󰏘  Colour picker	omacos-detach omacos-capture color')"
-}
-
-menu_toggle() {
-  show "toggle" "$(printf '%s\n' \
-    "󰒲  Screensaver on idle  [$(state idle-off)]	toggle_flag idle-off" \
-    "󰍜  Bar  [$(bar_state)]	sketchybar --bar hidden=toggle" \
-    "󰃣  Borders  [$(borders_state)]	if pgrep -x borders >/dev/null; then brew services stop borders; else brew services start borders; fi" \
-    "󰍬  Microphone mute  [$(osascript -e 'input volume of (get volume settings)' | awk '{print ($1==0)?"muted":"on"}')]	if [ \"\$(osascript -e 'input volume of (get volume settings)')\" = 0 ]; then osascript -e 'set volume input volume 100'; else osascript -e 'set volume input volume 0'; fi")"
-}
-
-menu_install() {
-  show "install" "$(printf '%s\n' \
-    '󰏗  Package (brew)	pick omacos-pkg-install' \
-    '󰀵  App Store	gui -a "App Store"')"
-}
-
-menu_remove() {
-  show "remove" "$(printf '%s\n' \
-    '󰏗  Package (brew)	pick omacos-pkg-remove' \
-    '󰗩  App (Pearcleaner)	pick omacos-launcher --uninstall')"
-}
-
-menu_update() {
-  show "update" "$(printf '%s\n' \
-    '󰚰  Upgrade packages (brew)	brew update && brew upgrade --formula && brew upgrade --cask; printf "\n done — press Enter to close"; read -r _' \
-    '󰋚  Show outdated	brew outdated --verbose; printf "\n press Enter to close"; read -r _' \
-    '  macOS software update	gui "x-apple.systempreferences:com.apple.Software-Update-Settings.extension"')"
-}
-
-menu_info() {
-  show "info" "$(printf '%s\n' \
-    '󰥔  Time	omacos-notify "$(date "+%H:%M")" "$(date "+%A, %d %B %Y")"' \
-    '󰖐  Weather	omacos-notify "Weather" "$(curl -s -m 10 "wttr.in/$(cat "$HOME/.config/omacos/weather-location" 2>/dev/null | tr -d "[:space:]")?format=%l:+%c+%t,+%w")"' \
-    '󰖩  Network	omacos-notify "Network" "$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || echo offline) · $(curl -s -m 5 ifconfig.me)"' \
-    '󰋼  About	about')"
-}
-
-about() {
-  printf '\n'; sed 's/^/   /' "$HOME/.config/omacos/screensaver.txt" 2>/dev/null
-  printf '\n   omacos — Omarchy look & feel on macOS\n   %s\n\n' "$REPO_URL"
-  printf '   macOS      %s\n' "$(sw_vers -productVersion)"
-  printf '   AeroSpace  %s\n' "$(aerospace --version 2>/dev/null | head -1)"
-  printf '   Ghostty    %s\n' "$(/Applications/Ghostty.app/Contents/MacOS/ghostty --version 2>/dev/null | head -1)"
-  printf '   tmux       %s\n' "$(tmux -V 2>/dev/null)"
-  printf '   uptime     %s\n' "$(uptime | sed 's/.*up \(.*\), [0-9]* user.*/\1/')"
-  printf '\n   press Enter to close'; read -r _
-}
-
-menu_system() {
-  show "system" "$(printf '%s\n' \
-    '󰒲  Screensaver	exec omacos-screensaver' \
-    '󰌾  Lock	osascript -e '"'"'tell application "System Events" to keystroke "q" using {control down, command down}'"'"'' \
-    '󰤄  Sleep	pmset sleepnow' \
-    '󰍃  Logout	osascript -e '"'"'tell application "System Events" to log out'"'"'' \
-    '󰜉  Restart	osascript -e '"'"'tell application "System Events" to restart'"'"'' \
-    '󰐥  Shutdown	osascript -e '"'"'tell application "System Events" to shut down'"'"'')"
-}
-
-route="${1:-root}"
-case "$route" in
-  root) menu_root ;;
-  learn|capture|toggle|install|remove|update|info|system) "menu_$route" ;;
-  *) echo "omacos-menu: unknown route '$route'" >&2; exit 2 ;;
-esac
+list=0; route=root
+for arg in "$@"; do
+  case "$arg" in
+    --list) list=1 ;;
+    *) route="$arg" ;;
+  esac
+done
+[ "$route" = root ] && set -- || set -- "$route"
+if [ $list -eq 1 ]; then
+  resolved "$@" | awk -F'\t' '{ printf "%s  %s\t%s\t%s %s\n", $2, $3, $4, $5, $6 }'; exit 0
+fi
+show "$@"
 exit 0

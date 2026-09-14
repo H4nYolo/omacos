@@ -1,0 +1,11 @@
+#!/bin/sh
+# omacos-about — logo and versions (menu → Info → About), runs in the Popup.
+PATH="/opt/homebrew/bin:$PATH"
+printf '\n'; sed 's/^/   /' "$HOME/.config/omacos/screensaver.txt" 2>/dev/null
+printf '\n   omacos — Omarchy look & feel on macOS\n   https://github.com/H4nYolo/omacos\n\n'
+printf '   macOS      %s\n' "$(sw_vers -productVersion)"
+printf '   AeroSpace  %s\n' "$(aerospace --version 2>/dev/null | head -1)"
+printf '   Ghostty    %s\n' "$(/Applications/Ghostty.app/Contents/MacOS/ghostty --version 2>/dev/null | head -1)"
+printf '   tmux       %s\n' "$(tmux -V 2>/dev/null)"
+printf '   uptime     %s\n' "$(uptime | sed 's/.*up \(.*\), [0-9]* user.*/\1/')"
+printf '\n   press Enter to close'; read -r _

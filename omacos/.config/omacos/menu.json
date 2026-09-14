@@ -1,0 +1,64 @@
+{
+  "_": "omacos menu. Read by omacos-menu (fzf in the Popup) and omacos-shell (native Panel). One kind per entry: menu (children, needs id = route), view (a Panel/Popup view: launcher, emoji, clipboard, keys; optional args), popup (a terminal task run in the Ghostty Popup, name = omacos-popup-run request), run (shell command, runs after the surface closed). Optional: state (shell command, output shown in brackets), when (shell command, entry shown only if it exits 0). Lines starting with _ are comments.",
+  "entries": [
+    { "icon": "󰀻", "label": "Apps", "view": "launcher" },
+    { "icon": "󰂺", "label": "Learn", "id": "learn", "menu": [
+      { "icon": "󰌌", "label": "Keybindings", "view": "keys" },
+      { "icon": "󰌌", "label": "tmux keybindings", "view": "keys", "args": "tmux" },
+      { "icon": "󰘳", "label": "AeroSpace keybindings", "view": "keys", "args": "aerospace" },
+      { "icon": "󰆍", "label": "Shell aliases, tmux layouts, omacos commands", "view": "keys", "args": "shell" },
+      { "icon": "󰊤", "label": "omacos on GitHub", "run": "omacos-open https://github.com/H4nYolo/omacos" },
+      { "icon": "󰂺", "label": "Omarchy manual", "run": "omacos-open https://learn.omacom.io/2/the-omarchy-manual" },
+      { "icon": "󰖲", "label": "AeroSpace guide", "run": "omacos-open https://nikitabobko.github.io/AeroSpace/guide" },
+      { "icon": "󰆍", "label": "Ghostty docs", "run": "omacos-open https://ghostty.org/docs" },
+      { "icon": "󰆍", "label": "tmux wiki", "run": "omacos-open https://github.com/tmux/tmux/wiki" }
+    ]},
+    { "icon": "󰄀", "label": "Capture", "id": "capture", "menu": [
+      { "icon": "󰆞", "label": "Screenshot region", "run": "omacos-capture region" },
+      { "icon": "󰖯", "label": "Screenshot window", "run": "omacos-capture window" },
+      { "icon": "󰍹", "label": "Screenshot screen", "run": "omacos-capture screen" },
+      { "icon": "󰕧", "label": "Screenrecord", "run": "omacos-capture record", "when": "[ ! -f \"$HOME/.local/state/omacos/recording\" ]" },
+      { "icon": "󰍬", "label": "Screenrecord with microphone", "run": "omacos-capture record-mic", "when": "[ ! -f \"$HOME/.local/state/omacos/recording\" ]" },
+      { "icon": "󰑊", "label": "Stop screenrecording", "run": "omacos-capture stop", "when": "[ -f \"$HOME/.local/state/omacos/recording\" ]" },
+      { "icon": "󰦨", "label": "Text (OCR) from selection", "run": "omacos-capture text" },
+      { "icon": "󰐲", "label": "QR code from clipboard", "popup": "qr" },
+      { "icon": "󰏘", "label": "Colour picker", "run": "omacos-capture color" }
+    ]},
+    { "icon": "󰆏", "label": "Clipboard", "view": "clipboard" },
+    { "icon": "󰎞", "label": "Notes", "popup": "notes" },
+    { "icon": "󰞅", "label": "Emoji", "view": "emoji" },
+    { "icon": "󰔡", "label": "Toggle", "id": "toggle", "menu": [
+      { "icon": "󰒲", "label": "Screensaver on idle", "run": "omacos-toggle idle", "state": "omacos-toggle idle --state" },
+      { "icon": "󰍜", "label": "Bar", "run": "omacos-toggle bar", "state": "omacos-toggle bar --state" },
+      { "icon": "󰃣", "label": "Borders", "run": "omacos-toggle borders", "state": "omacos-toggle borders --state" },
+      { "icon": "󰍬", "label": "Microphone", "run": "omacos-toggle mic", "state": "omacos-toggle mic --state" }
+    ]},
+    { "icon": "󰏗", "label": "Install", "id": "install", "menu": [
+      { "icon": "󰏗", "label": "Package (brew)", "popup": "pkg-install" },
+      { "icon": "󰀵", "label": "App Store", "run": "omacos-open -a \"App Store\"" }
+    ]},
+    { "icon": "󰆴", "label": "Remove", "id": "remove", "menu": [
+      { "icon": "󰏗", "label": "Package (brew)", "popup": "pkg-remove" },
+      { "icon": "󰗩", "label": "App (Pearcleaner)", "view": "launcher", "args": "--uninstall" }
+    ]},
+    { "icon": "󰚰", "label": "Update", "id": "update", "menu": [
+      { "icon": "󰚰", "label": "Upgrade packages (brew)", "popup": "brew" },
+      { "icon": "󰋚", "label": "Show outdated", "popup": "outdated" },
+      { "icon": "󰀵", "label": "macOS software update", "run": "omacos-open x-apple.systempreferences:com.apple.Software-Update-Settings.extension" }
+    ]},
+    { "icon": "󰋼", "label": "Info", "id": "info", "menu": [
+      { "icon": "󰥔", "label": "Time", "run": "omacos-notify \"$(date '+%H:%M')\" \"$(date '+%A, %d %B %Y')\"" },
+      { "icon": "󰖐", "label": "Weather", "run": "omacos-notify Weather \"$(curl -s -m 10 \"wttr.in/$(cat \"$HOME/.config/omacos/weather-location\" 2>/dev/null | tr -d '[:space:]')?format=%l:+%c+%t,+%w\")\"" },
+      { "icon": "󰩟", "label": "Network", "run": "omacos-notify Network \"$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || echo offline) · $(curl -s -m 5 ifconfig.me)\"" },
+      { "icon": "󰋼", "label": "About", "popup": "about" }
+    ]},
+    { "icon": "󰒓", "label": "System", "id": "system", "menu": [
+      { "icon": "󰒲", "label": "Screensaver", "run": "omacos-screensaver" },
+      { "icon": "󰌾", "label": "Lock", "run": "omacos-system lock" },
+      { "icon": "󰤄", "label": "Sleep", "run": "omacos-system sleep" },
+      { "icon": "󰍃", "label": "Logout", "run": "omacos-system logout" },
+      { "icon": "󰜉", "label": "Restart", "run": "omacos-system restart" },
+      { "icon": "󰐥", "label": "Shutdown", "run": "omacos-system shutdown" }
+    ]}
+  ]
+}

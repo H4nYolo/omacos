@@ -1,0 +1,4 @@
+#!/bin/sh
+# omacos-open <url|file|-a App> — `open` without the terminal's environment, so GUI apps
+# never inherit TERM/TMUX (Pearcleaner would turn into its CLI, tmux would refuse to nest).
+exec env -u TERM -u TERM_PROGRAM -u COLORTERM -u TMUX -u TMUX_PANE open "$@"

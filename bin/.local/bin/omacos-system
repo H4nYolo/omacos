@@ -1,0 +1,10 @@
+#!/bin/sh
+# omacos-system <lock|sleep|logout|restart|shutdown> — the System menu's actions.
+case "$1" in
+  lock)     exec osascript -e 'tell application "System Events" to keystroke "q" using {control down, command down}' ;;
+  sleep)    exec pmset sleepnow ;;
+  logout)   exec osascript -e 'tell application "System Events" to log out' ;;
+  restart)  exec osascript -e 'tell application "System Events" to restart' ;;
+  shutdown) exec osascript -e 'tell application "System Events" to shut down' ;;
+  *) echo "usage: omacos-system <lock|sleep|logout|restart|shutdown>" >&2; exit 2 ;;
+esac

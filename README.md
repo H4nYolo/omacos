@@ -176,7 +176,11 @@ Right, left to right:
 ## Menu, launcher and uninstall
 
 `Super + Shift + Space` opens `omacos-menu`, Omarchy's menu as a tree of fzf lists in the popup
-panel (`Backspace` on an empty query goes up a level, also out of the pickers; `Esc` closes):
+panel (`Backspace` on an empty query goes up a level, also out of the pickers; `Esc` closes).
+The tree is data: `~/.config/omacos/menu.json` (icon, label, and one of `menu`, `view`, `popup`, `run`;
+optional `state` and `when` shell commands for dynamic labels and visibility). Edit it to add
+entries; `omacos-menu <route> --list` shows what a level resolves to. The same file will drive
+the native panel of issue #10.
 
 - **Apps** — the launcher below
 - **Learn** — keybindings (all / tmux / AeroSpace), the omacos repo, the Omarchy manual, AeroSpace, Ghostty and tmux docs

@@ -1,0 +1,22 @@
+#!/bin/sh
+# omacos-toggle <idle|bar|borders|mic> [--state] — flip a switch, or print its state (on/off/muted).
+# Used by the Toggle menu (menu.json: run + state).
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/omacos"; mkdir -p "$STATE"
+what="$1"; query="$2"
+case "$what" in
+  idle)
+    if [ "$query" = "--state" ]; then [ -e "$STATE/idle-off" ] && echo off || echo on; exit 0; fi
+    if [ -e "$STATE/idle-off" ]; then rm -f "$STATE/idle-off"; else : > "$STATE/idle-off"; fi ;;
+  bar)
+    if [ "$query" = "--state" ]; then sketchybar --query bar 2>/dev/null | grep -q '"hidden": *"on"' && echo off || echo on; exit 0; fi
+    sketchybar --bar hidden=toggle ;;
+  borders)
+    if [ "$query" = "--state" ]; then pgrep -x borders >/dev/null && echo on || echo off; exit 0; fi
+    if pgrep -x borders >/dev/null; then brew services stop borders >/dev/null 2>&1; else brew services start borders >/dev/null 2>&1; fi ;;
+  mic)
+    vol="$(osascript -e 'input volume of (get volume settings)' 2>/dev/null)"
+    if [ "$query" = "--state" ]; then [ "$vol" = 0 ] && echo muted || echo on; exit 0; fi
+    if [ "$vol" = 0 ]; then osascript -e 'set volume input volume 100'; else osascript -e 'set volume input volume 0'; fi ;;
+  *) echo "usage: omacos-toggle <idle|bar|borders|mic> [--state]" >&2; exit 2 ;;
+esac

@@ -1,17 +1,23 @@
 #!/bin/sh
 # omacos-popup-run — runs inside the popup quick terminal; executes whatever
-# omacos-popup asked for last: launcher (default), keys [tmux|aerospace], menu [route],
-# emoji, clipboard, weather, brew, audio.
+# omacos-popup asked for last, or the request given as $1 (the menu hands its popup
+# entries over this way): launcher (default), keys [tmux|aerospace|shell], menu [route],
+# emoji, clipboard, notes, about, qr, pkg-install, pkg-remove, weather, brew, outdated, audio.
 PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
-req="$(cat "${XDG_STATE_HOME:-$HOME/.local/state}/omacos/popup-request" 2>/dev/null)"
+req="${1:-$(cat "${XDG_STATE_HOME:-$HOME/.local/state}/omacos/popup-request" 2>/dev/null)}"
 case "$req" in
-  keys*)  exec omacos-keys ${req#keys} ;;
-  menu*)  exec omacos-menu ${req#menu} ;;
-  emoji)  exec omacos-menu-emoji ;;
+  keys*)   exec omacos-keys ${req#keys} ;;
+  menu*)   exec omacos-menu ${req#menu} ;;
+  emoji)   exec omacos-menu-emoji ;;
   clipboard) exec omacos-clipboard ;;
-  notes)  exec omacos-notes ;;
+  notes)   exec omacos-notes ;;
+  about)   exec omacos-about ;;
+  qr)      exec omacos-capture qr ;;
+  pkg-install) exec omacos-pkg-install ;;
+  pkg-remove)  exec omacos-pkg-remove ;;
   weather) curl -s -m 15 "wttr.in/$(cat "$HOME/.config/omacos/weather-location" 2>/dev/null | tr -d '[:space:]')?F"; printf '\n press Enter to close'; read -r _ ;;
-  brew)   brew upgrade --formula; printf '\n done — press Enter to close'; read -r _ ;;
+  brew)    brew update && brew upgrade --formula && brew upgrade --cask; printf '\n done — press Enter to close'; read -r _ ;;
+  outdated) brew outdated --verbose; printf '\n press Enter to close'; read -r _ ;;
   audio)  dev="$(SwitchAudioSource -a -t output | fzf --reverse --no-info --cycle --prompt='󰓃  ' --pointer='' \
                   --color='bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7')" \
           && [ -n "$dev" ] && SwitchAudioSource -t output -s "$dev" >/dev/null ;;
