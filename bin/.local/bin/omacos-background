@@ -105,7 +105,7 @@ fetch() {
   tmp="${out%.*}.download"
   curl -fsSL -o "$tmp" "$url" || { rm -f "$tmp"; return 1; }
   case "$(file -b --mime-type "$tmp")" in
-    image/jpeg|image/png) mv "$tmp" "$out" ;;
+    image/jpeg) mv "$tmp" "$out" ;;
     image/*) sips -s format jpeg "$tmp" --out "$out" >/dev/null 2>&1; rm -f "$tmp" ;;
     *) rm -f "$tmp"; return 1 ;;
   esac

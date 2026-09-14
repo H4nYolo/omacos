@@ -77,7 +77,7 @@ issue), #10 omacos-shell = native Swift Panel (grilled 2026-09-14, decisions in 
 
 Cosmetics 5-7 are done. Left: #8 decide on Sol (calculator only, hotkeys nulled), #9 real-use verification
 (recording start/stop, OCR, mic/camera indicator, logout/login with panel + daemons autostart, upstream
-sketchybar formula issue). Wallpaper packs cyberpunk + fantasy shipped. The user also asked for Death Note wallpapers: no licence-free ones exist (franchise art), so at most a private, gitignored pack in `~/.local/share/omacos/wallpapers/` — waiting for the user's call.
+sketchybar formula issue). Wallpaper packs cyberpunk + fantasy shipped. Death Note (franchise fan art, never for the repo) lives as a private pack `~/.local/share/omacos/wallpapers/death-note.txt` (15 Wallhaven pictures via `https://wallhaven.cc/api/v1/search?q=…&categories=110&purity=100&ratios=16x9&atleast=2560x1440&sorting=favorites`, `.path` = direct URL), installed under `packs/death-note/`.
 
 ## Archive
 
