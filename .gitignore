@@ -16,5 +16,7 @@ themes/*/wallpaper.*
 sol/.config/sol/state.json
 sol/.config/sol/images_pasteboard/
 
+shell/.build/
+
 # personal, never committed
 omacos/.config/omacos/weather-location

@@ -175,8 +175,15 @@ Right, left to right:
 
 ## Menu, launcher and uninstall
 
-`Super + Shift + Space` opens `omacos-menu`, Omarchy's menu as a tree of fzf lists in the popup
-panel (`Backspace` on an empty query goes up a level, also out of the pickers; `Esc` closes).
+`Super + Space` and `Super + Shift + Space` open the **native panel**, `omacos-shell` (`shell/`,
+Swift, built by `install.sh`): one resident process that shows a compact floating window centred
+on the monitor under the mouse — no process start, app icons from macOS, the app you were in keeps
+focus. `Esc` or the same hotkey closes it, another view's hotkey switches in place, `Backspace`
+on an empty query goes up a level, a click outside closes. The same views also exist as fzf lists
+in the popup terminal (`omacos-launcher`, `omacos-menu`), which the panel opens for anything that
+needs a terminal (brew pickers, upgrades, notes) and which keep working over SSH.
+
+The menu is Omarchy's menu as a tree (`Backspace` on an empty query goes up a level, also out of the pickers; `Esc` closes).
 The tree is data: `~/.config/omacos/menu.json` (icon, label, and one of `menu`, `view`, `popup`, `run`;
 optional `state` and `when` shell commands for dynamic labels and visibility). Edit it to add
 entries; `omacos-menu <route> --list` shows what a level resolves to. The same file will drive
@@ -205,14 +212,14 @@ into `~/.cache/omacos/omacos-ocr`, the capture menu does the same on first use i
 
 ### Launcher
 
-`Super + Space` opens `omacos-launcher`, the walker look-alike: every app from `/Applications`,
+The launcher (native panel, or `omacos-launcher` in the popup) is the walker look-alike: every app from `/Applications`,
 `~/Applications` and the system folders in a monochrome fzf list, most-launched first. `Enter`
 launches, `ctrl-x` opens the app in Pearcleaner with its leftovers listed for a clean uninstall,
 `Esc` closes. Launch counts live in `~/.local/state/omacos/launcher-history`.
 
 ### The popup panel
 
-Launcher and help run in Ghostty's *quick terminal*: a floating panel, centred on the monitor
+Everything that needs a terminal runs in Ghostty's *quick terminal*: a floating panel, centred on the monitor
 under the mouse, that AeroSpace never tiles, so it appears in place with no jumps. A second
 Ghostty process started by AeroSpace (`omacos-popupd`, config `~/.config/ghostty/popup`) owns
 it. `omacos-popup <launcher|keys|menu [route]|emoji|clipboard>` writes the request to `~/.local/state/omacos/popup-request`

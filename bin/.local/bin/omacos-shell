@@ -1,0 +1,4 @@
+#!/bin/sh
+# omacos-shell [launcher|launcher --uninstall|menu [route]|hide|reload] — the native Panel.
+# Talks to the running instance (started by AeroSpace at login) or becomes it. Built by shell/build.sh.
+exec "$HOME/.local/share/omacos/omacos-shell.app/Contents/MacOS/omacos-shell" "$@"
