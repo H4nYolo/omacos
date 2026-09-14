@@ -3,7 +3,7 @@
 Read this first when resuming work on this repo (new session or after a context compact).
 Keep it current: update it at the end of every working session.
 
-**Last updated:** 2026-09-13 end of session 2 (other-monitor workspace marker, Omarchy menu with Backspace = back, brew picker, clipboard, emoji, capture, help with aliases/tools, weather-location, Super+W quits last window, tdl <dir>)
+**Last updated:** 2026-09-14 00:xx, end of session 2 (other-monitor workspace marker, Omarchy menu with Backspace = back, brew picker, clipboard, emoji, capture, help with aliases/tools, weather-location, Super+W quits last window, tdl <dir>, Sol hotkey conflict fixed, glow borders). Open work is in GitHub issues #5-#9.
 
 ## What this is
 
@@ -23,16 +23,17 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 
 | piece | how |
 |---|---|
+| Super+W/Q | `close --quit-if-last-window`: plain `close` left apps running without a window (looked like minimise) |
 | Super key | Caps Lock held = ctrl+alt+cmd (Karabiner), tap = Escape. Super+Shift = Caps+Shift. **No Meh key.** Caps+Shift+, . / are swallowed by Karabiner (macOS sysdiagnose) — never bind them |
 | Tiling | AeroSpace, `aerospace/.aerospace.toml`, config-version 2. Workspaces 1-5 + `scratch` on `CG437K P`, 6-10 on `Studio Display`; key 0 = workspace 10; `--auto-back-and-forth` on every workspace key (press again = go back). yabai and skhd are gone |
 | Alt | belongs to tmux (Ghostty `macos-option-as-alt = true`); AeroSpace only binds Alt+Tab |
 | Bar | sketchybar as Waybar clone (`sketchybar/`): workspaces (filled pill = focused, outlined pill = visible on the other monitor, via `aerospace list-workspaces --monitor all --visible`) · front app · mic/cam · brew updates · network · bluetooth · audio out · volume · cpu · mem · weather · clock. Menu bar hidden |
-| Borders | JankyBorders (`borders/`), Tokyo Night blue |
+| Borders | JankyBorders 1.9 (`borders/`): `style=round width=6 active_color='glow(0xff7aa2f7)'`; plain and gradient variants commented in `bordersrc`. `borders <options>` re-configures the running instance live |
 | Popups | a **second Ghostty instance** (`omacos-popupd`, config `ghostty/.config/ghostty/popup`, `initial-window=false`) owns a *quick terminal* panel (centred, monitor under the mouse, AeroSpace ignores it, fixed 1760x720 pt — Ghostty 1.3.1 ignores `quick-terminal-size`). `omacos-popup <launcher|keys|brew|audio|weather>` writes `~/.local/state/omacos/popup-request` and fires the instance's private global hotkey ctrl+alt+shift+cmd+F19 via System Events; `omacos-popup-run` execs the request inside. A running `brew upgrade` is never killed, only re-shown |
 | Menu | Super+Shift+Space → `omacos-menu [route]`: fzf tree (Apps, Learn, Capture, Clipboard, Emoji, Toggle, Install, Remove, Update, Info, System), Esc = one level up. Direct keys: Super+Shift+C capture, +E `omacos-menu-emoji` (`~/.config/omacos/emoji.tsv` from gemoji), +V `omacos-clipboard` (daemon `omacos-clipboardd` polls `pbpaste` 1/s → `~/.local/state/omacos/clipboard/`, 200 entries), +K tmux keys. `omacos-pkg-install`/`-remove` = fzf over `brew formulae`/`casks` (resp. `brew leaves` + casks) with `brew info` preview. `omacos-capture <region|window|screen|record|record-mic|stop|text|qr|color>` (screencapture; OCR = `~/.config/omacos/ocr.swift` compiled to `~/.cache/omacos/omacos-ocr`; qrencode). Actions that need the panel gone run via `omacos-detach` (nohup + 0.4s). `omacos-fzf` = fzf with the Tokyo Night look, `omacos-notify` = display notification |
 | Launcher | Super+Space → `omacos-launcher`: fzf list of all apps (+ Finder, CoreServices user apps, actions Screensaver/Lock/Sleep), most-launched first (`~/.local/state/omacos/launcher-history`), ctrl-x → Pearcleaner deep link |
 | Help | Super+K → `omacos-keys [tmux|aerospace|shell]`: parses `.aerospace.toml` bindings + comments, tmux keys, every alias of the interactive zsh (`zsh -ic alias`, trailing comments in omarchy.zsh become descriptions), the documented layout functions, `~/.config/omacos/tools.tsv` (Brewfile tools, generated with `brew desc`) and every `omacos-*` script's second line, into fzf. Comments name the app so searches like "neohtop" hit |
-| Uninstall | Pearcleaner (Sentinel + CLI `Pearcleaner uninstall-all <path>`). Raycast is gone. Sol still installed on plain Option+Space (calculator/clipboard), optional |
+| Uninstall | Pearcleaner (Sentinel + CLI `Pearcleaner uninstall-all <path>`). Raycast is gone. Sol still installed on plain Option+Space as calculator only; its window-management hotkeys are nulled in `sol/.config/sol/config.json` (issue #8 decides its fate) |
 | Screensaver | `omacos-idle` (started by AeroSpace) → after `~/.config/omacos/idle-minutes` (5) idle → `omacos-screensaver`: one fullscreen Ghostty per monitor (`ghostty/.config/ghostty/screensaver`) running `omacos-screensaver-run` = random `tte` effects on `~/.config/omacos/screensaver.txt` (Omarchy logo). Any key / focus loss ends all. Skips while `PreventUserIdleDisplaySleep` is asserted. `tte` via `uv tool install terminaltexteffects` |
 | Shell | OMZ + p10k kept, `zsh/.config/zsh/omarchy.zsh` = Omarchy aliases + `tdl`/`tdlm`/`tsl` (`ix` = `tdl cx`). zoxide replaced tiny-dc. Secrets + machine PATH in `~/.zshrc.local` (never committed) |
 | tmux | Omarchy config, prefix Ctrl+Space (Ctrl+b secondary), + Ctrl+hjkl navigator. tmux 3.7c |
@@ -52,6 +53,7 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 - brew inside the sketchybar launchd service crashes on cask checks → the updates plugin counts `--formula` only. `updates=when_shown` is the default: hidden items never run their script → set `updates=on`.
 - Karabiner sometimes does not reload after in-place edits: `launchctl kickstart -k gui/$(id -u)/org.pqrs.service.agent.Karabiner-Console-User-Server`.
 - Sol's window-management hotkeys (`control+option+command+left/right` = move to next screen, `control+option+arrows` = halves) collided with Super+arrows: every keyboard focus change made the unfocused window vanish for ~80 ms (Sol moved it, AeroSpace put it back). All `resize_*`/`move_*` shortcuts are `null` in `sol/.config/sol/config.json` now. Found by recording the screen with `screencapture -v` and diffing frames with ffmpeg; `aerospace focus` from the CLI never showed it, only real key events (`osascript key code 123 using {control down, option down, command down}`).
+- Accordion layout (Super+G, "toggle group") shows one window at a time and looks like fullscreen; `aerospace list-windows --workspace N --format '%{window-layout}'` reveals `h_accordion`. User knows now; keep the binding.
 - Never run an interactive `zsh -i` inside a popup pipeline: it takes over the panel's tty and fzf quits at once. Source `~/.zshrc` non-interactively instead (see `omacos-keys`).
 - fzf pickers inside the menu: `backward-eof:become(echo BACK)` + exit 3 = "go back one level"; menu functions must keep title/items `local` or the parent redraws with the child's entries.
 - Glyphs typed into heredocs can get lost silently (four menu icons arrived as two spaces). Check with a codepoint dump; use Material Design glyphs (U+F0000+), they all render in CaskaydiaMono NF.
