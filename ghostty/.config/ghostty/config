@@ -5,6 +5,8 @@ font-family = CaskaydiaMono Nerd Font
 theme = TokyoNight Night
 # omacos-theme set renders the current palette here; it overrides the theme above
 config-file = ?~/.local/state/omacos/theme/ghostty.conf
+# omacos-font set writes the chosen family here
+config-file = ?~/.local/state/omacos/font.conf
 
 # Omarchy: 14px padding, no confirm on close, no resize overlay
 window-padding-x = 14

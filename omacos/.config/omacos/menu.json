@@ -30,7 +30,9 @@
     { "icon": "󰏘", "label": "Style", "id": "style", "menu": [
       { "icon": "󰏘", "label": "Theme", "popup": "theme", "state": "omacos-theme current" },
       { "icon": "󰸉", "label": "Background", "popup": "background" },
-      { "icon": "󰸉", "label": "Next background", "run": "omacos-background next" }
+      { "icon": "󰸉", "label": "Next background", "run": "omacos-background next" },
+      { "icon": "󰉏", "label": "Wallpaper packs", "popup": "background-packs" },
+      { "icon": "󰛖", "label": "Font", "popup": "font", "state": "omacos-font current" }
     ]},
     { "icon": "󰔡", "label": "Toggle", "id": "toggle", "menu": [
       { "icon": "󰒲", "label": "Screensaver on idle", "run": "omacos-toggle idle", "state": "omacos-toggle idle --state" },

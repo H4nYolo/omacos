@@ -110,6 +110,13 @@ Whether a theme is dark or light. Decides the macOS appearance.
 One of a theme's desktop pictures. Omarchy calls them backgrounds; macOS says wallpaper.
 _Avoid_: Wallpaper in scripts (use background), desktop picture
 
+**Pack**:
+A theme-independent set of backgrounds, installed by name from a list of URLs or linked from a folder. Installed packs join the theme's backgrounds in the cycle and the picker.
+_Avoid_: Collection, gallery
+
+**Font**:
+The one monospace family used everywhere: terminal, bar, panel. Always a Nerd Font, because the bar and the menu use its glyphs.
+
 ### Packaging
 
 **Package** (stow):

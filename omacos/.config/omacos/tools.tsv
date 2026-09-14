@@ -23,3 +23,4 @@ zsh-autosuggestions	Fish-like fast/unobtrusive autosuggestions for zsh
 zsh-syntax-highlighting	Fish shell like syntax highlighting for zsh
 tte	terminaltexteffects — the screensaver animations (uv tool)
 chafa	Versatile and fast Unicode/ASCII/ANSI graphics renderer
+fontconfig	XML-based font configuration API for X Windows (fc-list)

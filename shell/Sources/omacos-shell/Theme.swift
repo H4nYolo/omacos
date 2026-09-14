@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// Panel colours. Defaults are Tokyo Night; `reload()` reads the current theme's
-/// `~/.local/state/omacos/theme/panel.conf` (rendered by `omacos-theme set`) before every show.
+/// Panel colours and font. Defaults are Tokyo Night / CaskaydiaMono; `reload()` reads the current
+/// theme's `~/.local/state/omacos/theme/panel.conf` and `~/.local/state/omacos/font` before every show.
 enum Theme {
     static var bg = color(0x1a1b26)
     static var bgSelected = color(0x283457)
@@ -9,13 +9,17 @@ enum Theme {
     static var dim = color(0x565f89)
     static var accent = color(0x7aa2f7)
     static var border = color(0x3b4261)
-    static let fontName = "CaskaydiaMono Nerd Font"
+    static var fontName = "CaskaydiaMono Nerd Font"
 
     static func font(_ size: CGFloat) -> Font { .custom(fontName, size: size) }
 
     static let confPath = NSString(string: "~/.local/state/omacos/theme/panel.conf").expandingTildeInPath
+    static let fontPath = NSString(string: "~/.local/state/omacos/font").expandingTildeInPath
 
     static func reload() {
+        if let f = try? String(contentsOfFile: fontPath, encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines), !f.isEmpty {
+            fontName = f
+        }
         guard let text = try? String(contentsOfFile: confPath, encoding: .utf8) else { return }
         for line in text.split(separator: "\n") {
             let parts = line.split(separator: "=", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespaces) }

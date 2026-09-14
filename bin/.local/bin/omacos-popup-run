@@ -20,6 +20,8 @@ case "$req" in
   outdated) brew outdated --verbose; printf '\n press Enter to close'; read -r _ ;;
   theme)   exec omacos-theme menu ;;
   background) exec omacos-background menu ;;
+  background-packs) exec omacos-background packs-menu ;;
+  font)    exec omacos-font menu ;;
   audio)  dev="$(SwitchAudioSource -a -t output | omacos-fzf --prompt='󰓃  ')" \
           && [ -n "$dev" ] && SwitchAudioSource -t output -s "$dev" >/dev/null ;;
   *)      exec omacos-launcher ;;

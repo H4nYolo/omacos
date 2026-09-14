@@ -1,0 +1,19 @@
+# Omarchy's logo wallpaper in every theme's colours (MIT). filename<TAB>url
+omarchy-catppuccin-latte.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/catppuccin-latte/backgrounds/omarchy.webp
+omarchy-catppuccin.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/catppuccin/backgrounds/omarchy.webp
+omarchy-ethereal.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/ethereal/backgrounds/omarchy.webp
+omarchy-everforest.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/everforest/backgrounds/omarchy.webp
+omarchy-gruvbox.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/gruvbox/backgrounds/omarchy.webp
+omarchy-hackerman.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/hackerman/backgrounds/omarchy.webp
+omarchy-kanagawa.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/kanagawa/backgrounds/omarchy.webp
+omarchy-lumon.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/lumon/backgrounds/omarchy.webp
+omarchy-matte-black.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/matte-black/backgrounds/omarchy.webp
+omarchy-miasma.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/miasma/backgrounds/omarchy.webp
+omarchy-nord.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/nord/backgrounds/omarchy.webp
+omarchy-osaka-jade.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/osaka-jade/backgrounds/omarchy.webp
+omarchy-retro-82.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/retro-82/backgrounds/omarchy.webp
+omarchy-ristretto.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/ristretto/backgrounds/omarchy.webp
+omarchy-rose-pine.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/rose-pine/backgrounds/omarchy.webp
+omarchy-tokyo-night.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/tokyo-night/backgrounds/omarchy.webp
+omarchy-vantablack.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/vantablack/backgrounds/omarchy.webp
+omarchy-white.webp	https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/white/backgrounds/omarchy.webp

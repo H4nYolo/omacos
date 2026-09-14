@@ -177,7 +177,19 @@ names of the theme's wallpapers. `omacos-theme set <name>` renders the templates
 picker with colour swatches. **Style → Background** picks one of the theme's wallpapers with an image
 preview (chafa, kitty graphics in the popup), `Super + Shift + B` or **Next background** cycles them
 (`omacos-background next | prev | set <file> | menu`). Your own pictures go into
-`~/.local/share/omacos/backgrounds/<theme>/`. Tokyo Night is the default and stays hard-wired as the fallback in every
+`~/.local/share/omacos/backgrounds/<theme>/`.
+
+**Wallpaper packs** are theme-independent sets that join the cycle and the picker:
+`omacos-background packs | install <pack> | remove <pack>`, or **Style → Wallpaper packs**. A pack is a
+`filename<TAB>url` list in `omacos/.config/omacos/wallpapers/<pack>.txt` (shipped: `omarchy-logos`, the
+Omarchy logo in every theme's colours, and `omarchy-all`, every Omarchy background), a private list in
+`~/.local/share/omacos/wallpapers/<pack>.txt`, or any folder: `omacos-background install ~/Pictures/walls`
+links it in.
+
+**Font**: **Style → Font** or `omacos-font list | set <family> | menu | install` switches the monospace font
+between the installed Nerd Fonts (fontconfig's `fc-list`), with a brew picker for more
+`font-*-nerd-font` casks. Ghostty reloads live (SIGUSR2, every window and the popup), the bar reloads,
+the Panel reads it on its next show; tmux and nvim inherit the terminal's font. Tokyo Night is the default and stays hard-wired as the fallback in every
 config, so nothing breaks before the first `set`. Your own theme: a directory with a `colors.toml`
 under `~/.local/share/omacos/themes/<name>/`.
 
@@ -226,7 +238,7 @@ the native panel of issue #10.
 - **Emoji** (`Super + Shift + E`) — search by name or keyword, `Enter` pastes
 - **Notes** (`Super + Shift + N`) — Raycast-Notes-style scratch pad: `~/notes/quick.md` (path in `~/.config/omacos/notes-file`) in nvim,
   cursor under a fresh timestamp in insert mode, every keystroke saved; `Esc` `:q` or just closing the panel keeps everything
-- **Style** — theme and background pickers (see [Themes](#themes)); the font switcher will join it
+- **Style** — theme, background, wallpaper pack and font pickers (see [Themes](#themes))
 - **Toggle** — screensaver on idle, bar, borders, microphone mute
 - **Install** — `omacos-pkg-install`: every Homebrew formula and cask in fzf with `brew info` as preview, `Tab` multi-select,
   `Enter` installs right there. Or the App Store

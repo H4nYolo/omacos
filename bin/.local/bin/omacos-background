@@ -1,21 +1,35 @@
 #!/bin/bash
-# omacos-background <next|prev|set <file>|current|list|menu> — switch the wallpaper within the current theme
+# omacos-background <next|prev|set <file>|current|list|menu|packs|install <pack|folder>|remove <pack>> — switch the wallpaper
 #
-# Backgrounds of the current theme live in ~/.local/share/omacos/backgrounds/<theme>/ (downloaded
-# by omacos-theme from the Omarchy repo; drop your own jpg/png there too). `next`/`prev` cycle
-# in name order on every display, `menu` is a picker with image preview (chafa) in the Popup.
+# Sources: the current theme's backgrounds in ~/.local/share/omacos/backgrounds/<theme>/
+# (downloaded by omacos-theme from the Omarchy repo; drop your own jpg/png there too) plus every
+# installed pack in ~/.local/share/omacos/backgrounds/packs/<pack>/. A pack is a list
+# `filename<TAB>url` in ~/.config/omacos/wallpapers/<pack>.txt (or ~/.local/share/omacos/wallpapers/)
+# or simply a folder of pictures (`install ~/Pictures/walls` links it). `next`/`prev` cycle in
+# name order on every display, `menu` is a picker with image preview (chafa) in the Popup.
 # The current one is the symlink ~/.local/state/omacos/background.
 set -u
 
 STATE="$HOME/.local/state/omacos"
 LINK="$STATE/background"
+BASE="$HOME/.local/share/omacos/backgrounds"
+PACKS="$BASE/packs"
+PACK_LISTS=("$HOME/.config/omacos/wallpapers" "$HOME/.local/share/omacos/wallpapers")
 
 theme=$(omacos-theme current)
-dir="$HOME/.local/share/omacos/backgrounds/$theme"
+dir="$BASE/$theme"
+
+sources() {
+  [[ -d $dir ]] && echo "$dir"
+  [[ -d $PACKS ]] && find "$PACKS" -mindepth 1 -maxdepth 1 \( -type d -o -type l \) | sort
+}
 
 list() {
-  [[ -d $dir ]] || return 0
-  find "$dir" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.heic' \) | sort
+  local s
+  while IFS= read -r s; do
+    [[ -n $s ]] || continue
+    find -L "$s" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.heic' \) 2>/dev/null | sort
+  done < <(sources)
 }
 
 current() { readlink "$LINK" 2>/dev/null; }
@@ -50,16 +64,88 @@ cycle() {
 menu() {
   local cur choice
   ensure
-  cur=$(basename "$(current)" 2>/dev/null)
-  choice=$(list | xargs -n1 basename | omacos-fzf --prompt='󰸉  background  ' \
+  cur=$(current); cur=${cur#$BASE/}
+  choice=$(list | sed "s|^$BASE/||" | omacos-fzf --prompt='󰸉  background  ' \
       --header="current: ${cur:-none}  ·  enter  apply  ·  esc  close" \
-      --preview="chafa -f kitty -s \${FZF_PREVIEW_COLUMNS}x\${FZF_PREVIEW_LINES} --animate off '$dir'/{}" \
+      --preview="chafa -f kitty -s \${FZF_PREVIEW_COLUMNS}x\${FZF_PREVIEW_LINES} --animate off '$BASE'/{}" \
       --preview-window=right,60% \
       --bind 'backward-eof:become(echo BACK)') || exit 0
   case "$choice" in
     BACK|"") exit 3 ;;
   esac
-  set_background "$dir/$choice"
+  set_background "$BASE/$choice"
+}
+
+# --- packs -----------------------------------------------------------------------------
+
+pack_file() {
+  local name="$1" d
+  for d in "${PACK_LISTS[@]}"; do [[ -f "$d/$name.txt" ]] && { echo "$d/$name.txt"; return 0; }; done
+  return 1
+}
+
+packs() {
+  local d f name
+  for d in "${PACK_LISTS[@]}"; do
+    [[ -d $d ]] || continue
+    for f in "$d"/*.txt; do [[ -f $f ]] && basename "$f" .txt; done
+  done | sort -u | while IFS= read -r name; do
+    if [[ -d "$PACKS/$name" ]]; then echo "$name	installed"; else echo "$name	available"; fi
+  done
+  [[ -d $PACKS ]] && for d in "$PACKS"/*/; do
+    [[ -e $d ]] || continue
+    name=$(basename "$d"); pack_file "$name" >/dev/null || echo "$name	folder"
+  done
+}
+
+fetch() {
+  local url="$1" out="$2" tmp
+  [[ -f $out ]] && return 0
+  tmp="${out%.*}.download.${url##*.}"
+  curl -fsSL -o "$tmp" "$url" || { rm -f "$tmp"; return 1; }
+  case "${tmp##*.}" in
+    jpg|jpeg|png) mv "$tmp" "$out" ;;
+    *) sips -s format jpeg "$tmp" --out "$out" >/dev/null 2>&1; rm -f "$tmp" ;;
+  esac
+  [[ -f $out ]]
+}
+
+install_pack() {
+  local what="$1" file name fname url n ok=0
+  if [[ -d $what ]]; then
+    name=$(basename "$what"); mkdir -p "$PACKS"
+    ln -sfn "$(cd "$what" && pwd)" "$PACKS/$name"
+    echo "linked $what as pack '$name'"; return 0
+  fi
+  file=$(pack_file "$what") || { echo "omacos-background: no pack '$what' (omacos-background packs)" >&2; exit 1; }
+  name="$what"; mkdir -p "$PACKS/$name"
+  n=$(grep -cv '^\s*#\|^\s*$' "$file")
+  while IFS=$'\t' read -r fname url; do
+    [[ -n $fname && -n $url && $fname != \#* ]] || continue
+    case "${fname##*.}" in jpg|jpeg|png) ;; *) fname="${fname%.*}.jpg" ;; esac
+    if fetch "$url" "$PACKS/$name/$fname"; then ok=$((ok + 1)); printf '\r  %d/%d %s' "$ok" "$n" "$fname"; else printf '\r  failed: %s\n' "$url"; fi
+  done <"$file"
+  printf '\r  %d/%d downloaded into %s\n' "$ok" "$n" "$PACKS/$name"
+}
+
+remove_pack() {
+  local name="$1"
+  [[ -e "$PACKS/$name" || -L "$PACKS/$name" ]] || { echo "omacos-background: pack '$name' is not installed" >&2; exit 1; }
+  if [[ -L "$PACKS/$name" ]]; then rm "$PACKS/$name"; else rm -rf "${PACKS:?}/$name"; fi
+  echo "removed pack '$name'"
+}
+
+packs_menu() {
+  local choice name state
+  choice=$(packs | omacos-fzf --prompt='󰉏  wallpaper packs  ' --delimiter='\t' --with-nth=1,2 \
+      --header='enter  install / remove  ·  esc  close' \
+      --preview='f=$(ls ~/.config/omacos/wallpapers/{1}.txt ~/.local/share/omacos/wallpapers/{1}.txt 2>/dev/null | head -1); [ -n "$f" ] && { sed -n "1p" "$f"; echo; grep -cv "^\s*#\|^\s*$" "$f" | sed "s/$/ pictures/"; } || ls ~/.local/share/omacos/backgrounds/packs/{1} | head -20' \
+      --preview-window=down,6,wrap \
+      --bind 'backward-eof:become(echo BACK)') || exit 0
+  case "$choice" in BACK|"") exit 3 ;; esac
+  name=${choice%%	*}; state=${choice#*	}
+  if [[ $state == available ]]; then install_pack "$name"; sleep 1; else remove_pack "$name"; sleep 1; fi
+  packs_menu
 }
 
 case "${1:-}" in
@@ -69,5 +155,9 @@ case "${1:-}" in
   current) current ;;
   list) list ;;
   menu) menu ;;
+  packs) packs ;;
+  packs-menu) packs_menu ;;
+  install) install_pack "${2:?pack or folder}" ;;
+  remove) remove_pack "${2:?pack}" ;;
   *) sed -n 2p "$0"; exit 1 ;;
 esac

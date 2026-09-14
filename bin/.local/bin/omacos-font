@@ -1,0 +1,66 @@
+#!/bin/bash
+# omacos-font <list|current|set <family>|menu|install> — switch the monospace font (Ghostty, bar, Panel)
+#
+# `list` = installed Nerd Font families (fontconfig). `set` writes the family to
+# ~/.local/state/omacos/font (+ font.conf for Ghostty's config-file include), reloads
+# every running Ghostty (SIGUSR2), sketchybar, and the Panel reads it on its next show.
+# tmux and nvim inherit the terminal's font. `install` picks a font-*-nerd-font cask,
+# installs it and sets it. Default: CaskaydiaMono Nerd Font.
+set -u
+
+STATE="$HOME/.local/state/omacos"
+DEFAULT="CaskaydiaMono Nerd Font"
+
+list() {
+  fc-list :spacing=100 -f '%{family[0]}\n' 2>/dev/null | grep -i 'nerd font$' | sort -u
+}
+
+current() { cat "$STATE/font" 2>/dev/null || echo "$DEFAULT"; }
+
+set_font() {
+  local family="$1"
+  list | grep -qxF "$family" || { echo "omacos-font: '$family' is not an installed Nerd Font (omacos-font list)" >&2; exit 1; }
+  mkdir -p "$STATE"
+  echo "$family" >"$STATE/font"
+  printf 'font-family = %s\n' "$family" >"$STATE/font.conf"
+  pkill -USR2 -x ghostty 2>/dev/null || true
+  sketchybar --reload >/dev/null 2>&1 || true
+  omacos-notify "Font" "$family" >/dev/null 2>&1 || true
+}
+
+menu() {
+  local cur choice
+  cur=$(current)
+  choice=$( { list; echo "󰇚  install another Nerd Font…"; } |
+    omacos-fzf --prompt='󰛖  font  ' --header="current: $cur  ·  enter  apply  ·  esc  close" \
+      --preview='printf "%s\n\nThe quick brown fox jumps over the lazy dog\n0123456789 O0 l1I |  -> => != <= >= ::\n   󰊤 󰀻 󰌌\n" {}' \
+      --preview-window=down,6 \
+      --bind 'backward-eof:become(echo BACK)') || exit 0
+  case "$choice" in
+    BACK|"") exit 3 ;;
+    "󰇚  install"*) install_font ;;
+    *) set_font "$choice" ;;
+  esac
+}
+
+install_font() {
+  local cask family
+  cask=$(brew search --cask nerd-font 2>/dev/null | grep '^font-.*-nerd-font$' |
+    omacos-fzf --prompt='󰇚  install font  ' --header='enter  brew install + apply  ·  esc  back' \
+      --preview='brew info --cask {} 2>/dev/null | head -20' --preview-window=down,8) || return 0
+  [[ -n $cask ]] || return 0
+  echo "installing $cask …"
+  brew install --cask "$cask" || { printf '\n install failed — press Enter'; read -r _; return 1; }
+  # the family fontconfig now sees that was not there before
+  family=$(list | grep -ivxF -f <(echo "$before") | head -n1)
+  [[ -n $family ]] && set_font "$family" || { echo "installed; pick it from the list"; sleep 1; menu; }
+}
+
+case "${1:-}" in
+  list) list ;;
+  current) current ;;
+  set) set_font "${2:?family}" ;;
+  install) before=$(list); install_font ;;
+  menu) before=$(list); menu ;;
+  *) sed -n 2p "$0"; exit 1 ;;
+esac
