@@ -5,7 +5,8 @@
 # (downloaded by omacos-theme from the Omarchy repo; drop your own jpg/png there too) plus every
 # installed pack in ~/.local/share/omacos/backgrounds/packs/<pack>/. A pack is a list
 # `filename<TAB>url` in ~/.config/omacos/wallpapers/<pack>.txt (or ~/.local/share/omacos/wallpapers/)
-# or simply a folder of pictures (`install ~/Pictures/walls` links it). `next`/`prev` cycle in
+# (further tab columns: source page, licence — attribution only) or simply a folder of
+# pictures (`install ~/Pictures/walls` links it). `next`/`prev` cycle in
 # name order on every display, `menu` is a picker with image preview (chafa) in the Popup.
 # The current one is the symlink ~/.local/state/omacos/background.
 set -u
@@ -101,11 +102,12 @@ packs() {
 fetch() {
   local url="$1" out="$2" tmp
   [[ -f $out ]] && return 0
-  tmp="${out%.*}.download.${url##*.}"
+  tmp="${out%.*}.download"
   curl -fsSL -o "$tmp" "$url" || { rm -f "$tmp"; return 1; }
-  case "${tmp##*.}" in
-    jpg|jpeg|png) mv "$tmp" "$out" ;;
-    *) sips -s format jpeg "$tmp" --out "$out" >/dev/null 2>&1; rm -f "$tmp" ;;
+  case "$(file -b --mime-type "$tmp")" in
+    image/jpeg|image/png) mv "$tmp" "$out" ;;
+    image/*) sips -s format jpeg "$tmp" --out "$out" >/dev/null 2>&1; rm -f "$tmp" ;;
+    *) rm -f "$tmp"; return 1 ;;
   esac
   [[ -f $out ]]
 }
@@ -120,7 +122,7 @@ install_pack() {
   file=$(pack_file "$what") || { echo "omacos-background: no pack '$what' (omacos-background packs)" >&2; exit 1; }
   name="$what"; mkdir -p "$PACKS/$name"
   n=$(grep -cv '^\s*#\|^\s*$' "$file")
-  while IFS=$'\t' read -r fname url; do
+  while IFS=$'\t' read -r fname url _rest; do   # further columns (source, licence) are attribution only
     [[ -n $fname && -n $url && $fname != \#* ]] || continue
     case "${fname##*.}" in jpg|jpeg|png) ;; *) fname="${fname%.*}.jpg" ;; esac
     if fetch "$url" "$PACKS/$name/$fname"; then ok=$((ok + 1)); printf '\r  %d/%d %s' "$ok" "$n" "$fname"; else printf '\r  failed: %s\n' "$url"; fi

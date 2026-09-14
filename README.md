@@ -181,8 +181,10 @@ preview (chafa, kitty graphics in the popup), `Super + Shift + B` or **Next back
 
 **Wallpaper packs** are theme-independent sets that join the cycle and the picker:
 `omacos-background packs | install <pack> | remove <pack>`, or **Style → Wallpaper packs**. A pack is a
-`filename<TAB>url` list in `omacos/.config/omacos/wallpapers/<pack>.txt` (shipped: `omarchy-logos`, the
-Omarchy logo in every theme's colours, and `omarchy-all`, every Omarchy background), a private list in
+`filename<TAB>url[<TAB>source<TAB>licence]` list in `omacos/.config/omacos/wallpapers/<pack>.txt` (shipped:
+`omarchy-logos`, the Omarchy logo in every theme's colours; `omarchy-all`, every Omarchy background;
+`cyberpunk` and `fantasy`, 14 photos each from Unsplash, Pexels and Wikimedia Commons under their free
+licences, credits in the list files), a private list in
 `~/.local/share/omacos/wallpapers/<pack>.txt`, or any folder: `omacos-background install ~/Pictures/walls`
 links it in.
 
