@@ -20,8 +20,8 @@ if [ -n "$child" ]; then
   # brew may sit several levels down (login → sh → omacos-menu → brew), so look at
   # every process on the panel's tty rather than at direct children only.
   child_tty="$(ps -o tty= -p "$child" 2>/dev/null | tr -d ' ')"
-  if [ -n "$child_tty" ] && [ "$child_tty" != "??" ] && ps -t "$child_tty" -o command= 2>/dev/null | grep -q 'brew'; then
-    : # leave the request as it is: the panel just comes back with whatever brew is doing
+  if [ -n "$child_tty" ] && [ "$child_tty" != "??" ] && ps -t "$child_tty" -o command= 2>/dev/null | grep -q 'brew\|omacos-notes'; then
+    : # brew or the notes pad is running in there: don't kill it, just bring the panel back
   else
     pkill -P "$pid"
     sleep 0.3

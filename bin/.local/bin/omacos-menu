@@ -39,6 +39,7 @@ menu_root() {
     '󰂺  Learn	menu_learn' \
     '󰄀  Capture	menu_capture' \
     '󰆏  Clipboard	pick omacos-clipboard' \
+    '󰎞  Notes	exec omacos-notes' \
     '󰞅  Emoji	pick omacos-menu-emoji' \
     '󰔡  Toggle	menu_toggle' \
     '󰏗  Install	menu_install' \

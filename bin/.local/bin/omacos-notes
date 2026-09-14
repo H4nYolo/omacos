@@ -1,0 +1,26 @@
+#!/bin/sh
+# omacos-notes — Raycast-Notes-style scratch pad (Super + Shift + N): one markdown file,
+# opened in nvim inside the popup panel, cursor at the end under a fresh timestamp,
+# insert mode ready. Every change is written immediately, so closing the panel or
+# pressing Esc twice never loses anything. File: ~/.config/omacos/notes-file, default
+# ~/notes/quick.md. A timestamp nobody wrote under is removed again on exit.
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+file="$(cat "$HOME/.config/omacos/notes-file" 2>/dev/null)"
+file="${file:-$HOME/notes/quick.md}"
+file="${file/#\~/$HOME}"
+mkdir -p "$(dirname "$file")"
+[ -f "$file" ] || printf '# Quick notes\n' > "$file"
+
+stamp="## $(date '+%a %d %b %Y %H:%M')"
+printf '\n%s\n\n' "$stamp" >> "$file"
+
+nvim "$file" \
+  -c 'set autowriteall nonumber norelativenumber signcolumn=no laststatus=0 wrap linebreak' \
+  -c 'autocmd TextChanged,TextChangedI,InsertLeave <buffer> silent! write' \
+  -c 'autocmd VimLeavePre * silent! write' \
+  -c 'normal G' -c 'startinsert'
+
+# drop the stamp again if nothing was written under it
+if [ "$(tail -n 2 "$file" | head -n 1)" = "$stamp" ] && [ -z "$(tail -n 1 "$file" | tr -d '[:space:]')" ]; then
+  n="$(wc -l < "$file")"; head -n $((n - 3)) "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+fi

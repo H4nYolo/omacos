@@ -106,7 +106,7 @@ arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resiz
 `Shift + ;` then `Shift + arrow` join a neighbour
 
 **Apps** — `Enter` Ghostty · `Shift + T` Ghostty with tmux · `Shift + Enter` Zen · `Shift + F` Finder ·
-`Shift + N` nvim · `Shift + D` lazydocker · `Shift + A` NeoHtop · `Shift + G` Telegram
+`Shift + W` nvim · `Shift + N` quick notes · `Shift + D` lazydocker · `Shift + A` NeoHtop · `Shift + G` Telegram
 
 `Alt + Tab` cycles windows on the workspace.
 
@@ -133,6 +133,7 @@ only the shell part. `Esc` closes it.
 | `Super + Space` Omarchy menu / `Super + Alt + Space` apps | `Super + Shift + Space` / `Super + Space` |
 | `Super + Ctrl + C` capture · `Super + Ctrl + E` emoji · `Super + Ctrl + V` clipboard | `Super + Shift + C` · `E` · `V` |
 | `Super + Alt + K` tmux keybindings | `Super + Shift + K` |
+| `Super + Shift + N` editor · `Super + Shift + W` Omawrite | `Super + Shift + W` editor · `Super + Shift + N` quick notes |
 
 ### Not portable
 
@@ -185,6 +186,8 @@ panel (`Backspace` on an empty query goes up a level, also out of the pickers; `
 - **Clipboard** (`Super + Shift + V`) — history of the last 200 text entries (`omacos-clipboardd`, started by AeroSpace);
   `Enter` pastes into the app that had focus, `ctrl-x` deletes, `alt-c` clears. Password managers' concealed entries are skipped
 - **Emoji** (`Super + Shift + E`) — search by name or keyword, `Enter` pastes
+- **Notes** (`Super + Shift + N`) — Raycast-Notes-style scratch pad: `~/notes/quick.md` (path in `~/.config/omacos/notes-file`) in nvim,
+  cursor under a fresh timestamp in insert mode, every keystroke saved; `Esc` `:q` or just closing the panel keeps everything
 - **Toggle** — screensaver on idle, bar, borders, microphone mute
 - **Install** — `omacos-pkg-install`: every Homebrew formula and cask in fzf with `brew info` as preview, `Tab` multi-select,
   `Enter` installs right there. Or the App Store
