@@ -1,312 +1,60 @@
-![omacos: Super + Space launcher panel over an Omarchy wallpaper, sketchybar on top](docs/screenshot-launcher-panel.jpg)
-
-# omacos
+<p align="center">
+  <img src="docs/images/banner.png" alt="omacos" width="800">
+</p>
 
 > **Status: personal fun project, very much in the testing phase.**
 > This is my own machine's setup, published as-is. It is not a product, not finished, not
 > tested on any Mac but mine (a Mac Studio with two monitors, a Kinesis keyboard, macOS 26 Tahoe),
 > and it changes daily. Nothing here is endorsed by or affiliated with Omarchy or Basecamp.
 >
-> **Read before running `install.sh`:** it rewires your keyboard (Caps Lock becomes a modifier,
-> Escape on tap), takes over window management (AeroSpace), hides the macOS menu bar, replaces
-> your tmux, zsh, Ghostty, nvim and git configs (the old ones are moved to `~/.config-archive/`,
-> not deleted), installs a dozen brew packages and starts several background services.
-> Restoring everything is possible but manual. Read the script, use it for ideas, copy what you
-> like into your own dotfiles, and only run it on a machine you are happy to reset.
-> No warranty of any kind; see `LICENSE`.
+> **Read before running `install.sh`:** it rewires your keyboard (Left Command becomes `Super`,
+> Caps Lock becomes Command, Escape on tap), takes over window management (AeroSpace), hides the
+> macOS menu bar, replaces your tmux, zsh, Ghostty, nvim and git configs (the old ones are moved
+> to `~/.config-archive/`, not deleted), installs a dozen brew packages and starts several
+> background services. Restoring everything is possible but manual. Read the script, use it for
+> ideas, copy what you like into your own dotfiles, and only run it on a machine you are happy to
+> reset. No warranty of any kind; see `LICENSE`.
 
-Omarchy look & feel on macOS. A port of the terminal and tiling experience of
-[Omarchy](https://github.com/basecamp/omarchy) — Hyprland keybindings, tmux, shell
-aliases, Tokyo Night — onto AeroSpace, Ghostty, tmux, zsh and Karabiner.
-
-| Omarchy piece | On the Mac |
-|---|---|
-| Hyprland tiling & bindings | [AeroSpace](https://github.com/nikitabobko/AeroSpace) (`aerospace/`) |
-| Waybar | [sketchybar](https://github.com/FelixKratz/SketchyBar) (`sketchybar/`) |
-| Window borders | [JankyBorders](https://github.com/FelixKratz/JankyBorders) (`borders/`) |
-| `Super` key | Caps Lock via [Karabiner-Elements](https://karabiner-elements.pqrs.org) (`karabiner/`) |
-| tmux config | tmux (`tmux/`) |
-| bash aliases, `tdl` / `tdlm` / `tsl` layouts | zsh (`zsh/`) |
-| Alacritty / Ghostty | Ghostty (`ghostty/`) |
-| LazyVim | LazyVim (`nvim/`) |
-| btop | [NeoHtop](https://github.com/Abdenasser/neohtop) on `Super + Shift + A` |
-| Walker (`Super + Space` menu) | `omacos-shell launcher`: native panel with every app, Pearcleaner on `ctrl-x` |
-| Clean app uninstall | [Pearcleaner](https://github.com/alienator88/Pearcleaner), with its Sentinel watching the Trash |
-| Theme | Tokyo Night everywhere (`themes/`) |
-
-## Install
+**omacos** brings the look and feel of [Omarchy](https://omarchy.org) to macOS: Hyprland-style
+tiling and keybindings on AeroSpace, a Waybar-like bar, Omarchy's menu, themes, tmux and shell
+setup, all driven from one `Super` key under your thumb. It is a set of dotfiles, a handful of
+scripts and one small native panel.
 
 ```sh
 git clone https://github.com/H4nYolo/omacos ~/work/projects/omacos
-cd ~/work/projects/omacos
-./install.sh
+cd ~/work/projects/omacos && ./install.sh
 ```
 
-`install.sh` runs `brew bundle`, hides the macOS menu bar, moves any existing
-configs to `~/.config-archive/<timestamp>/`, links every package with GNU stow
-and starts the services. Re-running it is safe.
+![A workspace: Ghostty with the ix layout (nvim, Claude Code, shell) next to the keys list](docs/images/tiling.jpg)
 
-Each top-level directory is a stow package mirroring `$HOME`, so a single tool
-can be linked on its own: `stow --target=$HOME aerospace`.
+A workspace: `ix` opens nvim, Claude Code and a shell in one tmux window, `Super + Enter` adds a
+terminal next to it. Windows tile dwindle-style, the focused one glows in the theme's accent, the
+bar on top replaces the menu bar.
 
-### First run: permissions macOS will ask for
+![Super + Space: the launcher](docs/images/launcher.jpg)
 
-- **Karabiner-Elements** — Input Monitoring (and its driver extension under Login Items & Extensions)
-- **AeroSpace** — Accessibility
-- **Ghostty** — Accessibility (global hotkey of the popup panel)
-- **Sol** — Accessibility (window management, clipboard)
-- **Pearcleaner** — Full Disk Access to find leftovers; turn on *Sentinel* in its settings
+`Super + Space` opens the launcher: every app, most-used first, `ctrl-x` uninstalls cleanly.
+It is a native panel, so it is there before you finish the chord, and the app you were in keeps focus.
 
-Grant them once, then restart the app that asked.
+![Super + Shift + Space: the menu](docs/images/menu.jpg)
 
-### Packages
+`Super + Shift + Space` is Omarchy's menu: capture, clipboard history, emoji, notes, style, toggles,
+brew install and remove, updates, system. `Backspace` goes up a level. The tree is one JSON file.
 
-| package | links |
-|---|---|
-| `aerospace` | `~/.aerospace.toml` |
-| `karabiner` | `~/.config/karabiner/` (Karabiner rewrites `karabiner.json` itself; backups are ignored) |
-| `tmux` | `~/.config/tmux/tmux.conf` |
-| `zsh` | `~/.zshrc`, `~/.p10k.zsh`, `~/.config/zsh/omarchy.zsh` |
-| `ghostty` | `~/.config/ghostty/config` (title bar in theme colour, no traffic lights, title from tmux), `popup` (the popup instance), `screensaver` |
-| `sketchybar`, `borders` | `~/.config/sketchybar/`, `~/.config/borders/bordersrc` |
-| `sol` | `~/.config/sol/` (Sol writes `config.json` itself; `state.json` is ignored) |
-| `nvim`, `git` | `~/.config/nvim/`, `~/.config/git/ignore` |
-| `bin` | `~/.local/bin/omacos-launcher`, `omacos-keys`, `omacos-scratchpad`, `omacos-popup`, `omacos-popupd`, `omacos-popup-run`, `omacos-media-stream`, `omacos-screensaver`, `omacos-screensaver-run`, `omacos-idle` |
-| `omacos` | `~/.config/omacos/` (screensaver text, idle minutes) |
+![Style → Theme: the theme picker](docs/images/theme.jpg)
 
-## The modifier story
+**Style → Theme** switches all of Omarchy's 22 themes at once: terminal, bar, borders, panel, editor,
+wallpaper and the macOS appearance. Backgrounds cycle on `Super + Shift + B`, fonts switch live.
 
-Omarchy hangs everything on `Super`. macOS has no spare modifier, so:
+## Manual
 
-| Omarchy | macOS | How |
-|---|---|---|
-| `Super` | **Caps Lock** held | Karabiner: caps lock → `ctrl + option + command`; tap = `Escape` |
-| `Super + Shift` | **Caps Lock + Shift** | same rule, shift passes through |
-| `Alt` | `Option` | untouched, so tmux keeps its `Alt` bindings (Ghostty sends option as alt) |
-| `Super + Alt`, `Super + Ctrl` | – | not expressible; those bindings were re-homed (below) |
-
-`Caps Lock + Space` opens the app launcher. Sol, if installed, keeps its own `⌥ Space`.
-
-`Caps Lock + Shift + , . /` are swallowed by Karabiner — macOS would otherwise
-start sysdiagnose on them.
-
-## Keybindings
-
-Everything Omarchy has, on the same keys, with `Super` = Caps Lock.
-
-**Windows** — `W`/`Q` close the window and quit the app when it was its last one · `T` float · `J` split · `F` fullscreen ·
-arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resize the other axis · `Home` balance
-
-**Workspaces** — `1-9`, `0` (= 10) jump, press the current one again to go back · `Shift + 1-9`, `Shift + 0` move window & follow ·
-`Tab`/`Shift + Tab` next/prev · `S` or `` ` `` toggle scratchpad · `Shift + S` send to scratchpad
-
-**Monitors** — `Ctrl + Alt + Tab` cycle · `Shift + Home`/`End` move workspace to prev/next monitor
-
-**Groups** (AeroSpace accordion) — `G` toggle · `/` next in group · `Shift + U` ungroup ·
-`Shift + ;` then `Shift + arrow` join a neighbour
-
-**Apps** — `Enter` Ghostty · `Shift + T` Ghostty with tmux · `Shift + Enter` Zen · `Shift + F` Finder ·
-`Shift + W` nvim · `Shift + N` quick notes · `Shift + D` lazydocker · `Shift + A` NeoHtop · `Shift + G` Telegram
-
-`Alt + Tab` cycles windows on the workspace.
-
-**Menus** — `Shift + Space` omacos menu · `Shift + C` capture · `Shift + E` emoji · `Shift + V` clipboard history · `Shift + B` next wallpaper
-
-**Help** — `Super + K` opens a searchable list of every binding (AeroSpace and tmux), generated
-from the config itself, plus the shell aliases, tmux layouts (`ix`, `tdl`, `tsl`, …) and every
-`omacos-*` command, in the popup panel (below). `Shift + K` shows only the tmux keys, `omacos-keys shell`
-only the shell part. `Esc` closes it.
-
-### Re-homed keys (no `Super + Alt` / `Super + Ctrl`)
-
-| Omarchy | Here |
-|---|---|
-| `Super + Ctrl + Tab` previous workspace | press the current workspace's key again |
-| `Super + Alt + S` move to scratchpad | `Super + Shift + S` |
-| `Super + Alt + Return` tmux terminal | `Super + Shift + T` |
-| `Super + Alt + Tab` next in group | `Super + /` |
-| `Super + Alt + G` leave group | `Super + Shift + U` |
-| `Super + Shift + Alt + ←/→` workspace to monitor | `Super + Shift + Home/End` |
-| `Super + Ctrl + T` activity | `Super + Shift + A` |
-| `Super + Ctrl + F` native fullscreen | macOS `⌃⌘F` |
-| `Super + Ctrl + L` lock | macOS `⌃⌘Q` |
-| `Super + Space` Omarchy menu / `Super + Alt + Space` apps | `Super + Shift + Space` / `Super + Space` |
-| `Super + Ctrl + C` capture · `Super + Ctrl + E` emoji · `Super + Ctrl + V` clipboard | `Super + Shift + C` · `E` · `V` |
-| `Super + Alt + K` tmux keybindings | `Super + Shift + K` |
-| `Super + Ctrl + Space` next background | `Super + Shift + B` |
-| `Super + Shift + N` editor · `Super + Shift + W` Omawrite | `Super + Shift + W` editor · `Super + Shift + N` quick notes |
-
-### Not portable
-
-Sticky windows, scrolling layout, pseudo-tiling, gap toggling and
-focus-follows-mouse have no AeroSpace equivalent.
-
-## Dwindle layout
-
-AeroSpace has no dwindle: every new window is put next to its siblings, so three windows end up
-side by side. `omacos-dwindled` (started by AeroSpace) watches for new tiled windows and, whenever
-one joins a container that already holds two or more, joins it with its neighbour into a nested
-container, which AeroSpace's normalization gives the opposite orientation — Hyprland's spiral:
-first split side by side, the next one top/bottom, and so on. A fresh workspace always starts
-side by side. Kill the watcher to get plain AeroSpace behaviour; `Super + J` still toggles a split by hand.
-
-## Workspaces & monitors
-
-Workspaces `1-5` and `scratch` live on the main display, `6-10` (keys `6 7 8 9 0`) on the second
-one (`workspace-to-monitor-force-assignment` in `aerospace/.aerospace.toml`).
-Edit the monitor names there for your setup — `aerospace list-monitors` prints them.
-Citrix sessions (`.ica` files) are sent to workspace 10 by an `on-window-detected` rule.
-
-## Themes
-
-Omarchy's themes, switched with one command. `omacos/.config/omacos/themes/<name>/` holds a
-`colors.toml` (Omarchy's palette format, ~30 semantic colours), an optional `neovim.lua` and the
-names of the theme's wallpapers. `omacos-theme set <name>` renders the templates in
-`omacos/.config/omacos/themed/` into `~/.local/state/omacos/theme/` and tells everything:
-
-- Ghostty: new windows read the rendered `ghostty.conf`; running windows get the palette via
-  OSC sequences on their ttys, so tmux sessions survive
-- sketchybar and JankyBorders reload with the new colours
-- the Panel and every fzf popup read the colours when they open
-- nvim loads the theme's colourscheme at its next start (`lua/plugins/theme.lua`)
-- the theme's first wallpaper is downloaded from the Omarchy repo into
-  `~/.local/share/omacos/backgrounds/<name>/` and set on every display (the rest follows in the background)
-- macOS switches to light or dark appearance to match the theme
-
-![Style → Theme: the picker in the popup with the palette of the highlighted theme](docs/screenshot-theme.jpg)
-
-`omacos-theme list | current | set <name> | next | menu`. The menu's **Style → Theme** entry opens a
-picker with colour swatches. **Style → Background** picks one of the theme's wallpapers with an image
-preview (chafa, kitty graphics in the popup), `Super + Shift + B` or **Next background** cycles them
-(`omacos-background next | prev | set <file> | menu`). Your own pictures go into
-`~/.local/share/omacos/backgrounds/<theme>/`.
-
-**Wallpaper packs** are theme-independent sets that join the cycle and the picker:
-`omacos-background packs | install <pack> | remove <pack>`, or **Style → Wallpaper packs**. A pack is a
-`filename<TAB>url[<TAB>source<TAB>licence]` list in `omacos/.config/omacos/wallpapers/<pack>.txt` (shipped:
-`omarchy-logos`, the Omarchy logo in every theme's colours; `omarchy-all`, every Omarchy background;
-`cyberpunk` and `fantasy`, 14 photos each from Unsplash, Pexels and Wikimedia Commons under their free
-licences, credits in the list files), a private list in
-`~/.local/share/omacos/wallpapers/<pack>.txt`, or any folder: `omacos-background install ~/Pictures/walls`
-links it in.
-
-**Font**: **Style → Font** or `omacos-font list | set <family> | menu | install` switches the monospace font
-between the installed Nerd Fonts (fontconfig's `fc-list`), with a brew picker for more
-`font-*-nerd-font` casks. Ghostty reloads live (SIGUSR2, every window and the popup), the bar reloads,
-the Panel reads it on its next show; tmux and nvim inherit the terminal's font. Tokyo Night is the default and stays hard-wired as the fallback in every
-config, so nothing breaks before the first `set`. Your own theme: a directory with a `colors.toml`
-under `~/.local/share/omacos/themes/<name>/`.
-
-## Bar, borders, wallpaper
-
-`sketchybar/` is a Waybar clone in the current theme's colours with Nerd Font glyphs. Left: workspaces (focused =
-filled blue pill, visible on the other monitor = outlined blue pill, occupied = bright, empty = dim,
-`scratch` only when in use). Centre: the focused app.
-Right, left to right:
-
-- mic / camera in use (best effort, follows macOS' sensor attribution log via `omacos-media-stream`)
-- brew updates: number of outdated packages, checked hourly, hidden at zero; click runs `brew upgrade` in the popup
-- network: SSID on Wi-Fi, port name on wired; click opens Network settings
-- weather: wttr.in, IP-based; put a place in `~/.config/omacos/weather-location` (`Berlin`, `Dieburg,DE`, or `48.5,10.2`) to pin it — the popup and the menu's weather notification use the same file
-- bluetooth: connected devices with battery; click opens Bluetooth settings
-- audio output device; click opens a chooser in the popup (SwitchAudioSource)
-- volume (click mutes), cpu and memory (click opens NeoHtop), clock (click opens Calendar) The macOS menu bar is hidden by `install.sh`.
-`borders/` draws a rounded, glowing border in the theme's accent colour around the focused window (JankyBorders; plain and gradient variants are in `bordersrc`).
-`install.sh` applies Tokyo Night (`OMACOS_THEME=<name> ./install.sh` for another one), which also sets the wallpaper on every display.
-
-## Menu, launcher and uninstall
-
-![Super + Shift + Space: the menu panel](docs/screenshot-menu.jpg)
-
-`Super + Space` and `Super + Shift + Space` open the **native panel**, `omacos-shell` (`shell/`,
-Swift, built by `install.sh`): one resident process that shows a compact floating window centred
-on the monitor under the mouse — no process start, app icons from macOS, the app you were in keeps
-focus. `Esc` or the same hotkey closes it, another view's hotkey switches in place, `Backspace`
-on an empty query goes up a level, a click outside closes. Emoji (`Super + Shift + E`), clipboard
-history (`Super + Shift + V`, with a preview column) and the keybindings list (`Super + K`, `Super + Shift + K`
-for tmux only) are views of the same panel. The same views also exist as fzf lists in the popup terminal
-(`omacos-launcher`, `omacos-menu`, `omacos-menu-emoji`, `omacos-clipboard`, `omacos-keys`), which the panel
-opens for anything that needs a terminal (brew pickers, upgrades, notes) and which keep working over SSH.
-
-The menu is Omarchy's menu as a tree (`Backspace` on an empty query goes up a level, also out of the pickers; `Esc` closes).
-The tree is data: `~/.config/omacos/menu.json` (icon, label, and one of `menu`, `view`, `popup`, `run`;
-optional `state` and `when` shell commands for dynamic labels and visibility). Edit it to add
-entries; `omacos-menu <route> --list` shows what a level resolves to. The same file will drive
-the native panel of issue #10.
-
-- **Apps** — the launcher below
-- **Learn** — keybindings (all / tmux / AeroSpace), the omacos repo, the Omarchy manual, AeroSpace, Ghostty and tmux docs
-- **Capture** (`Super + Shift + C`) — screenshot of a region, window or screen (saved to `~/Pictures/Screenshots` and copied),
-  screen recording with or without microphone (the entry turns into *Stop* while recording),
-  text recognition (OCR) from a selection straight into the clipboard, the clipboard as a QR code, a colour picker that copies hex
-- **Clipboard** (`Super + Shift + V`) — history of the last 200 text entries (`omacos-clipboardd`, started by AeroSpace);
-  `Enter` pastes into the app that had focus, `ctrl-x` deletes, `alt-c` clears. Password managers' concealed entries are skipped
-- **Emoji** (`Super + Shift + E`) — search by name or keyword, `Enter` pastes
-- **Notes** (`Super + Shift + N`) — Raycast-Notes-style scratch pad: `~/notes/quick.md` (path in `~/.config/omacos/notes-file`) in nvim,
-  cursor under a fresh timestamp in insert mode, every keystroke saved; `Esc` `:q` or just closing the panel keeps everything
-- **Style** — theme, background, wallpaper pack and font pickers (see [Themes](#themes))
-- **Toggle** — screensaver on idle, bar, borders, microphone mute
-- **Install** — `omacos-pkg-install`: every Homebrew formula and cask in fzf with `brew info` as preview, `Tab` multi-select,
-  `Enter` installs right there. Or the App Store
-- **Remove** — `omacos-pkg-remove`: the same for what is installed (`brew leaves` + casks, unused dependencies go too), or an app via Pearcleaner
-- **Update** — `brew upgrade`, `brew outdated`, macOS software update
-- **Info** — time, weather and network as notifications, About
-- **System** — screensaver, lock, sleep, logout, restart, shutdown
-
-The OCR helper is Apple's Vision framework (`~/.config/omacos/ocr.swift`); `install.sh` compiles it once
-into `~/.cache/omacos/omacos-ocr`, the capture menu does the same on first use if needed.
-
-### Launcher
-
-The launcher (native panel, or `omacos-launcher` in the popup) is the walker look-alike: every app from `/Applications`,
-`~/Applications` and the system folders in a monochrome fzf list, most-launched first. `Enter`
-launches, `ctrl-x` opens the app in Pearcleaner with its leftovers listed for a clean uninstall,
-`Esc` closes. Launch counts live in `~/.local/state/omacos/launcher-history`.
-
-### The popup panel
-
-Everything that needs a terminal runs in Ghostty's *quick terminal*: a floating panel, centred on the monitor
-under the mouse, that AeroSpace never tiles, so it appears in place with no jumps. A second
-Ghostty process started by AeroSpace (`omacos-popupd`, config `~/.config/ghostty/popup`) owns
-it. `omacos-popup <launcher|keys|menu [route]|emoji|clipboard>` writes the request to `~/.local/state/omacos/popup-request`
-and fires that process's private global hotkey (`ctrl+alt+shift+cmd+F19`, never typed by hand);
-`omacos-popup-run` inside the panel then execs the requested script. When it exits, the panel
-disappears. Ghostty needs Accessibility for the global hotkey.
-
-[Sol](https://github.com/ospfranco/sol) stays around on `⌥ Space` as a calculator; drop it from the
-Brewfile if you don't need it. Its built-in window management is switched off in `sol/.config/sol/config.json`:
-Sol's default `⌃⌥⌘ ←/→` (move window to the next screen) is `Super + ←/→` here, and with both active every
-focus change made the window jump.
-Uninstalling is Pearcleaner's job. Pick the app in the launcher with `ctrl-x`, or drag an app to
-the Trash: Pearcleaner's Sentinel (enable it in Pearcleaner's settings) pops up and offers to
-remove the leftovers. From a script: `/Applications/Pearcleaner.app/Contents/MacOS/Pearcleaner uninstall-all /Applications/Foo.app`.
-
-Note: Pearcleaner turns into that CLI whenever `TERM` is set in its environment, which is why
-`install.sh` launches Sol and AeroSpace with `TERM` and `TMUX` stripped.
-
-## Screensaver
-
-Omarchy's terminal screensaver: after 5 idle minutes (`~/.config/omacos/idle-minutes`, `0`
-disables it) `omacos-idle` opens one fullscreen Ghostty per monitor running random
-[terminaltexteffects](https://github.com/ChrisBuilds/terminaltexteffects) animations on
-`~/.config/omacos/screensaver.txt` (Omarchy's logo by default, edit it or drop in your own ASCII
-art). Any key, or clicking somewhere else, ends it on every monitor. It stays off while an app
-keeps the display awake (video, calls). Start it by hand from the launcher (`Screensaver`) or with
-`omacos-screensaver`. The launcher also has `Lock screen` and `Sleep`.
-
-## tmux
-
-Omarchy's tmux config as-is: prefix `Ctrl + Space`, `Alt + Enter` / `Alt + Shift + Enter` split,
-`Alt + 1-9` windows, `Alt + arrows` navigate, plus `Ctrl + h/j/k/l` pane navigation that is vim-aware.
-
-## Shell
-
-`zsh/.config/zsh/omarchy.zsh` is Omarchy's `default/bash/aliases`, running
-unchanged in zsh (`ls`, `lt`, `ff`, zoxide `cd`, `c`/`cx` for AI agents,
-`t` for tmux, git shortcuts) plus the `tdl`, `tdlm` and `tsl` tmux layouts. `ix ~/work/foo`
-(= `tdl cx ~/work/foo`) opens the editor / Claude Code / terminal layout in that folder and
-offers to create it when it does not exist yet.
-Secrets and machine-specific exports go in `~/.zshrc.local`, which is never committed.
+The details live in [`docs/`](docs/README.md):
+[Install](docs/install/README.md) ·
+[Keys](docs/keys/README.md) ·
+[Desktop](docs/desktop/README.md) ·
+[Menu, launcher, panel](docs/menu/README.md) ·
+[Style](docs/style/README.md) ·
+[Terminal](docs/terminal/README.md)
 
 ## Credits
 

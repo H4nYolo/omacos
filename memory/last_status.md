@@ -24,7 +24,7 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 | piece | how |
 |---|---|
 | Super+W/Q | `close --quit-if-last-window`: plain `close` left apps running without a window (looked like minimise) |
-| Super key | Caps Lock held = ctrl+alt+cmd (Karabiner), tap = Escape. Super+Shift = Caps+Shift. **No Meh key.** Caps+Shift+, . / are swallowed by Karabiner (macOS sysdiagnose) — never bind them |
+| Super key | **Left Command held = ctrl+alt+cmd** (Karabiner, since 2026-09-14 evening: the user wanted Super on the thumb). Caps Lock held = left_command (macOS ⌘ shortcuts), tap = Escape. Super+Shift = Left Cmd+Shift. **No Meh key.** Super+Shift+, . / are swallowed by Karabiner (macOS sysdiagnose) — never bind them. Firmware remap of a thumb key to Right Cmd was offered and declined (flashing too much) |
 | Tiling | AeroSpace, `aerospace/.aerospace.toml`, config-version 2. Workspaces 1-5 + `scratch` on `CG437K P`, 6-10 on `Studio Display`; key 0 = workspace 10; `--auto-back-and-forth` on every workspace key (press again = go back). yabai and skhd are gone |
 | Ghostty title bar | `macos-titlebar-style = transparent` + `macos-window-buttons = hidden` + `macos-titlebar-proxy-icon = hidden` (**no** `window-title-font-family`: Ghostty 1.3.1 truncates the title to ~10 chars with any custom title font, verified with throwaway instances); tmux `set-titles on`, `'#S · #W'`. Popup and screensaver configs force `hidden`. Style changes reach only new windows (Ghostty docs), so restart Ghostty after switching; `+new-window` is unsupported on macOS — for demos start a second instance with `open -na Ghostty --args --macos-titlebar-style=…` and kill it |
 | Alt | belongs to tmux (Ghostty `macos-option-as-alt = true`); AeroSpace only binds Alt+Tab |
@@ -79,6 +79,10 @@ issue), #10 omacos-shell = native Swift Panel (grilled 2026-09-14, decisions in 
 Cosmetics 5-7 are done. Left: #8 decide on Sol (calculator only, hotkeys nulled), #9 real-use verification
 (recording start/stop, OCR, mic/camera indicator, logout/login with panel + daemons autostart, upstream
 sketchybar formula issue). Wallpaper packs cyberpunk + fantasy shipped. Death Note (franchise fan art, never for the repo) lives as a private pack `~/.local/share/omacos/wallpapers/death-note.txt` (15 Wallhaven pictures via `https://wallhaven.cc/api/v1/search?q=…&categories=110&purity=100&ratios=16x9&atleast=2560x1440&sorting=favorites`, `.path` = direct URL), installed under `packs/death-note/`.
+
+## README / docs layout (2026-09-14 evening)
+
+Landing `README.md` is Omarchy-style: banner (`docs/images/banner.svg` → `banner.png` via rsvg-convert, CaskaydiaMono), disclaimer, three sentences, install block, four screenshots with ≤3 sentences each (tiling, launcher, menu, theme), links to the manual. Everything else lives in `docs/<topic>/README.md` (install, keys, desktop, menu, style, terminal) with `docs/README.md` as index. Screenshots in `docs/images/`, taken on the empty workspace 5 with bluetooth + audio bar items hidden; hostnames painted over with ffmpeg drawbox (Claude Code and the shell print the hostname top-right). GitHub caches README images by path — rename the file to bust it.
 
 ## Archive
 
