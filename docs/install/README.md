@@ -7,6 +7,7 @@
 > background services. Only run it on a machine you are happy to reset.
 
 ```sh
+# Tested on exactly one Mac (mine). Use at your own risk.
 git clone https://github.com/H4nYolo/omacos ~/work/projects/omacos
 cd ~/work/projects/omacos
 ./install.sh

@@ -21,6 +21,8 @@ setup, all driven from one `Super` key under your thumb. It is a set of dotfiles
 scripts and one small native panel.
 
 ```sh
+# Tested on exactly one Mac (mine). It rewires keys, replaces configs, starts services.
+# Read the disclaimer above and install.sh first. Use at your own risk.
 git clone https://github.com/H4nYolo/omacos ~/work/projects/omacos
 cd ~/work/projects/omacos && ./install.sh
 ```
