@@ -1,3 +1,5 @@
+![omacos: Super + Space launcher over the Tokyo Night wallpaper, sketchybar on top](docs/screenshot-launcher.jpg)
+
 # omacos
 
 > **Status: personal fun project, very much in the testing phase.**
