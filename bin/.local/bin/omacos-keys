@@ -88,7 +88,7 @@ shell_keys() {
 }
 
 {
-  echo "Super = Caps Lock held · Super+Shift = Caps Lock + Shift · tmux Prefix = Ctrl+Space · shell/tool = type it in a terminal"
+  echo "Super = Left Cmd held · Super+Shift = Left Cmd + Shift · macOS Cmd = Caps Lock held · tmux Prefix = Ctrl+Space · shell/tool = type it in a terminal"
   echo
   [ "$only" = all ] || [ "$only" = aerospace ] && aerospace_keys
   [ "$only" = all ] && echo

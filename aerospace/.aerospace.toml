@@ -2,12 +2,12 @@
 # Omarchy (Hyprland tiling-v2 + bindings.conf) ported to AeroSpace.
 #
 # Modifier mapping (Karabiner, see karabiner/):
-#   Omarchy Super         -> Caps Lock held  = ctrl-alt-cmd
-#   Omarchy Super + Shift -> Caps Lock + Shift = ctrl-alt-cmd-shift
+#   Omarchy Super         -> Left Cmd held    = ctrl-alt-cmd   (Karabiner; Caps Lock held = macOS Cmd, tapped = Esc)
+#   Omarchy Super + Shift -> Left Cmd + Shift = ctrl-alt-cmd-shift
 #   Omarchy Alt           -> Option (left to tmux / the terminal)
 #   Super + Alt / Super + Ctrl cannot be expressed; those bindings were re-homed (see README).
 #
-# Caps Lock + Space opens the app launcher (omacos-launcher); Sol stays on plain Option + Space.
+# Super + Space opens the app launcher; Sol stays on plain Option + Space.
 # ctrl-alt-cmd-shift + , . / are swallowed by Karabiner to avoid macOS sysdiagnose — never bind them.
 
 config-version = 2
