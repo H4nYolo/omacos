@@ -14,8 +14,13 @@ window-padding-y = 14
 confirm-close-surface = false
 resize-overlay = never
 
-# tiling: no macOS title bar, AeroSpace draws the frame via JankyBorders
-macos-titlebar-style = hidden
+# Title bar in the theme's background colour: no traffic lights (Super+W closes), no folder
+# icon, title from tmux (set-titles), title in the omacos font. Only new windows pick a
+# change of the style up. The popup and the screensaver keep theirs hidden.
+macos-titlebar-style = transparent
+macos-window-buttons = hidden
+macos-titlebar-proxy-icon = hidden
+window-title-font-family = CaskaydiaMono Nerd Font
 
 # Omarchy's tmux bindings live on Alt (Alt+Enter, Alt+1-9, Alt+arrows) — Option must send Alt.
 macos-option-as-alt = true

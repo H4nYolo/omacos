@@ -30,7 +30,7 @@ aliases, Tokyo Night — onto AeroSpace, Ghostty, tmux, zsh and Karabiner.
 | Alacritty / Ghostty | Ghostty (`ghostty/`) |
 | LazyVim | LazyVim (`nvim/`) |
 | btop | [NeoHtop](https://github.com/Abdenasser/neohtop) on `Super + Shift + A` |
-| Walker (`Super + Space` menu) | `omacos-launcher`: fzf app list in a floating Ghostty, Pearcleaner on `ctrl-x` |
+| Walker (`Super + Space` menu) | `omacos-shell launcher`: native panel with every app, Pearcleaner on `ctrl-x` |
 | Clean app uninstall | [Pearcleaner](https://github.com/alienator88/Pearcleaner), with its Sentinel watching the Trash |
 | Theme | Tokyo Night everywhere (`themes/`) |
 
@@ -67,7 +67,7 @@ Grant them once, then restart the app that asked.
 | `karabiner` | `~/.config/karabiner/` (Karabiner rewrites `karabiner.json` itself; backups are ignored) |
 | `tmux` | `~/.config/tmux/tmux.conf` |
 | `zsh` | `~/.zshrc`, `~/.p10k.zsh`, `~/.config/zsh/omarchy.zsh` |
-| `ghostty` | `~/.config/ghostty/config`, `popup` (the popup instance), `screensaver` |
+| `ghostty` | `~/.config/ghostty/config` (title bar in theme colour, no traffic lights, title from tmux), `popup` (the popup instance), `screensaver` |
 | `sketchybar`, `borders` | `~/.config/sketchybar/`, `~/.config/borders/bordersrc` |
 | `sol` | `~/.config/sol/` (Sol writes `config.json` itself; `state.json` is ignored) |
 | `nvim`, `git` | `~/.config/nvim/`, `~/.config/git/ignore` |

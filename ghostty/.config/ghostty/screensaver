@@ -6,3 +6,6 @@ font-size = 18
 background = #000000
 cursor-style-blink = false
 confirm-close-surface = false
+
+# no title bar here, whatever the main config says
+macos-titlebar-style = hidden

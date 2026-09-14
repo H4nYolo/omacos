@@ -19,3 +19,6 @@ quick-terminal-animation-duration = 0
 
 # Nobody presses this by hand; omacos-popup sends it as a synthetic key event.
 keybind = global:ctrl+alt+shift+cmd+f19=toggle_quick_terminal
+
+# no title bar here, whatever the main config says
+macos-titlebar-style = hidden
