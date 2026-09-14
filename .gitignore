@@ -9,8 +9,7 @@ zsh/.zshrc.local
 nvim/.config/nvim/lazy-lock.json.bak
 .scratch/
 
-# wallpaper is downloaded by install.sh from the Omarchy repo
-themes/*/wallpaper.*
+# wallpapers are downloaded by omacos-theme into ~/.local/share/omacos/backgrounds (outside the repo)
 
 # Sol runtime state
 sol/.config/sol/state.json

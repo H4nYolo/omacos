@@ -1,0 +1,175 @@
+#!/bin/bash
+# omacos-theme <list|current|set <name>|next|menu|preview <name>|dir <name>> — switch the theme (colours, wallpaper, appearance)
+#
+# A theme is a directory with a colors.toml (Omarchy's format), found in
+# ~/.config/omacos/themes/<name> (shipped) or ~/.local/share/omacos/themes/<name> (yours).
+# `set` renders ~/.config/omacos/themed/*.tpl into ~/.local/state/omacos/theme/ and tells
+# every consumer: sketchybar (--reload), JankyBorders (bordersrc), running Ghostty windows
+# (OSC palette on every tty), macOS appearance (dark/light by the theme's mode), the
+# wallpaper (first background of the theme, downloaded on first use). The Panel and fzf
+# read the rendered files whenever they open; nvim picks the colourscheme up at its next start.
+set -u
+
+THEME_DIRS=("$HOME/.config/omacos/themes" "$HOME/.local/share/omacos/themes")
+TEMPLATES="$HOME/.config/omacos/themed"
+STATE="$HOME/.local/state/omacos"
+CURRENT="$STATE/theme"
+BACKGROUNDS="$HOME/.local/share/omacos/backgrounds"
+OMARCHY_RAW="https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes"
+
+die() { echo "omacos-theme: $*" >&2; exit 1; }
+
+theme_dir() {
+  local name="$1" d
+  for d in "${THEME_DIRS[@]}"; do
+    [[ -f "$d/$name/colors.toml" ]] && { echo "$d/$name"; return 0; }
+  done
+  return 1
+}
+
+list() {
+  local d
+  for d in "${THEME_DIRS[@]}"; do
+    [[ -d $d ]] || continue
+    find "$d" -mindepth 2 -maxdepth 2 -name colors.toml -exec dirname {} \; | xargs -n1 basename
+  done | sort -u
+}
+
+current() { cat "$CURRENT/name" 2>/dev/null || echo tokyo-night; }
+
+title() { echo "$1" | tr '-' ' ' | awk '{ for (i = 1; i <= NF; i++) $i = toupper(substr($i, 1, 1)) substr($i, 2) } 1'; }
+
+# --- rendering -------------------------------------------------------------------------
+
+render() {
+  local dir="$1" next="$2" sed_script key value tpl out
+  sed_script=$(mktemp)
+  while IFS=$'\t' read -r key value; do
+    printf 's|{{ %s }}|%s|g\n' "$key" "$value"
+    printf 's|{{ %s_strip }}|%s|g\n' "$key" "${value#\#}"
+    [[ $value =~ ^#[0-9a-f]{6}$ ]] && printf 's|{{ %s_argb }}|0xff%s|g\n' "$key" "${value#\#}"
+  done < <(omacos-theme-colors --file "$dir/colors.toml") >"$sed_script"
+  printf 's|{{ name }}|%s|g\n' "$(basename "$dir")" >>"$sed_script"
+  for tpl in "$TEMPLATES"/*.tpl; do
+    out="$next/$(basename "$tpl" .tpl)"
+    [[ -f "$dir/$(basename "$out")" ]] && continue   # the theme ships its own file
+    sed -f "$sed_script" "$tpl" >"$out"
+  done
+  rm -f "$sed_script"
+}
+
+# --- consumers -------------------------------------------------------------------------
+
+reload_ghostty() {
+  # Running windows: OSC 10/11/12/17/19 + palette on every tty of this user. New windows
+  # read ~/.local/state/omacos/theme/ghostty.conf via config-file.
+  local seq tty key value
+  seq=""
+  while IFS=$'\t' read -r key value; do
+    case "$key" in
+      foreground) seq+=$(printf '\033]10;%s\007' "$value") ;;
+      background) seq+=$(printf '\033]11;%s\007' "$value") ;;
+      cursor) seq+=$(printf '\033]12;%s\007' "$value") ;;
+      selection_background) seq+=$(printf '\033]17;%s\007' "$value") ;;
+      selection_foreground) seq+=$(printf '\033]19;%s\007' "$value") ;;
+      color[0-9]|color1[0-5]) seq+=$(printf '\033]4;%s;%s\007' "${key#color}" "$value") ;;
+    esac
+  done < <(omacos-theme-colors --file "$CURRENT/colors.toml")
+  for tty in $(ps -o tty= -u "$USER" | grep -v '^?' | sort -u); do
+    printf '%s' "$seq" >"/dev/$tty" 2>/dev/null || true
+  done
+}
+
+set_appearance() {
+  local dark=true
+  [[ $(cat "$CURRENT/mode") == light ]] && dark=false
+  osascript -e "tell application \"System Events\" to tell appearance preferences to set dark mode to $dark" >/dev/null 2>&1 || true
+}
+
+# Download one background of the theme (webp → jpg for the Desktop) and return its path.
+fetch_background() {
+  local name="$1" file="$2" dir="$BACKGROUNDS/$name" out
+  out="$dir/${file%.*}.jpg"
+  [[ -f $out ]] && { echo "$out"; return 0; }
+  mkdir -p "$dir"
+  curl -fsSL -o "$dir/$file" "$OMARCHY_RAW/$name/backgrounds/$file" || return 1
+  if [[ ${file##*.} == jpg || ${file##*.} == jpeg ]]; then
+    [[ "$dir/$file" == "$out" ]] || mv "$dir/$file" "$out"
+  else
+    sips -s format jpeg "$dir/$file" --out "$out" >/dev/null 2>&1 && rm -f "$dir/$file"
+  fi
+  [[ -f $out ]] && echo "$out"
+}
+
+set_background() {
+  local name="$1" dir first file path
+  dir=$(theme_dir "$name") || return 1
+  [[ -s "$dir/backgrounds.txt" ]] || return 0
+  first=$(head -n1 "$dir/backgrounds.txt")
+  path=$(fetch_background "$name" "$first") || { echo "omacos-theme: could not download the wallpaper, keeping the old one" >&2; return 0; }
+  ln -sfn "$path" "$STATE/background"
+  osascript -e "tell application \"System Events\" to set picture of every desktop to \"$path\"" >/dev/null 2>&1 || true
+  # the rest of the theme's backgrounds, for cycling, in the background
+  ( while IFS= read -r file; do [[ -n $file ]] && fetch_background "$name" "$file" >/dev/null; done <"$dir/backgrounds.txt" ) >/dev/null 2>&1 &
+  disown
+}
+
+set_theme() {
+  local name="$1" dir next
+  dir=$(theme_dir "$name") || die "no theme named '$name' (try: omacos-theme list)"
+  mkdir -p "$STATE"
+  next="$CURRENT.next"
+  rm -rf "$next" && mkdir -p "$next"
+  cp "$dir"/* "$next"/ 2>/dev/null
+  render "$dir" "$next"
+  echo "$name" >"$next/name"
+  omacos-theme-colors --file "$dir/colors.toml" mode >"$next/mode"
+  rm -rf "$CURRENT" && mv "$next" "$CURRENT"
+
+  set_background "$name"
+  set_appearance
+  sketchybar --reload >/dev/null 2>&1 || true
+  [[ -x "$HOME/.config/borders/bordersrc" ]] && "$HOME/.config/borders/bordersrc" >/dev/null 2>&1 || true
+  reload_ghostty
+  omacos-notify "Theme" "$(title "$name")" >/dev/null 2>&1 || true
+}
+
+# --- picker ----------------------------------------------------------------------------
+
+preview() {
+  local dir key value r g b
+  dir=$(theme_dir "$1") || return 0
+  printf '%s  (%s)\n\n' "$(title "$1")" "$(omacos-theme-colors --file "$dir/colors.toml" mode)"
+  for key in background foreground accent red green yellow blue magenta cyan muted selection; do
+    value=$(omacos-theme-colors --file "$dir/colors.toml" "$key"); [[ $value =~ ^#[0-9a-f]{6}$ ]] || continue
+    r=$((16#${value:1:2})); g=$((16#${value:3:2})); b=$((16#${value:5:2}))
+    printf '\033[48;2;%d;%d;%dm      \033[0m  %-10s %s\n' "$r" "$g" "$b" "$key" "$value"
+  done
+  [[ -s "$dir/backgrounds.txt" ]] && printf '\nwallpapers: %s\n' "$(wc -l <"$dir/backgrounds.txt" | tr -d ' ')"
+}
+
+menu() {
+  local cur choice
+  cur=$(current)
+  choice=$(list | omacos-fzf --prompt='󰏘  theme  ' --header="current: $(title "$cur")  ·  enter  apply  ·  esc  close" \
+      --preview='omacos-theme preview {}' --preview-window=right,42 \
+      --bind 'backward-eof:become(echo BACK)') || exit 0
+  case "$choice" in
+    BACK|"") exit 3 ;;
+  esac
+  set_theme "$choice"
+}
+
+case "${1:-}" in
+  list) list ;;
+  current) current ;;
+  dir) theme_dir "${2:?name}" ;;
+  set) set_theme "${2:?name}" ;;
+  next)
+    cur=$(current)
+    nxt=$(list | awk -v cur="$cur" '{ if (NR == 1) first = $1; if (found && !printed) { print; printed = 1 }; if ($1 == cur) found = 1 } END { if (!printed && NR > 0) print first }')
+    [[ -n $nxt ]] && set_theme "$nxt" ;;
+  preview) preview "${2:?name}" ;;
+  menu) menu ;;
+  *) sed -n 2p "$0"; exit 1 ;;
+esac

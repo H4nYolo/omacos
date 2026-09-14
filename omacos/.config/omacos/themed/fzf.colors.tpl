@@ -1,0 +1,1 @@
+bg:{{ background }},bg+:{{ selection }},fg:{{ foreground }},fg+:{{ bright_foreground }},hl:{{ accent }},hl+:{{ accent }},prompt:{{ accent }},pointer:{{ accent }},marker:{{ green }},header:{{ dark_foreground }},info:{{ dark_foreground }},spinner:{{ accent }},border:{{ muted }},preview-bg:{{ dark_background }},label:{{ dark_foreground }}

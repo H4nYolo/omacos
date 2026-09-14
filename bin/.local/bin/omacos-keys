@@ -95,7 +95,6 @@ shell_keys() {
   [ "$only" = all ] || [ "$only" = tmux ] && tmux_keys
   [ "$only" = all ] && echo
   [ "$only" = all ] || [ "$only" = shell ] && shell_keys
-} | if [ "$list" -eq 1 ]; then cat; exit 0; else fzf --reverse --exact --no-info --cycle --prompt='  ' --pointer='' --header-lines=2 \
-        --color='bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7,header:#565f89,info:#565f89' \
+} | if [ "$list" -eq 1 ]; then cat; exit 0; else omacos-fzf --exact --prompt='  ' --header-lines=2 \
         --bind 'esc:abort,enter:abort,backward-eof:become(echo BACK)' | grep -qx BACK && exit 3; fi
 exit 0

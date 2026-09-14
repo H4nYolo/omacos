@@ -73,6 +73,7 @@ final class PanelController {
     // MARK: show / hide
 
     func show() {
+        Theme.reload()
         let mouse = NSEvent.mouseLocation
         let screen = NSScreen.screens.first { NSMouseInRect(mouse, $0.frame, false) } ?? NSScreen.main ?? NSScreen.screens[0]
         let area = screen.visibleFrame

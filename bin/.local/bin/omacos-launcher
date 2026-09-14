@@ -42,13 +42,11 @@ ranked() {
   ' | sort | cut -f2,3
 }
 
-TOKYO='--color=bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7,marker:#9ece6a,header:#565f89,info:#565f89,spinner:#7aa2f7,border:#3b4261'
-
-out="$(ranked | fzf --reverse --exact --no-info --cycle \
+out="$(ranked | omacos-fzf --exact \
         --delimiter='\t' --with-nth=1 \
-        --prompt="$prompt" --pointer='' \
+        --prompt="$prompt" \
         --header="$header" \
-        --expect=ctrl-x --bind 'backward-eof:become(echo BACK)' $TOKYO)" || exit 0
+        --expect=ctrl-x --bind 'backward-eof:become(echo BACK)')" || exit 0
 [ "$out" = BACK ] && exit 3
 
 key="$(printf '%s\n' "$out" | sed -n 1p)"

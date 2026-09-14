@@ -15,12 +15,12 @@ occupied="$(aerospace list-workspaces --monitor all --empty no 2>/dev/null)"
 args=()
 for ws in 1 2 3 4 5 6 7 8 9 10 scratch; do
   if [ "$ws" = "$focused" ]; then
-    args+=(--set "space.$ws" background.drawing=on background.color=$BLUE background.border_width=0 \
+    args+=(--set "space.$ws" background.drawing=on background.color=$ACCENT background.border_width=0 \
                              icon.highlight=on drawing=on)
   elif grep -qx "$ws" <<< "$visible"; then
     args+=(--set "space.$ws" background.drawing=on background.color=$TRANSPARENT \
-                             background.border_color=$BLUE background.border_width=2 \
-                             icon.highlight=off icon.color=$BLUE drawing=on)
+                             background.border_color=$ACCENT background.border_width=2 \
+                             icon.highlight=off icon.color=$ACCENT drawing=on)
   elif grep -qx "$ws" <<< "$occupied"; then
     args+=(--set "space.$ws" background.drawing=off icon.highlight=off icon.color=$FG drawing=on)
   else

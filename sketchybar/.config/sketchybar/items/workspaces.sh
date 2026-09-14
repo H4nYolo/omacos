@@ -13,7 +13,7 @@ for ws in $WORKSPACES; do
                                icon.color=$COMMENT \
                                icon.highlight_color=$BG \
                                label.drawing=off \
-                               background.color=$BLUE \
+                               background.color=$ACCENT \
                                background.corner_radius=4 \
                                background.height=22 \
                                background.drawing=off \

@@ -18,8 +18,8 @@ case "$req" in
   weather) curl -s -m 15 "wttr.in/$(cat "$HOME/.config/omacos/weather-location" 2>/dev/null | tr -d '[:space:]')?F"; printf '\n press Enter to close'; read -r _ ;;
   brew)    brew update && brew upgrade --formula && brew upgrade --cask; printf '\n done — press Enter to close'; read -r _ ;;
   outdated) brew outdated --verbose; printf '\n press Enter to close'; read -r _ ;;
-  audio)  dev="$(SwitchAudioSource -a -t output | fzf --reverse --no-info --cycle --prompt='󰓃  ' --pointer='' \
-                  --color='bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7')" \
+  theme)   exec omacos-theme menu ;;
+  audio)  dev="$(SwitchAudioSource -a -t output | omacos-fzf --prompt='󰓃  ')" \
           && [ -n "$dev" ] && SwitchAudioSource -t output -s "$dev" >/dev/null ;;
   *)      exec omacos-launcher ;;
 esac

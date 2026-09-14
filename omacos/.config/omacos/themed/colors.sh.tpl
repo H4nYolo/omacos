@@ -1,0 +1,19 @@
+# rendered by omacos-theme set — sourced by sketchybar (colors.sh) and JankyBorders (bordersrc)
+THEME_NAME={{ name }}
+THEME_MODE={{ mode }}
+BG={{ background_argb }}
+BG_DARK={{ dark_background_argb }}
+BG_LIGHT={{ lighter_background_argb }}
+FG={{ bright_foreground_argb }}
+FG_DIM={{ foreground_argb }}
+COMMENT={{ dark_foreground_argb }}
+MUTED={{ muted_argb }}
+SELECTION={{ selection_argb }}
+ACCENT={{ accent_argb }}
+BLUE={{ blue_argb }}
+CYAN={{ cyan_argb }}
+GREEN={{ green_argb }}
+MAGENTA={{ magenta_argb }}
+RED={{ red_argb }}
+YELLOW={{ yellow_argb }}
+ORANGE={{ orange_argb }}

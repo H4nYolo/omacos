@@ -156,9 +156,30 @@ one (`workspace-to-monitor-force-assignment` in `aerospace/.aerospace.toml`).
 Edit the monitor names there for your setup — `aerospace list-monitors` prints them.
 Citrix sessions (`.ica` files) are sent to workspace 10 by an `on-window-detected` rule.
 
+## Themes
+
+Omarchy's themes, switched with one command. `omacos/.config/omacos/themes/<name>/` holds a
+`colors.toml` (Omarchy's palette format, ~30 semantic colours), an optional `neovim.lua` and the
+names of the theme's wallpapers. `omacos-theme set <name>` renders the templates in
+`omacos/.config/omacos/themed/` into `~/.local/state/omacos/theme/` and tells everything:
+
+- Ghostty: new windows read the rendered `ghostty.conf`; running windows get the palette via
+  OSC sequences on their ttys, so tmux sessions survive
+- sketchybar and JankyBorders reload with the new colours
+- the Panel and every fzf popup read the colours when they open
+- nvim loads the theme's colourscheme at its next start (`lua/plugins/theme.lua`)
+- the theme's first wallpaper is downloaded from the Omarchy repo into
+  `~/.local/share/omacos/backgrounds/<name>/` and set on every display (the rest follows in the background)
+- macOS switches to light or dark appearance to match the theme
+
+`omacos-theme list | current | set <name> | next | menu`. The menu's **Style → Theme** entry opens a
+picker with colour swatches. Tokyo Night is the default and stays hard-wired as the fallback in every
+config, so nothing breaks before the first `set`. Your own theme: a directory with a `colors.toml`
+under `~/.local/share/omacos/themes/<name>/`.
+
 ## Bar, borders, wallpaper
 
-`sketchybar/` is a Waybar clone in Tokyo Night with Nerd Font glyphs. Left: workspaces (focused =
+`sketchybar/` is a Waybar clone in the current theme's colours with Nerd Font glyphs. Left: workspaces (focused =
 filled blue pill, visible on the other monitor = outlined blue pill, occupied = bright, empty = dim,
 `scratch` only when in use). Centre: the focused app.
 Right, left to right:
@@ -170,8 +191,8 @@ Right, left to right:
 - bluetooth: connected devices with battery; click opens Bluetooth settings
 - audio output device; click opens a chooser in the popup (SwitchAudioSource)
 - volume (click mutes), cpu and memory (click opens NeoHtop), clock (click opens Calendar) The macOS menu bar is hidden by `install.sh`.
-`borders/` draws a rounded, glowing Tokyo Night border around the focused window (JankyBorders; plain and gradient variants are in `bordersrc`).
-`install.sh` fetches Omarchy's Tokyo Night wallpaper and sets it on every display.
+`borders/` draws a rounded, glowing border in the theme's accent colour around the focused window (JankyBorders; plain and gradient variants are in `bordersrc`).
+`install.sh` applies Tokyo Night (`OMACOS_THEME=<name> ./install.sh` for another one), which also sets the wallpaper on every display.
 
 ## Menu, launcher and uninstall
 
@@ -201,6 +222,7 @@ the native panel of issue #10.
 - **Emoji** (`Super + Shift + E`) — search by name or keyword, `Enter` pastes
 - **Notes** (`Super + Shift + N`) — Raycast-Notes-style scratch pad: `~/notes/quick.md` (path in `~/.config/omacos/notes-file`) in nvim,
   cursor under a fresh timestamp in insert mode, every keystroke saved; `Esc` `:q` or just closing the panel keeps everything
+- **Style** — theme picker (see [Themes](#themes)); background and font switchers will join it
 - **Toggle** — screensaver on idle, bar, borders, microphone mute
 - **Install** — `omacos-pkg-install`: every Homebrew formula and cask in fzf with `brew info` as preview, `Tab` multi-select,
   `Enter` installs right there. Or the App Store
@@ -266,5 +288,6 @@ Secrets and machine-specific exports go in `~/.zshrc.local`, which is never comm
 
 ## Credits
 
-Configuration derived from [Omarchy](https://github.com/basecamp/omarchy) by
-Basecamp, MIT licensed. See `LICENSE`.
+Configuration and the theme palettes under `omacos/.config/omacos/themes/` derived from
+[Omarchy](https://github.com/basecamp/omarchy) by Basecamp and the theme authors, MIT licensed.
+See `LICENSE`.

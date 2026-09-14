@@ -45,8 +45,8 @@ The JankyBorders outline around the focused window.
 The floating terminal panel that scripts run in: Ghostty's quick terminal, owned by a second Ghostty instance, centred on the monitor under the mouse. Every fzf-based picker appears here.
 _Avoid_: Quick terminal (implementation), floating window, overlay
 
-**Panel** (planned, issue #10):
-The native Swift window that replaces the Popup for the views that do not need a terminal. Same place on screen, same keys, no process start.
+**Panel**:
+The native Swift window (issue #10) that replaces the Popup for the views that do not need a terminal. Same place on screen, same keys, no process start.
 _Avoid_: Popup (for the native one), window, HUD
 
 **View**:
@@ -90,6 +90,25 @@ _Avoid_: Help, cheatsheet, keybindings view
 
 **Screensaver**:
 The terminal animation shown on idle, one fullscreen Ghostty per monitor.
+
+### Style
+
+**Theme**:
+A named palette plus its wallpapers, in Omarchy's format. Switching a theme recolours every surface at once: terminal, bar, border, panel, popup, editor, desktop.
+_Avoid_: Colour scheme (that is the editor's part of it), skin, look
+
+**Palette**:
+The ~30 named colours of a theme (`background`, `foreground`, `accent`, `muted`, `selection`, the eight ANSI colours and their bright variants). Everything themed is rendered from it.
+
+**Accent**:
+The palette's highlight colour: focused workspace pill, border, prompt, selection marker.
+
+**Mode**:
+Whether a theme is dark or light. Decides the macOS appearance.
+
+**Background** (wallpaper):
+One of a theme's desktop pictures. Omarchy calls them backgrounds; macOS says wallpaper.
+_Avoid_: Wallpaper in scripts (use background), desktop picture
 
 ### Packaging
 

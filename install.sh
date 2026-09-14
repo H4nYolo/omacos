@@ -142,14 +142,8 @@ sleep 3; aerospace reload-config || true
 launch Karabiner-Elements
 [[ -d /Applications/Sol.app ]] && launch Sol
 
-# --- 7. Wallpaper (Omarchy's Tokyo Night default) --------------------------------
-WALL="$REPO/themes/tokyo-night/wallpaper.jpg"
-if [[ ! -f "$WALL" ]]; then
-  log "downloading wallpaper"
-  curl -fsSL -o "$WALL.webp" https://raw.githubusercontent.com/basecamp/omarchy/HEAD/themes/tokyo-night/backgrounds/0-winding-road.webp
-  sips -s format jpeg "$WALL.webp" --out "$WALL" >/dev/null && rm -f "$WALL.webp"
-fi
-log "wallpaper"
-osascript -e "tell application \"System Events\" to set picture of every desktop to \"$WALL\""
+# --- 7. Theme (Tokyo Night: colours, wallpaper, appearance) -----------------------
+log "theme"
+"$HOME/.local/bin/omacos-theme" set "${OMACOS_THEME:-tokyo-night}"
 
 log "done — log out and back in (or restart AeroSpace) if the menu bar is still visible"

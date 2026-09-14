@@ -1,0 +1,82 @@
+#!/bin/sh
+# omacos-theme-colors [--file colors.toml] [--all | <key>] — resolve a theme palette (Omarchy colors.toml)
+#
+# Prints every resolved key<TAB>value (--all, default) or one value. Mirrors Omarchy's
+# fallback cascade: legacy bg/fg and color0..15 names, derived shades (dark_background,
+# bright_red, ...), selection, cursor, orange/brown, and `mode` (dark|light, from the
+# file or the background's luminance). Values are "#rrggbb"; consumers derive other forms.
+set -eu
+set -o pipefail
+file="$HOME/.local/state/omacos/theme/colors.toml"
+key=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --file) file="$2"; shift 2 ;;
+    --all)  shift ;;
+    *)      key="$1"; shift ;;
+  esac
+done
+[ -f "$file" ] || { echo "omacos-theme-colors: no such file: $file" >&2; exit 1; }
+
+awk -v want="$key" '
+function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
+function hexv(c) { return index("0123456789abcdef", tolower(c)) - 1 }
+function chan(h, i) { return hexv(substr(h, i, 1)) * 16 + hexv(substr(h, i + 1, 1)) }
+function mix(a, b, amount,    r, g, bl) {
+  a = substr(a, 2); b = substr(b, 2)
+  r  = int(chan(a, 1) * (1 - amount) + chan(b, 1) * amount + 0.5)
+  g  = int(chan(a, 3) * (1 - amount) + chan(b, 3) * amount + 0.5)
+  bl = int(chan(a, 5) * (1 - amount) + chan(b, 5) * amount + 0.5)
+  return sprintf("#%02x%02x%02x", r, g, bl)
+}
+function ishex(v) { return v ~ /^#[0-9a-fA-F]{6}$/ }
+function alias(k, from) { if (!(k in C) && (from in C)) C[k] = C[from] }
+function need(k, v) { if (!(k in C)) C[k] = v }
+function derive(k, base, to, amount) { if (!(k in C) && (base in C) && ishex(C[base])) C[k] = mix(C[base], to, amount) }
+/^[ \t]*#/ || /^[ \t]*$/ || /^[ \t]*\[/ { next }
+{
+  n = index($0, "="); if (n == 0) next
+  k = trim(substr($0, 1, n - 1)); v = trim(substr($0, n + 1))
+  gsub(/["'\'']/, "", k)
+  if (v ~ /^["'\'']/) { q = substr(v, 1, 1); v = substr(v, 2); n = index(v, q); if (n > 0) v = substr(v, 1, n - 1) }
+  else { sub(/[ \t]*#.*$/, "", v); v = trim(v) }
+  if (k ~ /^[A-Za-z0-9_-]+$/ && v != "") C[k] = tolower(v)
+}
+END {
+  # legacy short names and ANSI names
+  alias("background", "bg"); alias("dark_background", "dark_bg"); alias("darker_background", "darker_bg")
+  alias("lighter_background", "lighter_bg"); alias("foreground", "fg"); alias("dark_foreground", "dark_fg")
+  alias("light_foreground", "light_fg"); alias("bright_foreground", "bright_fg")
+  alias("background", "color0"); alias("foreground", "color7")
+  alias("red", "color1"); alias("green", "color2"); alias("yellow", "color3"); alias("blue", "color4")
+  alias("magenta", "color5"); alias("cyan", "color6"); alias("bright_red", "color9"); alias("bright_green", "color10")
+  alias("bright_yellow", "color11"); alias("bright_blue", "color12"); alias("bright_magenta", "color13"); alias("bright_cyan", "color14")
+  alias("magenta", "purple"); alias("bright_magenta", "bright_purple")
+  alias("accent", "blue")
+  alias("light_foreground", "foreground"); alias("bright_foreground", "color15"); alias("bright_foreground", "foreground")
+  C["cursor"] = C["bright_foreground"]
+  alias("lighter_background", "background")
+  alias("dark_foreground", "color8"); alias("dark_foreground", "foreground")
+  alias("muted", "color8"); alias("muted", "dark_foreground")
+  alias("selection", "selection_background"); alias("selection", "color8"); alias("selection", "background")
+  alias("selection_background", "selection"); alias("selection_foreground", "bright_foreground")
+  alias("orange", "yellow")
+  derive("brown", "orange", "#000000", 0.5)
+  derive("dark_background", "background", "#000000", 0.25)
+  derive("darker_background", "background", "#000000", 0.5)
+  derive("bright_red", "red", "#ffffff", 0.2); derive("bright_yellow", "yellow", "#ffffff", 0.2)
+  derive("bright_green", "green", "#ffffff", 0.2); derive("bright_cyan", "cyan", "#ffffff", 0.2)
+  derive("bright_blue", "blue", "#ffffff", 0.2); derive("bright_magenta", "magenta", "#ffffff", 0.2)
+  alias("purple", "magenta"); alias("bright_purple", "bright_magenta")
+  # ANSI names for consumers that want color0..15
+  split("background red green yellow blue magenta cyan foreground muted bright_red bright_green bright_yellow bright_blue bright_magenta bright_cyan bright_foreground", ansi, " ")
+  for (i = 1; i <= 16; i++) if (ansi[i] in C) C["color" (i - 1)] = C[ansi[i]]
+  # mode
+  alias("mode", "theme_type")
+  if (!("mode" in C)) {
+    if (ishex(C["background"])) { h = substr(C["background"], 2); C["mode"] = (chan(h, 1) + chan(h, 3) + chan(h, 5) > 382) ? "light" : "dark" }
+    else C["mode"] = "dark"
+  }
+  if (want != "") { if (want in C) print C[want]; else exit 1 }
+  else for (k in C) printf "%s\t%s\n", k, C[k]
+}' "$file" | { [ -n "$key" ] && cat || sort; }

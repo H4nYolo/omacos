@@ -1,5 +1,5 @@
 #!/bin/sh
-# omacos-fzf — fzf with the omacos look (Tokyo Night, no info line). Every popup uses it.
-exec fzf --reverse --no-info --cycle --pointer='' \
-  --color='bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7,marker:#9ece6a,header:#565f89,info:#565f89,spinner:#7aa2f7,border:#3b4261,preview-bg:#16161e,label:#565f89' \
-  "$@"
+# omacos-fzf — fzf with the omacos look (current theme's colours, no info line). Every popup uses it.
+colors="$(cat "$HOME/.local/state/omacos/theme/fzf.colors" 2>/dev/null)"
+[ -n "$colors" ] || colors='bg:#1a1b26,bg+:#283457,fg:#c0caf5,fg+:#c0caf5,hl:#7aa2f7,hl+:#7aa2f7,prompt:#7aa2f7,pointer:#7aa2f7,marker:#9ece6a,header:#565f89,info:#565f89,spinner:#7aa2f7,border:#3b4261,preview-bg:#16161e,label:#565f89'
+exec fzf --reverse --no-info --cycle --pointer='' --color="$colors" "$@"

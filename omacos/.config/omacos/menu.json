@@ -27,6 +27,9 @@
     { "icon": "󰆏", "label": "Clipboard", "view": "clipboard" },
     { "icon": "󰎞", "label": "Notes", "popup": "notes" },
     { "icon": "󰞅", "label": "Emoji", "view": "emoji" },
+    { "icon": "󰏘", "label": "Style", "id": "style", "menu": [
+      { "icon": "󰏘", "label": "Theme", "popup": "theme", "state": "omacos-theme current" }
+    ]},
     { "icon": "󰔡", "label": "Toggle", "id": "toggle", "menu": [
       { "icon": "󰒲", "label": "Screensaver on idle", "run": "omacos-toggle idle", "state": "omacos-toggle idle --state" },
       { "icon": "󰍜", "label": "Bar", "run": "omacos-toggle bar", "state": "omacos-toggle bar --state" },

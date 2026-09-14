@@ -9,9 +9,10 @@ list() {
   brew list --cask 2>/dev/null | awk '{ printf "%s\tcask\t󰏖\n", $0 }'
 }
 
+RED="$(omacos-theme-colors red 2>/dev/null || echo '#f7768e')"
 sel="$(list | omacos-fzf --multi --exact --delimiter='\t' --with-nth=3,1 --nth=1 \
         --prompt='  remove  ' \
-        --color='pointer:#f7768e,marker:#f7768e,prompt:#f7768e' \
+        --color="pointer:$RED,marker:$RED,prompt:$RED" \
         --header=' enter  uninstall  ·  tab  multi-select  ·  alt-p  preview  ·  backspace  back  ·  esc  close' \
         --preview='brew info --{2} {1} 2>/dev/null' \
         --preview-window='down:60%:wrap' \
