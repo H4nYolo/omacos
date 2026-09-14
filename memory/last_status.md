@@ -3,7 +3,7 @@
 Read this first when resuming work on this repo (new session or after a context compact).
 Keep it current: update it at the end of every working session.
 
-**Last updated:** 2026-09-14 00:xx, end of session 2 (other-monitor workspace marker, Omarchy menu with Backspace = back, brew picker, clipboard, emoji, capture, help with aliases/tools, weather-location, Super+W quits last window, tdl <dir>, Sol hotkey conflict fixed, glow borders). Open work is in GitHub issues #5-#9.
+**Last updated:** 2026-09-14 afternoon, end of session 3 (native Swift panel #10 done and verified; menu.json; disclaimer; email leak fixed; dwindle; notes; glow borders) (other-monitor workspace marker, Omarchy menu with Backspace = back, brew picker, clipboard, emoji, capture, help with aliases/tools, weather-location, Super+W quits last window, tdl <dir>, Sol hotkey conflict fixed, glow borders). Open work is in GitHub issues #5-#9.
 
 ## What this is
 
@@ -70,6 +70,18 @@ Tracked as GitHub issues (`gh issue list`): #5 theme switcher, #6 background swi
 switcher (build in that order, "Kosmetik 8-10"), #8 decide on Sol, #9 verification checklist for
 things a script cannot test (recording, OCR, paste, mic/camera, logout/login, upstream sketchybar
 issue), #10 omacos-shell = native Swift Panel (grilled 2026-09-14, decisions in #10 and ADRs 0001-0003; glossary in CONTEXT.md). Work packages: #11 menu.json (done), #12 Panel v1 launcher+menu (done 2026-09-14), #13 Panel v2 emoji/clipboard/keys (done 2026-09-14). #10 closed. Verified by the user: paste after Enter, click outside, look. Still untested: logout/login with the panel in after-startup-command. Open a new issue for every new piece of work; close it with the commit that finishes it.
+
+## Next: theme switcher (#5) — where Tokyo Night is hard-wired today
+
+`omacos-theme-set <name>` has to rewrite or point these at the theme (found with
+`git grep -il '1a1b26|7aa2f7|tokyo|CaskaydiaMono|0-winding-road'`):
+`ghostty/.config/ghostty/config` (theme line), `sketchybar/.config/sketchybar/colors.sh` (+ `sketchybarrc` font),
+`borders/.config/borders/bordersrc`, `tmux/.config/tmux/tmux.conf` (status colours), `nvim/.config/nvim/lua/config/lazy.lua`
+(colorscheme), `shell/Sources/omacos-shell/Theme.swift` (make it read a colours file instead), the fzf colour strings in
+`bin/.local/bin/omacos-fzf`, `omacos-launcher`, `omacos-keys`, `omacos-popup-run`, and the wallpaper URL in `install.sh`.
+Plan agreed in issue #5: Omarchy's `themes/<name>/` layout (colours + backgrounds), a current-theme pointer, one command
+that rewrites everything and reloads (sketchybar, borders, tmux source-file, Ghostty reload, panel restart), then #6
+(background cycling) and #7 (font). A clone of basecamp/omarchy for reference sits in `$TMPDIR/omarchy-src` (re-clone if gone).
 
 ## Archive
 
