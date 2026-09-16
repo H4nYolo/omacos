@@ -63,6 +63,7 @@ alias ic='tdl c'      # dev layout with opencode, optional <dir>
 alias ix='tdl cx'     # dev layout with claude code, optional <dir>
 alias icx='tdl c cx'  # dev layout with both, optional <dir>
 alias mup='MISE_MINIMUM_RELEASE_AGE=0 mise up'
+alias jc='just --choose --chooser "omacos-fzf --multi --preview \"just --show {}\""'  # just: pick recipes with fzf, preview shows the recipe
 # n [files]  – nvim, current directory when called without arguments
 n() { if [ "$#" -eq 0 ]; then command nvim . ; else command nvim "$@"; fi; }
 
