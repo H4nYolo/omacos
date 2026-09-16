@@ -19,6 +19,7 @@ switchaudio-osx	SwitchAudioSource: change the audio output from the command line
 tmux	Terminal multiplexer
 uv	Extremely fast Python package installer and resolver, written in Rust
 zoxide	Shell extension to navigate your filesystem faster
+tailspin	tspin: log file highlighter, tail -f with colours (alias ol)
 zsh-autosuggestions	Fish-like fast/unobtrusive autosuggestions for zsh
 zsh-syntax-highlighting	Fish shell like syntax highlighting for zsh
 tte	terminaltexteffects — the screensaver animations (uv tool)

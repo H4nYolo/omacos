@@ -31,6 +31,7 @@ brew "eza"
 brew "fzf"
 brew "bat"
 brew "zoxide"
+brew "tailspin"   # tspin: tail -f with colours (alias ol)
 brew "jq"
 brew "neovim"
 brew "lazygit"
