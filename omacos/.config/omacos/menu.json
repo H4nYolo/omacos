@@ -38,7 +38,8 @@
       { "icon": "󰒲", "label": "Screensaver on idle", "run": "omacos-toggle idle", "state": "omacos-toggle idle --state" },
       { "icon": "󰍜", "label": "Bar", "run": "omacos-toggle bar", "state": "omacos-toggle bar --state" },
       { "icon": "󰃣", "label": "Borders", "run": "omacos-toggle borders", "state": "omacos-toggle borders --state" },
-      { "icon": "󰍬", "label": "Microphone", "run": "omacos-toggle mic", "state": "omacos-toggle mic --state" }
+      { "icon": "󰍬", "label": "Microphone", "run": "omacos-toggle mic", "state": "omacos-toggle mic --state" },
+      { "icon": "󰖩", "label": "Wi-Fi", "run": "omacos-toggle wifi", "state": "omacos-toggle wifi --state" }
     ]},
     { "icon": "󰏗", "label": "Install", "id": "install", "menu": [
       { "icon": "󰏗", "label": "Package (brew)", "popup": "pkg-install" },

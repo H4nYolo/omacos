@@ -38,7 +38,7 @@ visibility). Edit it to add entries; `omacos-menu <route> --list` shows what a l
 - **Notes** (`Super + Shift + N`) — Raycast-Notes-style scratch pad: `~/notes/quick.md` (path in `~/.config/omacos/notes-file`) in nvim,
   cursor under a fresh timestamp in insert mode, every keystroke saved; `Esc` `:q` or just closing the popup keeps everything
 - **Style** — theme, background, wallpaper pack and font pickers, see [Style](../style/README.md)
-- **Toggle** — screensaver on idle, bar, borders, microphone mute
+- **Toggle** — screensaver on idle, bar, borders, microphone mute, Wi-Fi
 - **Install** — `omacos-pkg-install`: every Homebrew formula and cask in fzf with `brew info` as preview, `Tab` multi-select,
   `Enter` installs right there. Or the App Store
 - **Remove** — `omacos-pkg-remove`: the same for what is installed (`brew leaves` + casks, unused dependencies go too), or an app via Pearcleaner
