@@ -5,7 +5,7 @@ Everything the landing page leaves out. One page per topic.
 **The basics**
 
 - [Install](install/README.md) — what `install.sh` does, permissions, packages, undo
-- [Keys](keys/README.md) — the modifier story (Super on the thumb), every binding, re-homed keys
+- [Keys](keys/README.md) — the modifier story (Super on Caps Lock), every binding, re-homed keys
 - [Desktop](desktop/README.md) — dwindle tiling, workspaces and monitors, the bar, borders
 
 **The surfaces**

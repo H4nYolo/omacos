@@ -7,8 +7,8 @@
 > tested on any Mac but mine (a Mac Studio with two monitors, a Kinesis keyboard, macOS 26 Tahoe),
 > and it changes daily. Nothing here is endorsed by or affiliated with Omarchy or Basecamp.
 >
-> **Read before running `install.sh`:** it rewires your keyboard (Left Command becomes `Super`,
-> Caps Lock becomes Command, Escape on tap), takes over window management (AeroSpace), hides the
+> **Read before running `install.sh`:** it rewires your keyboard (Caps Lock held becomes `Super`,
+> tapped Escape), takes over window management (AeroSpace), hides the
 > macOS menu bar, replaces your tmux, zsh, Ghostty, nvim and git configs (the old ones are moved
 > to `~/.config-archive/`, not deleted), installs a dozen brew packages and starts several
 > background services. Restoring everything is possible but manual. Read the script, use it for
@@ -17,7 +17,7 @@
 
 **omacos** brings the look and feel of [Omarchy](https://omarchy.org) to macOS: Hyprland-style
 tiling and keybindings on AeroSpace, a Waybar-like bar, Omarchy's menu, themes, tmux and shell
-setup, all driven from one `Super` key under your thumb. It is a set of dotfiles, a handful of
+setup, all driven from one `Super` key on Caps Lock. It is a set of dotfiles, a handful of
 scripts and one small native panel.
 
 ```sh

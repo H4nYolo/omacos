@@ -7,7 +7,7 @@ Omarchy's look and feel rebuilt on macOS: one keyboard-driven desktop out of Aer
 ### Keys
 
 **Super**:
-The modifier that Omarchy binds everything to. On this machine it is Left Command held, which Karabiner turns into ctrl+alt+cmd. Caps Lock held is the macOS Command key, tapped it is Escape.
+The modifier that Omarchy binds everything to. On this machine it is Caps Lock held, which Karabiner turns into ctrl+alt+cmd; a tap is Escape. Command stays Command.
 _Avoid_: Hyper, Meh, Caps
 
 **Super+Shift**:

@@ -5,27 +5,27 @@
 ## The modifier story
 
 Omarchy hangs everything on `Super`. macOS has no spare modifier, so Karabiner-Elements
-(`karabiner/`) rewires two keys:
+(`karabiner/`) rewires one key:
 
 | Omarchy | Here | How |
 |---|---|---|
-| `Super` | **Left Command** held | Karabiner: left command → `ctrl + option + command` |
-| `Super + Shift` | **Left Command + Shift** | same rule, shift passes through |
-| macOS `⌘` shortcuts (`⌘C`, `⌘V`, `⌘T`, `⌘Tab` …) | **Caps Lock** held | Karabiner: caps lock → `command` |
+| `Super` | **Caps Lock** held | Karabiner: caps lock → `ctrl + option + command` |
+| `Super + Shift` | **Caps Lock + Shift** | same rule, shift passes through |
 | `Escape` | **Caps Lock** tapped | same rule |
+| macOS `⌘` shortcuts (`⌘C`, `⌘V`, `⌘T`, `⌘Tab` …) | `Command` | untouched |
 | `Alt` | `Option` | untouched, so tmux keeps its `Alt` bindings (Ghostty sends option as alt) |
 | `Super + Alt`, `Super + Ctrl` | – | not expressible on this keyboard; those bindings were re-homed (below) |
 
-Super sits under the thumb, which is the point: every Omarchy chord is reachable without leaving
-the home row. The price is that the macOS Command key moved to Caps Lock. If that is not for you,
-swap the two rules in `karabiner/.config/karabiner/karabiner.json` back, or remap one thumb key of
-your keyboard to Right Command and bind Super to that.
+Super on Caps Lock leaves every macOS shortcut where it is. Super under the thumb (Left Command
+held = Super, Caps Lock held = Command) was tried for two days and reverted: the muscle memory for
+`⌘C`/`⌘V` never moved. If you want it anyway, the old rules are in git history
+(commit `11df1b4`); or remap one thumb key of your keyboard to Right Command and bind Super to that.
 
 `Super + Shift + , . /` are never bound: Karabiner swallows them (macOS would start sysdiagnose).
 
 ## Keybindings
 
-Everything Omarchy has, on the same keys, with `Super` = Left Command held.
+Everything Omarchy has, on the same keys, with `Super` = Caps Lock held.
 
 **Windows** — `W`/`Q` close the window and quit the app when it was its last one · `T` float · `J` split · `F` fullscreen ·
 arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resize the other axis · `Home` balance

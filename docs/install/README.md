@@ -29,7 +29,7 @@ can be linked on its own: `stow --target=$HOME aerospace`.
 | Hyprland tiling & bindings | [AeroSpace](https://github.com/nikitabobko/AeroSpace) (`aerospace/`) |
 | Waybar | [sketchybar](https://github.com/FelixKratz/SketchyBar) (`sketchybar/`) |
 | Window borders | [JankyBorders](https://github.com/FelixKratz/JankyBorders) (`borders/`) |
-| `Super` key | Left Command via [Karabiner-Elements](https://karabiner-elements.pqrs.org) (`karabiner/`) |
+| `Super` key | Caps Lock via [Karabiner-Elements](https://karabiner-elements.pqrs.org) (`karabiner/`) |
 | Walker (launcher, menus) | `omacos-shell` (`shell/`): a native Swift panel; fzf in a Ghostty popup for terminal tasks |
 | tmux config | tmux (`tmux/`) |
 | bash aliases, `tdl` / `tdlm` / `tsl` layouts | zsh (`zsh/`) |

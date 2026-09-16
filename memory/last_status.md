@@ -3,7 +3,7 @@
 Read this first when resuming work on this repo (new session or after a context compact).
 Keep it current: update it at the end of every working session.
 
-**Last updated:** 2026-09-14 night, end of session 4 (theme #5, background #6, font #7 switchers, wallpaper packs #14 incl. cyberpunk/fantasy and a private death-note pack, Ghostty title bar, Super moved to Left Command, README as landing page + docs/ manual, Mac renamed to h4nstudio, GitHub repo subscriptions cleared). Late addition, same night: AeroSpace rules pin Telegram + Messages to workspace 9 and Teams + Mail to 8 (794b764); the panel's menu search covers the whole tree below the current level with breadcrumb rows, `back` finds `Style › Background` from the top (fb48b9c, user-tested). Open: #8 Sol, #9 verification. 2026-09-15 morning: nvim got `christoomey/vim-tmux-navigator` (`nvim/.config/nvim/lua/plugins/tmux-navigator.lua`) so Ctrl+hjkl leaves an nvim split into the next tmux pane; the tmux side (`is_vim` in tmux.conf) was already there.
+**Last updated:** 2026-09-14 night, end of session 4 (theme #5, background #6, font #7 switchers, wallpaper packs #14 incl. cyberpunk/fantasy and a private death-note pack, Ghostty title bar, Super briefly moved to Left Command (reverted 2026-09-16), README as landing page + docs/ manual, Mac renamed to h4nstudio, GitHub repo subscriptions cleared). Late addition, same night: AeroSpace rules pin Telegram + Messages to workspace 9 and Teams + Mail to 8 (794b764); the panel's menu search covers the whole tree below the current level with breadcrumb rows, `back` finds `Style › Background` from the top (fb48b9c, user-tested). Open: #8 Sol, #9 verification. 2026-09-15 morning: nvim got `christoomey/vim-tmux-navigator` (`nvim/.config/nvim/lua/plugins/tmux-navigator.lua`) so Ctrl+hjkl leaves an nvim split into the next tmux pane; the tmux side (`is_vim` in tmux.conf) was already there.
 
 ## What this is
 
@@ -24,7 +24,7 @@ screen coordinates). Displays never sleep before 3h (`displaysleep 180`).
 | piece | how |
 |---|---|
 | Super+W/Q | `close --quit-if-last-window`: plain `close` left apps running without a window (looked like minimise) |
-| Super key | **Left Command held = ctrl+alt+cmd** (Karabiner, since 2026-09-14 evening: the user wanted Super on the thumb). Caps Lock held = left_command (macOS ⌘ shortcuts), tap = Escape. Super+Shift = Left Cmd+Shift. **No Meh key.** Super+Shift+, . / are swallowed by Karabiner (macOS sysdiagnose) — never bind them. Firmware remap of a thumb key to Right Cmd was offered and declined (flashing too much) |
+| Super key | **Caps Lock held = ctrl+alt+cmd**, tap = Escape (Karabiner). Command stays Command. Super on the thumb (Left Cmd held = Super, Caps held = Cmd, 11df1b4, 2026-09-14) lasted two days and was reverted on 2026-09-16 at the user's request: muscle memory for ⌘C/⌘V kept firing Super chords. Do not suggest it again. Super+Shift = Caps+Shift. **No Meh key.** Super+Shift+, . / are swallowed by Karabiner (macOS sysdiagnose) — never bind them. Firmware remap of a thumb key to Right Cmd was offered and declined (flashing too much) |
 | Tiling | AeroSpace, `aerospace/.aerospace.toml`, config-version 2. Workspaces 1-5 + `scratch` on `CG437K P`, 6-10 on `Studio Display`; key 0 = workspace 10; `--auto-back-and-forth` on every workspace key (press again = go back). yabai and skhd are gone |
 | Ghostty title bar | `macos-titlebar-style = transparent` + `macos-window-buttons = hidden` + `macos-titlebar-proxy-icon = hidden` (**no** `window-title-font-family`: Ghostty 1.3.1 truncates the title to ~10 chars with any custom title font, verified with throwaway instances); tmux `set-titles on`, `'#S · #W'`. Popup and screensaver configs force `hidden`. Style changes reach only new windows (Ghostty docs), so restart Ghostty after switching; `+new-window` is unsupported on macOS — for demos start a second instance with `open -na Ghostty --args --macos-titlebar-style=…` and kill it |
 | Alt | belongs to tmux (Ghostty `macos-option-as-alt = true`); AeroSpace only binds Alt+Tab |
@@ -79,9 +79,9 @@ issue), #10 omacos-shell = native Swift Panel (grilled 2026-09-14, decisions in 
 
 Nothing is being built. Open issues: #8 decide on Sol (calculator only, hotkeys nulled), #9 real-use verification —
 the user agreed to do it next: recording start/stop, OCR, mic/camera indicator, logout/login (panel + daemons
-autostart via AeroSpace after-startup-command), upstream sketchybar formula issue. Also worth a check after the
-Super change: every Super+Shift chord with the thumb, Cmd shortcuts via Caps in GUI apps, `omacos-paste` (System
-Events Cmd+V, unaffected by Karabiner). Private wallpaper packs on request: one Wallhaven API line
+autostart via AeroSpace after-startup-command), upstream sketchybar formula issue. The Super-on-thumb experiment is
+reverted (Caps Lock = Super again, 2026-09-16), so the thumb-chord checks are moot; `omacos-paste` (System Events
+Cmd+V) is unaffected by Karabiner either way. Private wallpaper packs on request: one Wallhaven API line
 (see Background row).
 
 ## README / docs layout (2026-09-14 evening)
