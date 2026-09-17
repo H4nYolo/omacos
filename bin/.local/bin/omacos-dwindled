@@ -6,7 +6,10 @@
 # holds two or more windows, it is joined with its neighbour into a nested container,
 # which AeroSpace's normalization gives the opposite orientation.
 # Started by AeroSpace at login; runs forever. Kill it to get plain AeroSpace behaviour.
+# A script that builds its own tree (omacos-dev) creates ~/.local/state/omacos/dwindle-pause
+# while it works; new windows seen in the meantime are left alone.
 PATH="/opt/homebrew/bin:$PATH"
+pause="${XDG_STATE_HOME:-$HOME/.local/state}/omacos/dwindle-pause"
 known="$(aerospace list-windows --all --format '%{window-id}' 2>/dev/null)"
 while true; do
   sleep 0.3
@@ -15,6 +18,7 @@ while true; do
   new="$(printf '%s\n' "$ids" | grep -vxF -f <(printf '%s\n' "$known") 2>/dev/null)"
   known="$ids"
   [ -n "$new" ] || continue
+  [ -e "$pause" ] && continue
   for id in $new; do
     line="$(printf '%s\n' "$now" | grep "^$id|")"
     ws="${line#*|}"; ws="${ws%%|*}"; layout="${line##*|}"

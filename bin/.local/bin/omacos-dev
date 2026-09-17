@@ -1,0 +1,54 @@
+#!/bin/sh
+# omacos-dev [<dir>] — dev layout as five Ghostty windows: two stacked left, tmux in the middle, two stacked right (25/50/25).
+# Bound to Super+Shift+L. The tmux-only twin is the shell function tdev. Uses the focused
+# workspace when it is empty, otherwise the first empty workspace (focused monitor first).
+PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
+STATE="${XDG_STATE_HOME:-$HOME/.local/state}/omacos"; mkdir -p "$STATE"
+dir="${1:-$HOME}"; [ -d "$dir" ] || { echo "No such directory: $dir" >&2; exit 1; }
+dir="$(cd "$dir" && pwd)"
+
+ws="$(aerospace list-workspaces --focused)"
+if [ -n "$(aerospace list-windows --workspace "$ws" --format '%{window-id}')" ]; then
+  empty="$(aerospace list-workspaces --monitor focused --empty | head -1)"
+  [ -n "$empty" ] || empty="$(aerospace list-workspaces --monitor all --empty | head -1)"
+  [ -n "$empty" ] || { omacos-notify "Dev layout" "No empty workspace"; exit 1; }
+  ws="$empty"; aerospace workspace "$ws"
+fi
+
+pause="$STATE/dwindle-pause"; : > "$pause"
+seen="$(mktemp)"
+trap 'rm -f "$pause" "$seen"' EXIT INT TERM
+
+windows() { aerospace list-windows --workspace "$ws" --app-bundle-id com.mitchellh.ghostty --format '%{window-id}'; }
+
+# spawn one Ghostty, wait for its window, print the window id
+spawn() {
+  windows > "$seen"
+  open -na Ghostty --args --working-directory="$dir" "$@"
+  i=0
+  while [ $i -lt 50 ]; do
+    sleep 0.2; i=$((i + 1))
+    new="$(windows | grep -vxF -f "$seen" | head -1)"
+    [ -n "$new" ] && { echo "$new"; return 0; }
+  done
+  return 1
+}
+
+main="$(spawn -e zsh -lic 'tmux new-session -A -s dev')" || exit 1
+aerospace layout --window-id "$main" --root h_tiles 2>/dev/null
+l1="$(spawn)" || exit 1
+l2="$(spawn)" || exit 1
+r1="$(spawn)" || exit 1
+r2="$(spawn)" || exit 1
+
+# root is [main l1 l2 r1 r2]: put main between the pairs, then fold each pair into a column
+aerospace move --window-id "$main" right
+aerospace move --window-id "$main" right
+aerospace join-with --window-id "$l2" left
+aerospace join-with --window-id "$r2" left
+
+# three equal columns → 25/50/25: grow the middle by half its width (System Events knows the size)
+pid="$(aerospace list-windows --workspace "$ws" --format '%{window-id}|%{app-pid}' | grep "^$main|" | cut -d'|' -f2)"
+w="$(osascript -e "tell application \"System Events\" to get size of window 1 of (first process whose unix id is $pid)" 2>/dev/null)"; w="${w%%,*}"
+[ -n "$w" ] && aerospace resize --window-id "$main" width +$((w / 2))
+aerospace focus --window-id "$main"

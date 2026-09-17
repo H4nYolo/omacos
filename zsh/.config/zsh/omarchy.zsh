@@ -141,6 +141,23 @@ tsl() {
   tmux select-pane -t 1
 }
 
+# tdev [<dir>]  – dev layout: two terminals | main terminal | two terminals (25/50/25), main in the middle
+tdev() {
+  _tmux_require || return 1
+  local dir="${1:-$PWD}"; dir="${dir/#\~/$HOME}"
+  [ -d "$dir" ] || { echo "No such directory: $dir"; return 1; }
+  dir="$(cd "$dir" && pwd)"
+  local main side left right
+  tmux new-window -c "$dir" -n dev
+  main="$(tmux display -p '#{pane_id}')"
+  side=$(( $(tmux display -p '#{window_width}') / 4 ))
+  left="$(tmux split-window -h -b -l "$side" -t "$main" -c "$dir" -P -F '#{pane_id}')"    # left column
+  tmux split-window -v -t "$left" -c "$dir"                                                 # left bottom
+  right="$(tmux split-window -h -l "$side" -t "$main" -c "$dir" -P -F '#{pane_id}')"      # right column
+  tmux split-window -v -t "$right" -c "$dir"                                                # right bottom
+  tmux select-pane -t "$main"
+}
+
 # ---------------------------------------------------------------- zsh plugins
 # Autosuggestions: grey history hints (→ or End accepts, Ctrl+→ one word)
 _brew_prefix="${HOMEBREW_PREFIX:-$(brew --prefix 2>/dev/null)}"
