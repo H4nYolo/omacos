@@ -50,4 +50,11 @@ idle** switches the timer off.
 `omacos-keys shell` (or `Super + K`) lists every `omacos-*` script with its one-line summary.
 The important ones: `omacos-theme`, `omacos-background`, `omacos-font`, `omacos-menu`,
 `omacos-launcher`, `omacos-capture`, `omacos-notes`, `omacos-toggle`, `omacos-system`,
-`omacos-pkg-install`, `omacos-pkg-remove`, `omacos-popup`, `omacos-shell`.
+`omacos-pkg-install`, `omacos-pkg-remove`, `omacos-popup`, `omacos-shell`, `omacos-awake`,
+`omacos-say`.
+
+`omacos-say <text…>` reads a line out loud: it POSTs `{text, lang, voice}` to the TTS sidecar in
+`~/.config/omacos/say-url` (`http://127.0.0.1:8880/tts` by default, `say-lang` and `say-voice` pick
+the voice) and plays the WAV it gets back. Text can come in on stdin, `-o file.wav` keeps it instead
+of playing it, and with no sidecar listening it falls back to macOS' own `say` — which is also the
+one to use for German, the sidecar answers `tts.unsupported_language` for `de`.
