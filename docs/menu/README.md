@@ -52,16 +52,23 @@ into `~/.cache/omacos/omacos-ocr`, the capture menu does the same on first use i
 ## Keep session awake
 
 Remote desktops lock themselves when nothing happens in them — even while you are busy on the other
-monitor. **Toggle → Keep session awake** starts `omacos-awake`: every 60-120 seconds (random, so it does
-not look like a metronome) it posts a four-pixel mouse move into the window of the app named in
-`~/.config/omacos/awake-app` (`Citrix Viewer` by default).
+monitor, which also leaves you on "Away" in the chat everyone else is watching. **Toggle → Keep session
+awake** starts `omacos-awake`: every 60-120 seconds (random, so it does not look like a metronome) it
+nudges the window of the app named in `~/.config/omacos/awake-app` (`Citrix Viewer` by default) with a
+four-pixel mouse move and an F15 press — invisible in Windows, but input as far as the session is concerned.
 
-The nudge goes to the app's process, not to the screen: `~/.config/omacos/jiggle.swift`
-(compiled once to `~/.cache/omacos/omacos-jiggle`) looks the app up by name — so a new pid every
-morning is fine — takes its largest window from the window list and sends the move with
-`CGEventPostToPid`. Your real cursor never moves, focus never changes, and it also works while that
-window sits on a workspace you are not looking at. While the app is frontmost the nudge is skipped:
-you are using the session yourself then.
+`~/.config/omacos/jiggle.swift` (compiled once to `~/.cache/omacos/omacos-jiggle`) looks the app up by
+name on every nudge, so a new pid every morning is fine, and takes its largest window from the window
+list. Citrix Viewer only forwards input it receives while it is the active app, so the helper activates
+it, waits for the activation to land, sends the events with `CGEventPostToPid` and hands the focus
+straight back — about half a second, and the real mouse pointer never moves.
+
+Half a second of borrowed focus would swallow whatever you type in that moment, so the daemon waits for
+a pause first: it only nudges once this Mac has been idle for `awake-min-idle` seconds (the bar shows
+`hold` while it waits). Typing through a whole coffee break would still let the session lock, so after
+`awake-deadline` seconds without a nudge it goes ahead anyway. While the app is frontmost the nudge is
+skipped — you are using the session yourself then — and while its window sits on a workspace you are not
+looking at, nothing happens either: activating it would drag that workspace onto the monitor in front of you.
 
 A countdown to the next nudge appears in the bar (󰅶 1:07); clicking it stops the whole thing, as does
 picking the menu entry again. `omacos-awake status` prints the same from the shell, `omacos-awake once`
@@ -71,7 +78,9 @@ sends a single nudge for testing.
 |---|---|
 | `~/.config/omacos/awake-app` | app to keep awake (`Citrix Viewer`) |
 | `~/.config/omacos/awake-interval` | `min max` seconds between nudges (`60 120`) |
-| `~/.config/omacos/awake-flags` | extra flags if the quiet way is not enough: `--global` (real event at the window centre, cursor warped back), `--click`, `--dx <px>` |
+| `~/.config/omacos/awake-min-idle` | seconds of local quiet before the focus is borrowed (`4`) |
+| `~/.config/omacos/awake-deadline` | nudge anyway after this long without one (`210`) |
+| `~/.config/omacos/awake-flags` | how the nudge is delivered: `--activate --key` by default, `--global` for apps that read the event stream through a tap, `--click`, `--dx <px>` |
 
 ## Launcher
 

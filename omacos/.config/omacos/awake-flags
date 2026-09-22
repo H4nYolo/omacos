@@ -1,7 +1,12 @@
-# Extra flags for the jiggle helper (~/.config/omacos/jiggle.swift), one per line.
-# Default (no flags): a mouse move posted straight to the app's process — the real
-# cursor stays where it is and the focus never changes.
-# --global   post a real event at the window centre and warp the cursor back
-#            (louder, but reaches apps that ignore events they did not get focus for)
-# --click    add a left click in the middle of the window
-# --dx 8     how far the pointer is nudged before it moves back (default 4 px)
+# Flags for the jiggle helper (~/.config/omacos/jiggle.swift), one per line, # = comment.
+#
+# --activate  activate the app for ~0.5 s, nudge, then give the focus straight back.
+#             Citrix Viewer only forwards input it receives while it is the active app,
+#             so without this the remote session goes Away anyway (tested 2026-09-22).
+# --key       also press F15 — invisible in Windows, still counts as input there.
+# --global    a real event at the window centre, cursor warped back (for apps that watch
+#             the event stream with a tap instead of through their own window).
+# --click     add a left click in the middle of the window (can hit whatever is there).
+# --dx 8      how far the pointer is nudged before it moves back (default 4 px).
+--activate
+--key
