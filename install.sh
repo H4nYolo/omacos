@@ -117,6 +117,13 @@ if [[ ! -x "$HOME/.cache/omacos/omacos-ocr" ]]; then
   swiftc -O -o "$HOME/.cache/omacos/omacos-ocr" "$REPO/omacos/.config/omacos/ocr.swift" || echo "  swiftc failed — install the Command Line Tools (xcode-select --install) and rerun"
 fi
 
+# Input jiggler for menu -> Toggle -> Keep session awake, compiled once
+if [[ ! -x "$HOME/.cache/omacos/omacos-jiggle" ]]; then
+  log "compiling jiggle helper (swiftc)"
+  mkdir -p "$HOME/.cache/omacos"
+  swiftc -O -o "$HOME/.cache/omacos/omacos-jiggle" "$REPO/omacos/.config/omacos/jiggle.swift" || echo "  swiftc failed — omacos-awake compiles it on first use"
+fi
+
 if ! command -v tte >/dev/null; then
   log "installing terminaltexteffects"
   uv tool install terminaltexteffects >/dev/null

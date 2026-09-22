@@ -38,7 +38,7 @@ visibility). Edit it to add entries; `omacos-menu <route> --list` shows what a l
 - **Notes** (`Super + Shift + N`) — Raycast-Notes-style scratch pad: `~/notes/quick.md` (path in `~/.config/omacos/notes-file`) in nvim,
   cursor under a fresh timestamp in insert mode, every keystroke saved; `Esc` `:q` or just closing the popup keeps everything
 - **Style** — theme, background, wallpaper pack and font pickers, see [Style](../style/README.md)
-- **Toggle** — screensaver on idle, bar, borders, microphone mute, Wi-Fi
+- **Toggle** — screensaver on idle, bar, borders, microphone mute, Wi-Fi, keep session awake
 - **Install** — `omacos-pkg-install`: every Homebrew formula and cask in fzf with `brew info` as preview, `Tab` multi-select,
   `Enter` installs right there. Or the App Store
 - **Remove** — `omacos-pkg-remove`: the same for what is installed (`brew leaves` + casks, unused dependencies go too), or an app via Pearcleaner
@@ -48,6 +48,30 @@ visibility). Edit it to add entries; `omacos-menu <route> --list` shows what a l
 
 The OCR helper is Apple's Vision framework (`~/.config/omacos/ocr.swift`); `install.sh` compiles it once
 into `~/.cache/omacos/omacos-ocr`, the capture menu does the same on first use if needed.
+
+## Keep session awake
+
+Remote desktops lock themselves when nothing happens in them — even while you are busy on the other
+monitor. **Toggle → Keep session awake** starts `omacos-awake`: every 60-120 seconds (random, so it does
+not look like a metronome) it posts a four-pixel mouse move into the window of the app named in
+`~/.config/omacos/awake-app` (`Citrix Viewer` by default).
+
+The nudge goes to the app's process, not to the screen: `~/.config/omacos/jiggle.swift`
+(compiled once to `~/.cache/omacos/omacos-jiggle`) looks the app up by name — so a new pid every
+morning is fine — takes its largest window from the window list and sends the move with
+`CGEventPostToPid`. Your real cursor never moves, focus never changes, and it also works while that
+window sits on a workspace you are not looking at. While the app is frontmost the nudge is skipped:
+you are using the session yourself then.
+
+A countdown to the next nudge appears in the bar (󰅶 1:07); clicking it stops the whole thing, as does
+picking the menu entry again. `omacos-awake status` prints the same from the shell, `omacos-awake once`
+sends a single nudge for testing.
+
+| file | meaning |
+|---|---|
+| `~/.config/omacos/awake-app` | app to keep awake (`Citrix Viewer`) |
+| `~/.config/omacos/awake-interval` | `min max` seconds between nudges (`60 120`) |
+| `~/.config/omacos/awake-flags` | extra flags if the quiet way is not enough: `--global` (real event at the window centre, cursor warped back), `--click`, `--dx <px>` |
 
 ## Launcher
 

@@ -1,0 +1,7 @@
+# Extra flags for the jiggle helper (~/.config/omacos/jiggle.swift), one per line.
+# Default (no flags): a mouse move posted straight to the app's process — the real
+# cursor stays where it is and the focus never changes.
+# --global   post a real event at the window centre and warp the cursor back
+#            (louder, but reaches apps that ignore events they did not get focus for)
+# --click    add a left click in the middle of the window
+# --dx 8     how far the pointer is nudged before it moves back (default 4 px)
