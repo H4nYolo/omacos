@@ -29,6 +29,7 @@ apps() {
     printf 'Finder\t/System/Library/CoreServices/Finder.app\n'
   } | sort -t "$(printf '\t')" -k1,1 -u
   # omacos actions (Omarchy menu → System)
+  printf '󰅶 Keep session awake\taction:awake\n'
   printf '󰒲 Screensaver\taction:screensaver\n'
   printf '󰌾 Lock screen\taction:lock\n'
   printf '󰤄 Sleep\taction:sleep\n'
@@ -56,6 +57,7 @@ name="${line%%	*}"; path="${line#*	}"
 [ "$mode" = "--uninstall" ] && key=ctrl-x
 
 case "$path" in
+  action:awake) exec omacos-awake toggle ;;
   action:screensaver) exec omacos-screensaver ;;
   action:lock)  exec osascript -e 'tell application "System Events" to keystroke "q" using {control down, command down}' ;;
   action:sleep) exec pmset sleepnow ;;

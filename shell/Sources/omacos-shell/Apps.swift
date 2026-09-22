@@ -41,6 +41,7 @@ struct LauncherAction {
     let command: String
 
     static let all = [
+        LauncherAction(name: "Keep session awake", glyph: "\u{F0176}", command: "omacos-awake toggle"),
         LauncherAction(name: "Screensaver", glyph: "\u{F04B2}", command: "omacos-screensaver"),
         LauncherAction(name: "Lock screen", glyph: "\u{F033E}", command: "omacos-system lock"),
         LauncherAction(name: "Sleep", glyph: "\u{F0904}", command: "omacos-system sleep"),

@@ -77,6 +77,8 @@ tenths of a second before the focus — and the workspace — go back. Those nud
 far apart as `awake-deadline` allows, and `awake-hidden` = `skip` turns them off entirely if you would
 rather have the lock than the flicker.
 
+The launcher (`Super + Space`) carries the same entry next to Screensaver, Lock screen and Sleep.
+
 The bar shows how much of that time is left (󰅶 1h23, or 󰅶 23:05 in the last hour; with no end time it
 counts down to the next nudge instead), and the menu entry carries the same number in brackets. Clicking
 the bar item stops the whole thing, as does picking the menu entry again — and when the time is up it stops
