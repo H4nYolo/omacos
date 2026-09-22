@@ -2,7 +2,7 @@
 # omacos-popup-run — runs inside the popup quick terminal; executes whatever
 # omacos-popup asked for last, or the request given as $1 (the menu hands its popup
 # entries over this way): launcher (default), keys [tmux|aerospace|shell], menu [route],
-# emoji, clipboard, notes, about, qr, pkg-install, pkg-remove, weather, brew, outdated, audio.
+# emoji, clipboard, notes, about, qr, pkg-install, pkg-remove, weather, brew, outdated, audio, awake.
 PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
 req="${1:-$(cat "${XDG_STATE_HOME:-$HOME/.local/state}/omacos/popup-request" 2>/dev/null)}"
 case "$req" in
@@ -22,6 +22,7 @@ case "$req" in
   background) exec omacos-background menu ;;
   background-packs) exec omacos-background packs-menu ;;
   font)    exec omacos-font menu ;;
+  awake)   exec omacos-awake ask ;;
   audio)  dev="$(SwitchAudioSource -a -t output | omacos-fzf --prompt='󰓃  ')" \
           && [ -n "$dev" ] && SwitchAudioSource -t output -s "$dev" >/dev/null ;;
   *)      exec omacos-launcher ;;

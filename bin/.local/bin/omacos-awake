@@ -1,20 +1,22 @@
 #!/bin/sh
-# omacos-awake <start|stop|toggle|once|status|run> [--state] — keeps a remote session
-# (Citrix) from locking itself while you work on the other monitor: every 1-2 minutes a
-# tiny mouse move is posted into the app's own window (~/.config/omacos/jiggle.swift,
-# CGEventPostToPid — the real cursor stays put and focus never changes). The countdown
-# to the next nudge shows in sketchybar; menu → Toggle → Keep session awake.
+# omacos-awake <start [duration]|stop|toggle|ask|once|status> [--state] — keeps a remote
+# session (Citrix) from locking itself while you work on the other monitor: every 1-2
+# minutes the app's window is activated for half a second, nudged with a mouse move and
+# an F15 press, and the focus goes straight back (~/.config/omacos/jiggle.swift).
+# `toggle` asks how long it should run (fzf in the popup); the bar shows the time left.
 # Config: ~/.config/omacos/awake-app (app name), awake-interval ("min max" seconds),
 # awake-flags (jiggle flags: --activate --key is what Citrix Viewer needs), awake-min-idle
-# (seconds you must have been idle before the focus is borrowed) and awake-deadline
-# (after this long without a nudge it happens anyway, even while you type).
+# (seconds you must have been idle before the focus is borrowed), awake-deadline (after this
+# long without a nudge it happens anyway, even while you type) and awake-hidden (nudge|skip:
+# what to do while the window sits on a workspace you cannot see).
 PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
 STATE="${XDG_STATE_HOME:-$HOME/.local/state}/omacos"; mkdir -p "$STATE"
 CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/omacos"; mkdir -p "$CACHE"
 CONF="$HOME/.config/omacos"
-FILE="$STATE/awake"            # pid / started / next / nudges, one per line
+FILE="$STATE/awake"            # pid / started / next / nudges / until, one per line
 LOG="$STATE/awake.log"
 ICON="󰅶"
+ICON_HOLD="󰏤"   # pause: waiting for a pause in your typing
 
 APP="$(cat "$CONF/awake-app" 2>/dev/null)"; APP="${APP:-Citrix Viewer}"
 range="$(cat "$CONF/awake-interval" 2>/dev/null)"; range="${range:-60 120}"
@@ -22,6 +24,11 @@ LO="${range%% *}"; HI="${range##* }"
 FLAGS="$(grep -vE '^\s*(#|$)' "$CONF/awake-flags" 2>/dev/null | tr '\n' ' ')"
 MIN_IDLE="$(cat "$CONF/awake-min-idle" 2>/dev/null)"; MIN_IDLE="${MIN_IDLE:-4}"
 DEADLINE="$(cat "$CONF/awake-deadline" 2>/dev/null)"; DEADLINE="${DEADLINE:-210}"
+HIDDEN="$(cat "$CONF/awake-hidden" 2>/dev/null)"; HIDDEN="${HIDDEN:-nudge}"
+# In a meeting the session's workspace is usually not the visible one — nudge it anyway,
+# otherwise the thing is useless exactly when it is needed. Costs a ~0.2 s flash of that
+# workspace on its monitor, so those nudges are spaced out as far as the deadline allows.
+[ "$HIDDEN" = skip ] || FLAGS="$FLAGS --allow-hidden"
 
 helper() {
   src="$CONF/jiggle.swift"; bin="$CACHE/omacos-jiggle"
@@ -34,35 +41,77 @@ helper() {
 
 running() { p="$(sed -n 1p "$FILE" 2>/dev/null)"; [ -n "$p" ] && kill -0 "$p" 2>/dev/null; }
 bar() { sketchybar --set awake "$@" >/dev/null 2>&1 || true; }
-wait_seconds() { awk -v lo="$LO" -v hi="$HI" 'BEGIN { srand(); print lo + int(rand() * (hi - lo + 1)) }'; }
+wait_seconds() { awk -v lo="${1:-$LO}" -v hi="${2:-$HI}" 'BEGIN { srand(); print lo + int(rand() * (hi - lo + 1)) }'; }
 mmss() { awk -v s="$1" 'BEGIN { printf "%d:%02d", int(s / 60), s % 60 }'; }
+# hours get their own shape so 1h23 is never read as 1 minute 23
+left_of() { awk -v s="$1" 'BEGIN { if (s >= 3600) printf "%dh%02d", int(s / 3600), int((s % 3600) / 60); else printf "%d:%02d", int(s / 60), s % 60 }'; }
 # seconds since the last real key or mouse event on *this* Mac (same source as omacos-idle)
 hid_idle() { ioreg -c IOHIDSystem 2>/dev/null | awk '/HIDIdleTime/ { print int($NF / 1000000000); exit } END { print 0 }' | head -1; }
 
+# "90" / "90m" / "2h" / "1h30" / "1:30" -> minutes; empty, 0 or "no limit" -> 0 = forever
+minutes_of() {
+  d="$(printf '%s' "$1" | tr 'HM' 'hm' | tr -d ' ')"
+  case "$d" in
+    ''|0|0m|no*|unlimited|forever) echo 0 ;;
+    *h*) h="${d%%h*}"; m="${d#*h}"; m="${m%m}"; echo $(( ${h:-0} * 60 + ${m:-0} )) ;;
+    *:*) h="${d%%:*}"; m="${d#*:}"; echo $(( ${h:-0} * 60 + ${m:-0} )) ;;
+    *m)  echo $(( ${d%m} )) ;;
+    *[!0-9]*) echo "" ;;
+    *)   echo $(( d )) ;;
+  esac 2>/dev/null
+}
+
 case "${1:-toggle}" in
-  --state|state) running && echo on || echo off ;;
+  --state|state)
+    # what the menu shows in brackets: the time left is more useful than a plain "on"
+    running || { echo off; exit 0; }
+    until_="$(sed -n 5p "$FILE")"
+    [ "${until_:-0}" -gt 0 ] && left_of $((until_ - $(date +%s))) || echo on ;;
+
+  ask)
+    # The duration picker: pick a preset or just type 45, 1h30, 2h …
+    tab="$(printf '\t')"
+    out="$(printf '%s\n' \
+            "15 minutes|15" "30 minutes|30" "45 minutes|45" "1 hour|60" "1 hour 30|90" \
+            "2 hours|120" "3 hours|180" "4 hours|240" "8 hours|480" "until I stop it|0" \
+          | tr '|' "$tab" \
+          | omacos-fzf --print-query --delimiter="$tab" --with-nth=1 --prompt="$ICON  " \
+              --header=' enter  keep awake for …  ·  or type 45, 1h30, 2h  ·  esc  cancel')"
+    rc=$?
+    [ "$rc" = 130 ] && exit 0                       # Esc / Ctrl-C
+    pick="$(printf '%s\n' "$out" | sed -n 2p)"     # line 1 is the query, line 2 the row
+    if [ -n "$pick" ]; then choice="${pick#*"$tab"}"; else choice="$(printf '%s\n' "$out" | sed -n 1p)"; fi
+    [ -n "$choice" ] || exit 0                      # nothing picked and nothing typed
+    m="$(minutes_of "$choice")"
+    [ -n "$m" ] || { omacos-notify "Keep awake" "\"$choice\" is not a duration"; exit 2; }
+    exec omacos-awake start "$m" ;;
 
   start)
     running && exit 0
+    m="$(minutes_of "${2:-0}")"; m="${m:-0}"
     bin="$(helper)" || exit 1
     # Resolve the app now (the pid changes every day — the helper looks it up by name on
     # every nudge) so a missing session is reported before the daemon goes to the background.
     where="$("$bin" --app "$APP" --print 2>&1)" || {
       omacos-notify "Keep awake" "$APP: ${where#*: } — not started"; exit 1; }
     : > "$FILE"                      # claimed by the daemon a moment later
-    ( cd / && nohup omacos-awake run </dev/null >>"$LOG" 2>&1 & )
-    omacos-notify "Keep awake" "$APP gets a nudge every $LO-$HI s"
-    ;;
+    ( cd / && nohup omacos-awake run "$m" </dev/null >>"$LOG" 2>&1 & )
+    if [ "$m" -gt 0 ]; then
+      omacos-notify "Keep awake" "$APP stays awake for $(left_of $((m * 60)))"
+    else
+      omacos-notify "Keep awake" "$APP stays awake until you stop it"
+    fi ;;
 
   stop)
     p="$(sed -n 1p "$FILE" 2>/dev/null)"
     rm -f "$FILE"
     [ -n "$p" ] && kill "$p" 2>/dev/null
     bar drawing=off
-    omacos-notify "Keep awake" "Stopped"
-    ;;
+    omacos-notify "Keep awake" "Stopped" ;;
 
-  toggle) running && exec omacos-awake stop || exec omacos-awake start ;;
+  toggle)
+    # Switching it on always asks how long — that is the point for a meeting.
+    running && exec omacos-awake stop || exec omacos-popup awake ;;
 
   once)
     bin="$(helper)" || exit 1
@@ -72,47 +121,63 @@ case "${1:-toggle}" in
       0) omacos-notify "Keep awake" "Nudged $APP" ;;
       1) omacos-notify "Keep awake" "$APP is not running" ;;
       2) omacos-notify "Keep awake" "$APP has no window" ;;
+      4) omacos-notify "Keep awake" "$APP is on a workspace you cannot see" ;;
+      5) omacos-notify "Keep awake" "$APP could not be activated" ;;
     esac
     exit $rc ;;
 
   status)
     running || { echo "off"; exit 0; }
-    started="$(sed -n 2p "$FILE")"; next="$(sed -n 3p "$FILE")"; n="$(sed -n 4p "$FILE")"
+    started="$(sed -n 2p "$FILE")"; next="$(sed -n 3p "$FILE")"
+    n="$(sed -n 4p "$FILE")"; until_="$(sed -n 5p "$FILE")"
     now="$(date +%s)"
-    echo "on — $APP, next in $(mmss $((next - now < 0 ? 0 : next - now))), $n nudges, running $(mmss $((now - started)))" ;;
+    if [ "${until_:-0}" -gt 0 ]; then rest="$(left_of $((until_ - now)))"; else rest="no limit"; fi
+    echo "on — $APP, $rest left, next nudge in $(mmss $((next - now < 0 ? 0 : next - now))), $n nudges, running $(left_of $((now - started)))" ;;
 
   run)
+    trap '' HUP                      # a closing popup must not take the daemon with it
     bin="$(helper)" || exit 1
+    m="${2:-0}"
     started="$(date +%s)"; last="$started"; next=$((started + $(wait_seconds))); n=0
-    printf '%s\n%s\n%s\n%s\n' "$$" "$started" "$next" "$n" > "$FILE"
+    [ "$m" -gt 0 ] && until_=$((started + m * 60)) || until_=0
+    printf '%s\n%s\n%s\n%s\n%s\n' "$$" "$started" "$next" "$n" "$until_" > "$FILE"
     trap 'bar drawing=off; rm -f "$FILE"; exit 0' INT TERM
     while :; do
       # someone else claimed or removed the state file -> this daemon is done
       [ "$(sed -n 1p "$FILE" 2>/dev/null)" = "$$" ] || { bar drawing=off; exit 0; }
-      now="$(date +%s)"; left=$((next - now)); [ "$left" -lt 0 ] && left=0
+      now="$(date +%s)"
+      if [ "$until_" -gt 0 ] && [ "$now" -ge "$until_" ]; then
+        omacos-notify "Keep awake" "Time is up — $APP is on its own again"
+        bar drawing=off; rm -f "$FILE"; exit 0
+      fi
+      left=$((next - now)); [ "$left" -lt 0 ] && left=0
+      # the bar shows what you asked for: the time left, or the next nudge if there is no end
+      [ "$until_" -gt 0 ] && shown="$(left_of $((until_ - now)))" || shown="$(mmss "$left")"
       if [ "$left" -gt 0 ]; then
-        bar drawing=on icon="$ICON" label="$(mmss "$left")"
+        bar drawing=on icon="$ICON" label="$shown"
         sleep 1; continue
       fi
       # --activate borrows the focus for about half a second, so wait for a pause in your
       # typing first -- but not past the deadline, or the session would lock after all.
       if [ "$(hid_idle)" -lt "$MIN_IDLE" ] && [ $((now - last)) -lt "$DEADLINE" ]; then
-        bar drawing=on icon="$ICON" label="hold"
+        bar drawing=on icon="$ICON_HOLD" label="$shown"
         sleep 2; continue
       fi
       # --skip-if-frontmost: while you are in the session yourself it is not idle anyway
       # shellcheck disable=SC2086
-      "$bin" --app "$APP" --skip-if-frontmost $FLAGS; rc=$?
+      out="$("$bin" --app "$APP" --skip-if-frontmost $FLAGS 2>>"$LOG")"; rc=$?
       case $rc in
         0) n=$((n + 1)); last="$now" ;;
         3) last="$now" ;;                      # you are working in the session yourself
-        4|5) bar drawing=on icon="$ICON" label="hold"; sleep 5; continue ;;  # window not on screen / activation refused
+        4|5) bar drawing=on icon="$ICON_HOLD" label="$shown"; sleep 5; continue ;;  # window not on screen / activation refused
         1) omacos-notify "Keep awake" "$APP is gone — stopped"; bar drawing=off; rm -f "$FILE"; exit 0 ;;
         *) omacos-notify "Keep awake" "Nudge failed (exit $rc) — stopped"; bar drawing=off; rm -f "$FILE"; exit 1 ;;
       esac
-      next=$((now + $(wait_seconds)))
-      printf '%s\n%s\n%s\n%s\n' "$$" "$started" "$next" "$n" > "$FILE"
+      # a nudge that flashed a hidden workspace: the next one waits as long as it safely can
+      if [ "$out" = hidden ]; then next=$((now + $(wait_seconds "$HI" $((DEADLINE - 30)))))
+      else next=$((now + $(wait_seconds))); fi
+      printf '%s\n%s\n%s\n%s\n%s\n' "$$" "$started" "$next" "$n" "$until_" > "$FILE"
     done ;;
 
-  *) echo "usage: omacos-awake <start|stop|toggle|once|status> [--state]" >&2; exit 2 ;;
+  *) echo "usage: omacos-awake <start [duration]|stop|toggle|ask|once|status> [--state]" >&2; exit 2 ;;
 esac

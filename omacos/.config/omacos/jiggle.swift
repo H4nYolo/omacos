@@ -23,7 +23,7 @@ import AppKit
 var appName: String?
 var pid: pid_t?
 var click = false, useGlobal = false, skipIfFrontmost = false, printOnly = false
-var sendKey = false, activate = false
+var sendKey = false, activate = false, allowHidden = false
 var settle: UInt32 = 1_000_000        // µs to wait for the activation to land
 var dx: CGFloat = 4
 
@@ -38,6 +38,7 @@ while let arg = args.first {
     case "--key": sendKey = true
     case "--global": useGlobal = true
     case "--activate": activate = true
+    case "--allow-hidden": allowHidden = true
     case "--settle":
         settle = UInt32((args.first.flatMap { Double($0) } ?? 1000) * 1000)
         if !args.isEmpty { args.removeFirst() }
@@ -101,10 +102,12 @@ func event(_ type: CGEventType, _ point: CGPoint, delta: CGFloat = 0) -> CGEvent
 var sequence: [(CGEventType, CGPoint, CGFloat)] = [(.mouseMoved, nudged, dx), (.mouseMoved, centre, -dx)]
 if click { sequence += [(.leftMouseDown, centre, 0), (.leftMouseUp, centre, 0)] }
 
-// Both loud modes need the window to be where the user can see it: AeroSpace parks the
-// windows of a hidden workspace far outside every display (verified: x = 5749 for a window
-// on workspace 1 while workspace 4 was visible), and activating one would drag that whole
-// workspace onto the monitor in front of the user.
+// AeroSpace parks the windows of a hidden workspace far outside every display (verified:
+// x = 5749 for a window on workspace 1 while workspace 4 was visible). Activating such a
+// window pulls its whole workspace onto the monitor for ~0.2 s before the focus goes back,
+// so by default the loud modes refuse it; --allow-hidden takes the flicker and says so on
+// stdout, which is how omacos-awake knows to nudge less often.
+var hidden = false
 if useGlobal || activate {
     let onScreen = NSScreen.screens.contains { screen in
         var frame = screen.frame
@@ -114,7 +117,12 @@ if useGlobal || activate {
         }
         return frame.insetBy(dx: -1, dy: -1).contains(CGPoint(x: centre.x, y: centre.y))
     }
-    if !onScreen { die("window is off-screen (its workspace is not visible)", 4) }
+    hidden = !onScreen
+    if hidden {
+        // a real event at that point would land wherever that coordinate really is
+        if !allowHidden || useGlobal { die("window is off-screen (its workspace is not visible)", 4) }
+        print("hidden")
+    }
 }
 
 let previous = activate ? NSWorkspace.shared.frontmostApplication : nil

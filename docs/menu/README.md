@@ -53,9 +53,11 @@ into `~/.cache/omacos/omacos-ocr`, the capture menu does the same on first use i
 
 Remote desktops lock themselves when nothing happens in them — even while you are busy on the other
 monitor, which also leaves you on "Away" in the chat everyone else is watching. **Toggle → Keep session
-awake** starts `omacos-awake`: every 60-120 seconds (random, so it does not look like a metronome) it
-nudges the window of the app named in `~/.config/omacos/awake-app` (`Citrix Viewer` by default) with a
-four-pixel mouse move and an F15 press — invisible in Windows, but input as far as the session is concerned.
+awake** asks how long it should last — a preset from 15 minutes to 8 hours, "until I stop it", or just type
+`45`, `1h30`, `2h` — and then, every 60-120 seconds (random, so it does not look like a metronome), nudges
+the window of the app named in `~/.config/omacos/awake-app` (`Citrix Viewer` by default) with a four-pixel
+mouse move and an F15 press — invisible in Windows, but input as far as the session is concerned. Set it to
+the length of the meeting you are about to sit in and it switches itself off afterwards.
 
 `~/.config/omacos/jiggle.swift` (compiled once to `~/.cache/omacos/omacos-jiggle`) looks the app up by
 name on every nudge, so a new pid every morning is fine, and takes its largest window from the window
@@ -64,15 +66,22 @@ it, waits for the activation to land, sends the events with `CGEventPostToPid` a
 straight back — about half a second, and the real mouse pointer never moves.
 
 Half a second of borrowed focus would swallow whatever you type in that moment, so the daemon waits for
-a pause first: it only nudges once this Mac has been idle for `awake-min-idle` seconds (the bar shows
-`hold` while it waits). Typing through a whole coffee break would still let the session lock, so after
+a pause first: it only nudges once this Mac has been idle for `awake-min-idle` seconds (the bar
+icon turns into 󰏤 while it waits). Typing through a whole coffee break would still let the session lock, so after
 `awake-deadline` seconds without a nudge it goes ahead anyway. While the app is frontmost the nudge is
-skipped — you are using the session yourself then — and while its window sits on a workspace you are not
-looking at, nothing happens either: activating it would drag that workspace onto the monitor in front of you.
+skipped — you are using the session yourself then.
 
-A countdown to the next nudge appears in the bar (󰅶 1:07); clicking it stops the whole thing, as does
-picking the menu entry again. `omacos-awake status` prints the same from the shell, `omacos-awake once`
-sends a single nudge for testing.
+In a meeting the session usually sits on a workspace you are *not* looking at, which is the case it has to
+survive: activating a window there makes AeroSpace pull its workspace onto that monitor for about two
+tenths of a second before the focus — and the workspace — go back. Those nudges are therefore spaced as
+far apart as `awake-deadline` allows, and `awake-hidden` = `skip` turns them off entirely if you would
+rather have the lock than the flicker.
+
+The bar shows how much of that time is left (󰅶 1h23, or 󰅶 23:05 in the last hour; with no end time it
+counts down to the next nudge instead), and the menu entry carries the same number in brackets. Clicking
+the bar item stops the whole thing, as does picking the menu entry again — and when the time is up it stops
+itself with a notification. `omacos-awake status` prints the long version, `omacos-awake start 90` skips
+the picker, `omacos-awake once` sends a single nudge for testing.
 
 | file | meaning |
 |---|---|
@@ -80,6 +89,7 @@ sends a single nudge for testing.
 | `~/.config/omacos/awake-interval` | `min max` seconds between nudges (`60 120`) |
 | `~/.config/omacos/awake-min-idle` | seconds of local quiet before the focus is borrowed (`4`) |
 | `~/.config/omacos/awake-deadline` | nudge anyway after this long without one (`210`) |
+| `~/.config/omacos/awake-hidden` | `nudge` or `skip` while the window's workspace is not visible |
 | `~/.config/omacos/awake-flags` | how the nudge is delivered: `--activate --key` by default, `--global` for apps that read the event stream through a tap, `--click`, `--dx <px>` |
 
 ## Launcher
