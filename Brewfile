@@ -36,6 +36,7 @@ brew "jq"
 brew "neovim"
 brew "lazygit"
 brew "lazydocker"
+brew "btop"         # Activity: Super+Shift+A, click on cpu/mem in the bar
 brew "qrencode"
 brew "chafa"       # image previews in the background picker
 brew "fontconfig"  # fc-list for the font picker           # menu → Capture → QR code

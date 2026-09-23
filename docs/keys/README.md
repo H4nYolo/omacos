@@ -39,7 +39,7 @@ arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resiz
 `Shift + ;` then `Shift + arrow` join a neighbour
 
 **Apps** — `Enter` Ghostty · `Shift + T` Ghostty with tmux · `Shift + Enter` Zen · `Shift + F` Finder ·
-`Shift + W` nvim · `Shift + N` quick notes · `Shift + D` lazydocker · `Shift + A` NeoHtop · `Shift + G` Telegram
+`Shift + W` nvim · `Shift + N` quick notes · `Shift + D` lazydocker · `Shift + A` btop · `Shift + G` Telegram
 
 `Alt + Tab` cycles windows on the workspace.
 
@@ -48,7 +48,8 @@ arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resiz
 
 **Help** — `Super + K` opens a searchable list of every binding (AeroSpace and tmux), generated
 from the config itself, plus the shell aliases, tmux layouts (`ix`, `tdl`, `tsl`, …) and every
-`omacos-*` command. `Shift + K` shows only the tmux keys, `omacos-keys shell` only the shell part.
+`omacos-*` command. `Shift + K` shows only the tmux keys, `omacos-keys shell` only the shell part,
+`omacos-keys btop` the keys inside btop (also Menu → Learn → btop keybindings).
 `Esc` closes it.
 
 ## Re-homed keys (no `Super + Alt` / `Super + Ctrl`)

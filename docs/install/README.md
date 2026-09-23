@@ -35,7 +35,7 @@ can be linked on its own: `stow --target=$HOME aerospace`.
 | bash aliases, `tdl` / `tdlm` / `tsl` layouts | zsh (`zsh/`) |
 | Alacritty / Ghostty | Ghostty (`ghostty/`) |
 | LazyVim | LazyVim (`nvim/`) |
-| btop | [NeoHtop](https://github.com/Abdenasser/neohtop) on `Super + Shift + A` |
+| btop | btop with Omarchy's config (`btop/`), themed by `omacos-theme`, on `Super + Shift + A` |
 | Clean app uninstall | [Pearcleaner](https://github.com/alienator88/Pearcleaner), with its Sentinel watching the Trash |
 | Themes | Omarchy's palettes (`omacos/.config/omacos/themes/`), switched by `omacos-theme` |
 

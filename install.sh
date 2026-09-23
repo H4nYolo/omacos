@@ -10,7 +10,7 @@ set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ARCHIVE="$HOME/.config-archive/$(date +%Y%m%d-%H%M%S)"
-PACKAGES=(aerospace karabiner tmux zsh ghostty sketchybar borders nvim git sol omacos bin)
+PACKAGES=(aerospace karabiner tmux zsh ghostty sketchybar borders nvim git sol btop omacos bin)
 
 log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 
@@ -86,8 +86,11 @@ archive "$HOME/.config/sketchybar"
 archive "$HOME/.config/borders"
 archive "$HOME/.config/nvim"
 archive "$HOME/.config/git"
+archive "$HOME/.config/btop/btop.conf"
 
 mkdir -p "$HOME/.config" "$HOME/.local/bin"
+# a real directory, so stow links only btop.conf and themes/current.theme (omacos-theme) stays out of the repo
+mkdir -p "$HOME/.config/btop/themes"
 for pkg in "${PACKAGES[@]}"; do
   [[ -d "$REPO/$pkg" ]] || continue
   stow --dir="$REPO" --target="$HOME" --restow "$pkg"

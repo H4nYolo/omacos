@@ -7,6 +7,7 @@ ghostty	Terminal emulator that uses platform-native UI and GPU acceleration
 jq	Lightweight and flexible command-line JSON processor
 karabiner-elements	Keyboard customiser
 lazydocker	Lazier way to manage everything docker
+btop	Resource monitor, Omarchy theme (Super+Shift+A; keys: omacos-keys btop)
 lazygit	Simple terminal UI for git commands
 ncurses	tmux-256color terminfo (macOS ships an ncurses that is too old)
 neovim	Ambitious Vim-fork focused on extensibility and agility

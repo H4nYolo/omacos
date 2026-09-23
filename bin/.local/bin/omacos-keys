@@ -3,7 +3,8 @@
 # Reads the bindings and their comments straight from ~/.aerospace.toml, adds the
 # tmux bindings, and shows everything in fzf. Super+K shows both, `omacos-keys tmux`
 # (Super+Shift+K) only tmux, `omacos-keys aerospace` only the window manager,
-# `omacos-keys shell` the aliases, tmux layouts (tdl/ix/…) and omacos-* commands.
+# `omacos-keys shell` the aliases, tmux layouts (tdl/ix/…) and omacos-* commands,
+# `omacos-keys btop` the keys inside btop (Super+Shift+A).
 # `--list` prints the lines instead of opening fzf (the native Panel reads them).
 PATH="/opt/homebrew/bin:$PATH"
 only=all; list=0
@@ -45,6 +46,47 @@ aerospace_keys() {
 tmux_keys() {
   tmux list-keys -T root 2>/dev/null | awk '{ key=$4; $1=$2=$3=$4=""; sub(/^ +/,""); printf "%-30s %s\n", "tmux " key, $0 }'
   tmux list-keys -T prefix 2>/dev/null | awk '{ key=$4; $1=$2=$3=$4=""; sub(/^ +/,""); printf "%-30s %s\n", "tmux Prefix " key, $0 }'
+}
+
+# btop 1.4.7's own help table (src/btop_menu.cpp), with vim_keys = true from our btop.conf:
+# h/j/k/l/g/G move, so help and kill move to Shift+H and Shift+K
+btop_keys() {
+  awk -F'\t' '{ printf "%-30s %s\n", "btop " $1, $2 }' <<'KEYS'
+Esc, m	main menu
+?, F1, Shift+H	help (all keys)
+o, F2	options
+q, Ctrl+C	quit
+p / Shift+P	next / previous layout preset
+1 2 3 4 5	toggle CPU / MEM / NET / PROC / GPU box
+d	toggle disks in the MEM box
+i	disk io mode with big graphs
++, -	update interval +/- 100 ms
+Ctrl+R	reload config from disk
+j/k, Up/Down	select process
+g / G, Home / End	first / last page of processes
+PgUp, PgDn	one page up / down
+h/l, Left/Right	previous / next sort column
+r	reverse sort order
+Enter	details of the selected process
+f, /	filter processes (start with ! for regex)
+Delete	clear the filter
+F	follow the selected process
+u	pause the process list
+e	tree view
+E	collapse / expand all in tree view
+Space	expand / collapse selected in tree view
+C	expand / collapse the selected process' children
+c	per-core cpu usage of processes
+%	memory display mode in the process box
+t	terminate selected process (SIGTERM)
+Shift+K	kill selected process (SIGKILL)
+s	send any signal to the selected process
+N	new nice value for the selected process
+b, n	previous / next network device
+z	reset totals of the network device
+a	auto scaling of the network graphs
+y	synced scaling of the network graphs
+KEYS
 }
 
 # every alias of the shell (Omarchy's, oh-my-zsh's, yours; ~/.zshrc is sourced non-interactively,
@@ -95,6 +137,8 @@ shell_keys() {
   [ "$only" = all ] || [ "$only" = tmux ] && tmux_keys
   [ "$only" = all ] && echo
   [ "$only" = all ] || [ "$only" = shell ] && shell_keys
+  [ "$only" = all ] && echo
+  [ "$only" = all ] || [ "$only" = btop ] && btop_keys
 } | if [ "$list" -eq 1 ]; then cat; exit 0; else omacos-fzf --exact --prompt='  ' --header-lines=2 \
         --bind 'esc:abort,enter:abort,backward-eof:become(echo BACK)' | grep -qx BACK && exit 3; fi
 exit 0

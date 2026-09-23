@@ -28,7 +28,7 @@ walked there. `Backspace` on an empty query goes up a level, also out of the pic
 visibility). Edit it to add entries; `omacos-menu <route> --list` shows what a level resolves to.
 
 - **Apps** — the launcher below
-- **Learn** — keybindings (all / tmux / AeroSpace), the omacos repo, the Omarchy manual, AeroSpace, Ghostty and tmux docs
+- **Learn** — keybindings (all / tmux / AeroSpace / shell / btop), the omacos repo, the Omarchy manual, AeroSpace, Ghostty and tmux docs
 - **Capture** (`Super + Shift + C`) — screenshot of a region, window or screen (saved to `~/Pictures/Screenshots` and copied),
   screen recording with or without microphone (the entry turns into *Stop* while recording),
   text recognition (OCR) from a selection straight into the clipboard, the clipboard as a QR code, a colour picker that copies hex

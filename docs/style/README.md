@@ -15,6 +15,7 @@ names of the theme's wallpapers. `omacos-theme set <name>` renders the templates
   OSC sequences on their ttys, so tmux sessions survive
 - sketchybar and JankyBorders reload with the new colours
 - the panel and every fzf popup read the colours when they open
+- a running btop reloads its theme (`~/.config/btop/themes/current.theme` + SIGUSR2)
 - nvim loads the theme's colourscheme at its next start (`lua/plugins/theme.lua`)
 - the theme's first wallpaper is downloaded from the Omarchy repo into
   `~/.local/share/omacos/backgrounds/<name>/` and set on every display (the rest follows in the background)

@@ -37,7 +37,7 @@ filled pill, visible on the other monitor = outlined pill, occupied = bright, em
 - weather: wttr.in, IP-based; put a place in `~/.config/omacos/weather-location` (`Berlin`, `Dieburg,DE`, or `48.5,10.2`) to pin it — the popup and the menu's weather notification use the same file
 - bluetooth: connected devices with battery; click opens Bluetooth settings
 - audio output device; click opens a chooser in the popup (SwitchAudioSource)
-- volume (click mutes), cpu and memory (click opens NeoHtop), clock (click opens Calendar)
+- volume (click mutes), cpu 󰻠 and memory  (click opens btop), clock (click opens Calendar)
 
 The macOS menu bar is hidden by `install.sh`. **Toggle → Bar** in the menu hides the bar.
 
