@@ -16,7 +16,7 @@ case "$req" in
   pkg-install) exec omacos-pkg-install ;;
   pkg-remove)  exec omacos-pkg-remove ;;
   weather) curl -s -m 15 "wttr.in/$(cat "$HOME/.config/omacos/weather-location" 2>/dev/null | tr -d '[:space:]')?F"; printf '\n press Enter to close'; read -r _ ;;
-  brew)    brew update && brew upgrade --formula && brew upgrade --cask; printf '\n done — press Enter to close'; read -r _ ;;
+  brew)    brew update && brew upgrade --formula && brew upgrade --cask; sketchybar --trigger brew_update; printf '\n done — press Enter to close'; read -r _ ;;
   outdated) brew outdated --verbose; printf '\n press Enter to close'; read -r _ ;;
   theme)   exec omacos-theme menu ;;
   background) exec omacos-background menu ;;

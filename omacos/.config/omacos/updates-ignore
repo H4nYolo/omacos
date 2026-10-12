@@ -1,3 +1,1 @@
 # Formulae the sketchybar update counter ignores, one per line.
-# sketchybar: its formula curls the docs inside the brew build sandbox, which fails TLS on macOS 26.
-sketchybar
