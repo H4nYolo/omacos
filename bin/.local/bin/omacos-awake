@@ -138,7 +138,7 @@ case "${1:-toggle}" in
     trap '' HUP                      # a closing popup must not take the daemon with it
     bin="$(helper)" || exit 1
     m="${2:-0}"
-    started="$(date +%s)"; last="$started"; next=$((started + $(wait_seconds))); n=0
+    started="$(date +%s)"; last="$started"; next=$((started + $(wait_seconds))); n=0; warned=
     [ "$m" -gt 0 ] && until_=$((started + m * 60)) || until_=0
     printf '%s\n%s\n%s\n%s\n%s\n' "$$" "$started" "$next" "$n" "$until_" > "$FILE"
     trap 'bar drawing=off; rm -f "$FILE"; exit 0' INT TERM
@@ -167,9 +167,17 @@ case "${1:-toggle}" in
       # shellcheck disable=SC2086
       out="$("$bin" --app "$APP" --skip-if-frontmost $FLAGS 2>>"$LOG")"; rc=$?
       case $rc in
-        0) n=$((n + 1)); last="$now" ;;
-        3) last="$now" ;;                      # you are working in the session yourself
-        4|5) bar drawing=on icon="$ICON_HOLD" label="$shown"; sleep 5; continue ;;  # window not on screen / activation refused
+        0) n=$((n + 1)); last="$now"; warned= ;;
+        3) last="$now"; warned= ;;             # you are working in the session yourself
+        4|5)                                   # window not on screen / activation refused
+          # past the deadline the session is about to lock: say so once instead of
+          # pausing silently (in October 2026 it sat here for minutes and Citrix locked)
+          if [ -z "$warned" ] && [ $((now - last)) -ge "$DEADLINE" ]; then
+            [ "$rc" = 4 ] && why="is on a workspace you cannot see" || why="cannot be activated"
+            omacos-notify "Keep awake" "$APP $why — no nudge for $(mmss $((now - last))), it may lock"
+            warned=1
+          fi
+          bar drawing=on icon="$ICON_HOLD" label="$shown"; sleep 5; continue ;;
         1) omacos-notify "Keep awake" "$APP is gone — stopped"; bar drawing=off; rm -f "$FILE"; exit 0 ;;
         *) omacos-notify "Keep awake" "Nudge failed (exit $rc) — stopped"; bar drawing=off; rm -f "$FILE"; exit 1 ;;
       esac

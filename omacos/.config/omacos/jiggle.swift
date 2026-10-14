@@ -17,7 +17,7 @@
 // --key adds an F15 press (invisible in Windows, still counts as input there).
 // Exit: 0 posted, 1 app not running, 2 no window, 3 skipped (app is frontmost),
 //       4 window parked off-screen (hidden workspace) and --global needs it visible,
-//       5 the app could not be activated.
+//       5 the app could not be activated (not even through AeroSpace).
 import AppKit
 
 var appName: String?
@@ -50,8 +50,14 @@ while let arg = args.first {
     }
 }
 
+// stderr ends up in omacos-awake's log, so every line carries the time it happened
+func warn(_ message: String) {
+    let stamp = ISO8601DateFormatter.string(from: Date(), timeZone: .current, formatOptions: [.withInternetDateTime])
+    FileHandle.standardError.write("\(stamp) omacos-jiggle: \(message)\n".data(using: .utf8)!)
+}
+
 func die(_ message: String, _ code: Int32) -> Never {
-    FileHandle.standardError.write("omacos-jiggle: \(message)\n".data(using: .utf8)!)
+    warn(message)
     exit(code)
 }
 
@@ -68,16 +74,19 @@ if skipIfFrontmost, NSWorkspace.shared.frontmostApplication?.processIdentifier =
 // Largest normal-layer window of that process. Offscreen windows count: AeroSpace parks
 // the windows of a hidden workspace far outside the displays, and the session still ticks.
 let info = (CGWindowListCopyWindowInfo([.excludeDesktopElements], kCGNullWindowID) as? [[String: Any]]) ?? []
-let rects: [CGRect] = info.compactMap { window in
+let windows: [(id: CGWindowID, rect: CGRect)] = info.compactMap { window in
     guard window[kCGWindowOwnerPID as String] as? pid_t == target,
           window[kCGWindowLayer as String] as? Int == 0,
+          let id = window[kCGWindowNumber as String] as? CGWindowID,
           let bounds = window[kCGWindowBounds as String] as? [String: Any],
           let rect = CGRect(dictionaryRepresentation: bounds as CFDictionary) else { return nil }
-    return rect
+    return (id, rect)
 }
-guard let frame = rects.max(by: { $0.width * $0.height < $1.width * $1.height }), frame.width > 1 else {
+guard let largest = windows.max(by: { $0.rect.width * $0.rect.height < $1.rect.width * $1.rect.height }),
+      largest.rect.width > 1 else {
     die("no window", 2)
 }
+let frame = largest.rect
 
 let centre = CGPoint(x: frame.midX, y: frame.midY)
 let nudged = CGPoint(x: frame.midX + dx, y: frame.midY)
@@ -135,18 +144,39 @@ func restoreFocus() {
     previous.activate()
 }
 
-if activate {
-    guard let app = NSRunningApplication(processIdentifier: target) else { die("app not running", 1) }
-    app.activate()
-    // NSWorkspace learns about the new front app from a notification, so the run loop
-    // has to turn while we wait — a plain usleep() would still see the old value.
+// NSWorkspace learns about the new front app from a notification, so the run loop
+// has to turn while we wait — a plain usleep() would still see the old value.
+func waitForFront() -> Bool {
     var waited: UInt32 = 0
     while waited < settle, NSWorkspace.shared.frontmostApplication?.processIdentifier != target {
         RunLoop.current.run(until: Date().addingTimeInterval(0.01)); waited += 10_000
     }
-    if NSWorkspace.shared.frontmostApplication?.processIdentifier != target {
-        restoreFocus()
-        die("could not activate the app", 5)
+    return NSWorkspace.shared.frontmostApplication?.processIdentifier == target
+}
+
+// macOS 14+ activation is cooperative and is refused now and then (seen in October 2026: the
+// daemon sat on "could not activate" for minutes and the Citrix session locked). AeroSpace
+// focuses through the accessibility API instead; its window ids are CGWindowIDs.
+func focusThroughAeroSpace() -> Bool {
+    let task = Process()
+    task.executableURL = URL(fileURLWithPath: "/opt/homebrew/bin/aerospace")
+    task.arguments = ["focus", "--window-id", String(largest.id)]
+    task.standardOutput = FileHandle.nullDevice
+    task.standardError = FileHandle.nullDevice
+    guard (try? task.run()) != nil else { return false }
+    task.waitUntilExit()
+    return task.terminationStatus == 0
+}
+
+if activate {
+    guard let app = NSRunningApplication(processIdentifier: target) else { die("app not running", 1) }
+    app.activate()
+    if !waitForFront() {
+        warn("activate() refused, trying AeroSpace")
+        if !(focusThroughAeroSpace() && waitForFront()) {
+            restoreFocus()
+            die("could not activate the app", 5)
+        }
     }
 }
 
