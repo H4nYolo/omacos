@@ -149,6 +149,7 @@ set_theme() {
   [[ -x "$HOME/.config/borders/bordersrc" ]] && "$HOME/.config/borders/bordersrc" >/dev/null 2>&1 || true
   reload_ghostty
   reload_btop
+  omacos-notes reload >/dev/null 2>&1 || true   # only tells a running Notes, never starts it
   omacos-notify "Theme" "$(title "$name")" >/dev/null 2>&1 || true
 }
 

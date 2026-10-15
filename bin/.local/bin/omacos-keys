@@ -4,7 +4,8 @@
 # tmux bindings, and shows everything in fzf. Super+K shows both, `omacos-keys tmux`
 # (Super+Shift+K) only tmux, `omacos-keys aerospace` only the window manager,
 # `omacos-keys shell` the aliases, tmux layouts (tdl/ix/…) and omacos-* commands,
-# `omacos-keys btop` the keys inside btop (Super+Shift+A).
+# `omacos-keys btop` the keys inside btop (Super+Shift+A), `omacos-keys notes` the keys inside Notes
+# (Super+Shift+N).
 # `--list` prints the lines instead of opening fzf (the native Panel reads them).
 PATH="/opt/homebrew/bin:$PATH"
 only=all; list=0
@@ -46,6 +47,37 @@ aerospace_keys() {
 tmux_keys() {
   tmux list-keys -T root 2>/dev/null | awk '{ key=$4; $1=$2=$3=$4=""; sub(/^ +/,""); printf "%-30s %s\n", "tmux " key, $0 }'
   tmux list-keys -T prefix 2>/dev/null | awk '{ key=$4; $1=$2=$3=$4=""; sub(/^ +/,""); printf "%-30s %s\n", "tmux Prefix " key, $0 }'
+}
+
+# Notes (omacos-notes, ADR 0004): its own shortcuts plus the vim subset of the vendored engine
+notes_keys() {
+  awk -F'\t' '{ printf "%-30s %s\n", "notes " $1, $2 }' <<'KEYS'
+Super+Shift+N	show and focus · focus · hide (Notes)
+Cmd+Enter	back to the previous app, Notes stays on screen
+Cmd+T	new Tab (asks for the name, creates ~/notes/<name>.md, you type right away)
+Cmd+W	close the Tab (the file stays; Cmd+P brings it back)
+Cmd+1 … Cmd+9	go to Tab 1 … 9
+Ctrl+Tab / Ctrl+Shift+Tab	next / previous Tab
+Cmd+P	search Tab names and every line, Enter jumps there
+Cmd+E	edit the Tab in real nvim in the Popup
+Cmd+Shift+D	insert a timestamp heading
+Cmd+Shift+X	tick / untick the task on this line, or make the line a task
+/t + space	at the start of a line: - [ ]  (a task)
+/h + space	at the start of a line: ## (a heading)
+/d + space	at the start of a line: a timestamp heading
+Enter	on a task / bullet / numbered line: continues the list; on an empty marker: ends it
+Cmd+Plus / Cmd+Minus	opacity with focus
+Cmd+Opt+Plus / Cmd+Opt+Minus	opacity without focus (previewed)
+double-click Tab	rename · right-click: close, move to Trash · drag: reorder
+click a checkbox	toggle it · Cmd+click a link opens it
+Esc / i a o O	vim: normal mode / insert (NORMAL/INSERT bottom right)
+h j k l w b e 0 $ gg G	vim motions, f t % { } too, counts work
+d c y + motion, dd yy p	vim operators; y and p use the system clipboard
+v V	visual / visual line
+/ n N	search in the Tab
+u Ctrl+R .	undo, redo, repeat
+:w :q	save now · hide Notes
+KEYS
 }
 
 # btop 1.4.7's own help table (src/btop_menu.cpp), with vim_keys = true from our btop.conf:
@@ -139,6 +171,8 @@ shell_keys() {
   [ "$only" = all ] || [ "$only" = shell ] && shell_keys
   [ "$only" = all ] && echo
   [ "$only" = all ] || [ "$only" = btop ] && btop_keys
+  [ "$only" = all ] && echo
+  [ "$only" = all ] || [ "$only" = notes ] && notes_keys
 } | if [ "$list" -eq 1 ]; then cat; exit 0; else omacos-fzf --exact --prompt='  ' --header-lines=2 \
         --bind 'esc:abort,enter:abort,backward-eof:become(echo BACK)' | grep -qx BACK && exit 3; fi
 exit 0

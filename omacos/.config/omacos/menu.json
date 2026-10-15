@@ -8,6 +8,8 @@
       { "icon": "󰘳", "label": "AeroSpace keybindings", "view": "keys", "args": "aerospace" },
       { "icon": "󰆍", "label": "Shell aliases, tmux layouts, omacos commands", "view": "keys", "args": "shell" },
       { "icon": "󰍛", "label": "btop keybindings", "view": "keys", "args": "btop" },
+      { "icon": "󰎞", "label": "Notes keybindings", "view": "keys", "args": "notes" },
+      { "icon": "󰎞", "label": "Notes guide", "run": "omacos-open https://github.com/H4nYolo/omacos/blob/main/docs/notes/README.md" },
       { "icon": "󰊤", "label": "omacos on GitHub", "run": "omacos-open https://github.com/H4nYolo/omacos" },
       { "icon": "󰂺", "label": "Omarchy manual", "run": "omacos-open https://learn.omacom.io/2/the-omarchy-manual" },
       { "icon": "󰖲", "label": "AeroSpace guide", "run": "omacos-open https://nikitabobko.github.io/AeroSpace/guide" },
@@ -26,7 +28,7 @@
       { "icon": "󰏘", "label": "Colour picker", "run": "omacos-capture color" }
     ]},
     { "icon": "󰆏", "label": "Clipboard", "view": "clipboard" },
-    { "icon": "󰎞", "label": "Notes", "popup": "notes" },
+    { "icon": "󰎞", "label": "Notes", "run": "omacos-notes toggle" },
     { "icon": "󰞅", "label": "Emoji", "view": "emoji" },
     { "icon": "󰏘", "label": "Style", "id": "style", "menu": [
       { "icon": "󰏘", "label": "Theme", "popup": "theme", "state": "omacos-theme current" },

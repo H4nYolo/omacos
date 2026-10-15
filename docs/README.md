@@ -10,7 +10,8 @@ Everything the landing page leaves out. One page per topic.
 
 **The surfaces**
 
-- [Menu, launcher, panel and popup](menu/README.md) — the native panel, the menu tree, capture, clipboard, emoji, notes, uninstalling
+- [Menu, launcher, panel and popup](menu/README.md) — the native panel, the menu tree, capture, clipboard, emoji, uninstalling
+- [Notes](notes/README.md) — the floating markdown scratch pad: tabs, tasks, vim keys
 - [Style](style/README.md) — themes, backgrounds, wallpaper packs, fonts
 - [Terminal](terminal/README.md) — Ghostty, tmux, shell, Neovim, screensaver, the `omacos-*` commands
 

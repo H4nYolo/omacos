@@ -16,7 +16,7 @@ config-version = 2
 persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'scratch']
 
 # sketchybar and borders run as brew services. The popup Ghostty instance (Super+Space, Super+K) starts here.
-after-startup-command = ['exec-and-forget omacos-popupd', 'exec-and-forget omacos-media-stream', 'exec-and-forget omacos-idle', 'exec-and-forget omacos-clipboardd', 'exec-and-forget omacos-dwindled', 'exec-and-forget omacos-shell']
+after-startup-command = ['exec-and-forget omacos-popupd', 'exec-and-forget omacos-media-stream', 'exec-and-forget omacos-idle', 'exec-and-forget omacos-clipboardd', 'exec-and-forget omacos-dwindled', 'exec-and-forget omacos-shell', 'exec-and-forget omacos-notes']
 
 # Notify sketchybar about workspace changes
 exec-on-workspace-change = ['/bin/bash', '-c',
@@ -208,7 +208,7 @@ ctrl-alt-cmd-shift-t     = 'exec-and-forget open -na Ghostty --args -e zsh -lic 
 ctrl-alt-cmd-shift-enter = 'exec-and-forget open -a Zen'                                                   # Super + Shift + Return  Browser (Zen)
 ctrl-alt-cmd-shift-f     = 'exec-and-forget open -a Finder ~'                                              # Super + Shift + F  Files (Finder)
 ctrl-alt-cmd-shift-w     = 'exec-and-forget open -na Ghostty --args -e nvim'                               # Super + Shift + W  Editor (nvim, Omarchy: Super+Shift+N; Super+Shift+W is Omawrite there)
-ctrl-alt-cmd-shift-n     = 'exec-and-forget omacos-popup notes'                                     # Super + Shift + N  Quick notes (markdown scratch pad in the popup)
+ctrl-alt-cmd-shift-n     = 'exec-and-forget omacos-notes toggle'                                    # Super + Shift + N  Notes (floating markdown scratch pad, tabs, vim keys)
 ctrl-alt-cmd-shift-d     = 'exec-and-forget open -na Ghostty --args -e lazydocker'                         # Super + Shift + D  Docker (lazydocker)
 ctrl-alt-cmd-shift-l     = 'exec-and-forget omacos-dev'                                                    # Super + Shift + L  Dev layout (five Ghostty windows: 2 | tmux | 2, tmux: tdev)
 ctrl-alt-cmd-shift-a     = 'exec-and-forget open -na Ghostty --args -e btop'                               # Super + Shift + A  Activity (btop)

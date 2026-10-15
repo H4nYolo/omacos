@@ -17,7 +17,7 @@ type must appear, most-used entries first.
 
 The same views also exist as fzf lists in the popup terminal (`omacos-launcher`, `omacos-menu`,
 `omacos-menu-emoji`, `omacos-clipboard`, `omacos-keys`), which the panel opens for anything that
-needs a terminal (brew pickers, upgrades, notes, the style pickers) and which keep working over SSH.
+needs a terminal (brew pickers, upgrades, the style pickers) and which keep working over SSH.
 
 ## The menu
 
@@ -35,8 +35,10 @@ visibility). Edit it to add entries; `omacos-menu <route> --list` shows what a l
 - **Clipboard** (`Super + Shift + V`) — history of the last 200 text entries (`omacos-clipboardd`, started by AeroSpace);
   `Enter` pastes into the app that had focus, `ctrl-x` deletes, `alt-c` clears. Password managers' concealed entries are skipped
 - **Emoji** (`Super + Shift + E`) — search by name or keyword, `Enter` pastes
-- **Notes** (`Super + Shift + N`) — Raycast-Notes-style scratch pad: `~/notes/quick.md` (path in `~/.config/omacos/notes-file`) in nvim,
-  cursor under a fresh timestamp in insert mode, every keystroke saved; `Esc` `:q` or just closing the popup keeps everything
+- **Notes** (`Super + Shift + N`) — the floating markdown scratch pad, its own app (`omacos-notes`, ADR 0004): above every window,
+  top right on the active monitor, Liquid Glass that fades to almost only the text without focus. One Tab per `*.md` in `~/notes/`
+  (folder in `~/.config/omacos/notes-dir`), Typora-style rendering (the cursor line shows the markdown), vim keys, autosave.
+  `Super + Shift + N` shows and focuses, focuses, hides; `Cmd + Enter` hands the focus back. See [Notes](../notes/README.md)
 - **Style** — theme, background, wallpaper pack and font pickers, see [Style](../style/README.md)
 - **Toggle** — screensaver on idle, bar, borders, microphone mute, Wi-Fi, keep session awake
 - **Install** — `omacos-pkg-install`: every Homebrew formula and cask in fzf with `brew info` as preview, `Tab` multi-select,
@@ -111,7 +113,7 @@ Ghostty process started by AeroSpace (`omacos-popupd`, config `~/.config/ghostty
 it. `omacos-popup <request>` writes the request to `~/.local/state/omacos/popup-request`
 and fires that process's private global hotkey (`ctrl+alt+shift+cmd+F19`, never typed by hand);
 `omacos-popup-run` inside the panel then execs the requested script. When it exits, the panel
-disappears. A running `brew upgrade` or an open notes pad is never killed, only re-shown.
+disappears. A running `brew upgrade` or nvim on a Notes Tab (`Cmd + E`) is never killed, only re-shown.
 Ghostty needs Accessibility for the global hotkey.
 
 ## Uninstalling apps

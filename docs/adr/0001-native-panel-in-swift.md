@@ -9,4 +9,4 @@ The fzf popups start a Ghostty surface, a shell and fzf on every keypress and re
 ## Consequences
 
 - Built with SwiftPM and the Command Line Tools only; no Xcode project, no developer account (ad-hoc signed).
-- The Panel replaces the Popup only for views that need no terminal; brew install with preview, brew upgrade, weather, audio and Notes stay in the Ghostty Popup.
+- The Panel replaces the Popup only for views that need no terminal; brew install with preview, brew upgrade, weather and audio stay in the Ghostty Popup (Notes moved to its own app, ADR 0004).

@@ -2,7 +2,7 @@
 # omacos-popup-run — runs inside the popup quick terminal; executes whatever
 # omacos-popup asked for last, or the request given as $1 (the menu hands its popup
 # entries over this way): launcher (default), keys [tmux|aerospace|shell], menu [route],
-# emoji, clipboard, notes, about, qr, pkg-install, pkg-remove, weather, brew, outdated, audio, awake.
+# emoji, clipboard, notes-edit <file>, about, qr, pkg-install, pkg-remove, weather, brew, outdated, audio, awake.
 PATH="$HOME/.local/bin:/opt/homebrew/bin:$PATH"
 req="${1:-$(cat "${XDG_STATE_HOME:-$HOME/.local/state}/omacos/popup-request" 2>/dev/null)}"
 case "$req" in
@@ -10,7 +10,7 @@ case "$req" in
   menu*)   exec omacos-menu ${req#menu} ;;
   emoji)   exec omacos-menu-emoji ;;
   clipboard) exec omacos-clipboard ;;
-  notes)   exec omacos-notes ;;
+  notes-edit\ *) exec nvim "${req#notes-edit }" ;;   # Cmd+E in Notes: the current Tab in real nvim
   about)   exec omacos-about ;;
   qr)      exec omacos-capture qr ;;
   pkg-install) exec omacos-pkg-install ;;

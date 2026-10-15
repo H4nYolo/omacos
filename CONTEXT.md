@@ -50,7 +50,7 @@ The native Swift window (issue #10) that replaces the Popup for the views that d
 _Avoid_: Popup (for the native one), window, HUD
 
 **View**:
-One screen inside the Popup or Panel: Launcher, Menu, Emoji, Clipboard, Keys, Notes. A view is what a hotkey opens.
+One screen inside the Popup or Panel: Launcher, Menu, Emoji, Clipboard, Keys. A view is what a hotkey opens. (Notes is its own window, not a view.)
 _Avoid_: Mode, page, picker (see below)
 
 **Picker**:
@@ -81,8 +81,12 @@ Screenshots, screen recordings, OCR from a selection, QR code, colour picker: Om
 _Avoid_: Screenshot menu
 
 **Notes**:
-The one-file markdown scratch pad on Super+Shift+N, Raycast Notes' replacement.
-_Avoid_: Scratchpad (that is the workspace), journal
+The floating markdown scratch pad on Super+Shift+N (ADR 0004): its own app, above every window, one Tab per file in `~/notes/`. For meeting notes, incident numbers and things you need now and then. Raycast Notes' replacement.
+_Avoid_: Scratchpad (that is the workspace), journal, notes app
+
+**Tab**:
+One file of Notes: `~/notes/<name>.md`, the Tab's name is the file name. Closing a Tab never deletes the file.
+_Avoid_: Note, page, document
 
 **Keys**:
 The searchable list of every binding, alias, tool and omacos command on Super+K.

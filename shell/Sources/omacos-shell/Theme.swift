@@ -1,3 +1,4 @@
+import OmacosCore
 import SwiftUI
 
 /// Panel colours and font. Defaults are Tokyo Night / CaskaydiaMono; `reload()` reads the current
@@ -13,18 +14,11 @@ enum Theme {
 
     static func font(_ size: CGFloat) -> Font { .custom(fontName, size: size) }
 
-    static let confPath = NSString(string: "~/.local/state/omacos/theme/panel.conf").expandingTildeInPath
-    static let fontPath = NSString(string: "~/.local/state/omacos/font").expandingTildeInPath
-
     static func reload() {
-        if let f = try? String(contentsOfFile: fontPath, encoding: .utf8).trimmingCharacters(in: .whitespacesAndNewlines), !f.isEmpty {
-            fontName = f
-        }
-        guard let text = try? String(contentsOfFile: confPath, encoding: .utf8) else { return }
-        for line in text.split(separator: "\n") {
-            let parts = line.split(separator: "=", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespaces) }
-            guard parts.count == 2, let c = color(hex: parts[1]) else { continue }
-            switch parts[0] {
+        if let f = ThemeConfig.fontName() { fontName = f }
+        for (key, value) in ThemeConfig.colors() {
+            let c = color(value)
+            switch key {
             case "bg": bg = c
             case "bg_selected": bgSelected = c
             case "fg": fg = c
@@ -34,13 +28,6 @@ enum Theme {
             default: break
             }
         }
-    }
-
-    private static func color(hex: String) -> Color? {
-        var s = hex
-        if s.hasPrefix("#") { s.removeFirst() }
-        guard s.count == 6, let v = UInt32(s, radix: 16) else { return nil }
-        return color(v)
     }
 
     private static func color(_ hex: UInt32) -> Color {

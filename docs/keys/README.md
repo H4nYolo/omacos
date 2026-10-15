@@ -39,7 +39,7 @@ arrows focus · `Shift + arrows` swap · `-`/`=` resize · `Shift + -`/`=` resiz
 `Shift + ;` then `Shift + arrow` join a neighbour
 
 **Apps** — `Enter` Ghostty · `Shift + T` Ghostty with tmux · `Shift + Enter` Zen · `Shift + F` Finder ·
-`Shift + W` nvim · `Shift + N` quick notes · `Shift + D` lazydocker · `Shift + A` btop · `Shift + G` Telegram
+`Shift + W` nvim · `Shift + N` Notes · `Shift + D` lazydocker · `Shift + A` btop · `Shift + G` Telegram
 
 `Alt + Tab` cycles windows on the workspace.
 
@@ -69,7 +69,7 @@ from the config itself, plus the shell aliases, tmux layouts (`ix`, `tdl`, `tsl`
 | `Super + Ctrl + C` capture · `Super + Ctrl + E` emoji · `Super + Ctrl + V` clipboard | `Super + Shift + C` · `E` · `V` |
 | `Super + Alt + K` tmux keybindings | `Super + Shift + K` |
 | `Super + Ctrl + Space` next background | `Super + Shift + B` |
-| `Super + Shift + N` editor · `Super + Shift + W` Omawrite | `Super + Shift + W` editor · `Super + Shift + N` quick notes |
+| `Super + Shift + N` editor · `Super + Shift + W` Omawrite | `Super + Shift + W` editor · `Super + Shift + N` Notes |
 
 ## Not portable
 

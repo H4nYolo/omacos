@@ -107,8 +107,8 @@ fi
 # --- 4b. terminaltexteffects for the screensaver ---------------------------------
 # The native Panel (launcher + menu), built from shell/ with the Command Line Tools
 if command -v swift >/dev/null; then
-  log "building omacos-shell (first build takes a minute)"
-  "$REPO/shell/build.sh" || echo "  omacos-shell build failed — the fzf popups keep working; rerun shell/build.sh later"
+  log "building omacos-shell and omacos-notes (first build takes a minute)"
+  "$REPO/shell/build.sh" || echo "  shell/build.sh failed — the fzf popups keep working, Notes is missing; rerun shell/build.sh later"
 else
   echo "  swift not found: install the Command Line Tools (xcode-select --install) and run shell/build.sh for the native panel"
 fi
